@@ -172,11 +172,11 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             title={
               project.isPrivateRepo
                 ? lang === "es"
-                  ? "Repositorio privado de cliente comercial"
-                  : "Private commercial client repository"
+                  ? "Repositorio privado de cliente comercial — Ver perfil de GitHub"
+                  : "Private commercial client repo — View GitHub profile"
                 : undefined
             }
-            className="cursor-can-hover inline-flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 font-mono text-xs font-semibold text-zinc-800 dark:text-zinc-200 transition-all hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            className="cursor-can-hover inline-flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-2.5 py-2.5 font-mono text-[11px] font-semibold text-zinc-800 dark:text-zinc-200 transition-all hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
           >
             {project.isPrivateRepo ? (
               <Lock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
@@ -186,8 +186,8 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             <span className="truncate">
               {project.isPrivateRepo
                 ? lang === "es"
-                  ? "Repo Privado"
-                  : "Private Repo"
+                  ? "Código (NDA / Perfil GitHub)"
+                  : "Code (Client NDA / GitHub)"
                 : lang === "es"
                   ? "Código"
                   : "Code"}

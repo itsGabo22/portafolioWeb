@@ -77,7 +77,7 @@ export const projects: Project[] = [
       en: "Commercial online store for premium steel, gold-filled, and rhodium jewelry and accessories delivered to a private client, featuring retail/wholesale catalogs and nationwide checkout.",
     },
     technologies: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind CSS"],
-    githubUrl: "https://github.com/itsGabo22/BrisalWeb",
+    githubUrl: "https://github.com/itsGabo22",
     liveUrl: "https://brisal.com.co/",
   },
   {
@@ -98,7 +98,7 @@ export const projects: Project[] = [
       en: "Exclusive footwear, sneakers, and fashion e-commerce platform in Colombia developed for a commercial client, featuring a modern luxury editorial aesthetic and fast conversion checkout.",
     },
     technologies: ["Next.js", "TypeScript", "Supabase", "Tailwind CSS", "Vercel"],
-    githubUrl: "https://github.com/itsGabo22/BlueVelvet0",
+    githubUrl: "https://github.com/itsGabo22",
     liveUrl: "https://bluevelvet0.com/",
   },
   {
@@ -119,7 +119,7 @@ export const projects: Project[] = [
       en: "Live cosmetics, skincare, and accessories e-commerce platform featuring multi-category search, interactive catalog management, and a dedicated wholesale partner portal.",
     },
     technologies: ["Next.js", "TypeScript", "Supabase", "Tailwind CSS", "Vercel"],
-    githubUrl: "https://github.com/itsGabo22/Carlin",
+    githubUrl: "https://github.com/itsGabo22",
     liveUrl: "https://carlincosmeticos.com/",
   },
   {
@@ -140,7 +140,7 @@ export const projects: Project[] = [
     },
     technologies: ["Next.js", "Capacitor Mobile", "Steam API", "Gemini AI", "TypeScript"],
     githubUrl: "https://github.com/itsGabo22/GamerBox",
-    liveUrl: "https://github.com/itsGabo22/GamerBox",
+    liveUrl: "https://github.com/itsGabo22/GamerBox#readme",
   },
   {
     id: "viberoute-colombia",
@@ -180,7 +180,7 @@ export const projects: Project[] = [
     },
     technologies: ["Kotlin / Wear OS", "Next.js", "Conversational AI", "Tailwind CSS"],
     githubUrl: "https://github.com/itsGabo22/WGO",
-    liveUrl: "https://github.com/itsGabo22/WGO",
+    liveUrl: "https://github.com/itsGabo22/WGO#readme",
   },
   {
     id: "ocioflex-desktop",
@@ -200,7 +200,7 @@ export const projects: Project[] = [
     },
     technologies: ["Tauri v2 / Rust", "Next.js 16", "AI Analytics", "Tailwind CSS v4", "TypeScript"],
     githubUrl: "https://github.com/itsGabo22/OcioFlex",
-    liveUrl: "https://github.com/itsGabo22/OcioFlex",
+    liveUrl: "https://github.com/itsGabo22/OcioFlex#readme",
   },
   {
     id: "musicscript-ai",
@@ -213,13 +213,14 @@ export const projects: Project[] = [
       en: "UCC Academic Project // WebAPK & AI",
     },
     projectType: "academic",
+    isPrivateRepo: true,
     image: "/images/projects/musicscript.png",
     description: {
       es: "Estación de audio y reproductor musical web instalable como WebAPK en móvil con Inteligencia Artificial integrada: incluye un chat musical inteligente que recomienda canciones y adopta la personalidad de tu artista o cantante favorito.",
       en: "Pro web audio station and mobile-installable WebAPK music player with integrated Artificial Intelligence: features an AI music chat that recommends tracks and roleplays the persona of your favorite singer.",
     },
     technologies: ["Next.js", "WebAPK / PWA", "Conversational AI", "Web Audio API", "TypeScript"],
-    githubUrl: "https://github.com/itsGabo22/MusicScript",
+    githubUrl: "https://github.com/itsGabo22",
     liveUrl: "https://musicscript.vercel.app/",
   },
 ];
