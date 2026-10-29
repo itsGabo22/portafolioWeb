@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#09090b" />
+      <stop offset="50%" stop-color="#18181b" />
+      <stop offset="100%" stop-color="#09090b" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#6366f1" />
+    </linearGradient>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#27272a" stroke-width="0.75" stroke-opacity="0.6" />
+    </pattern>
+  </defs>
+  <rect width="400" height="400" fill="url(#bgGrad)" />
+  <rect width="400" height="400" fill="url(#grid)" />
+  <circle cx="200" cy="200" r="150" fill="none" stroke="url(#accentGrad)" stroke-width="1.5" stroke-dasharray="8 6" opacity="0.5" />
+  <circle cx="200" cy="200" r="120" fill="#09090b" fill-opacity="0.85" stroke="#27272a" stroke-width="2" />
+  <polygon points="200,65 317,132 317,268 200,335 83,268 83,132" fill="none" stroke="url(#accentGrad)" stroke-width="2.5" opacity="0.85" />
+  <text x="200" y="218" text-anchor="middle" fill="#fafafa" font-family="monospace, sans-serif" font-weight="800" font-size="68" letter-spacing="4">GP</text>
+  <text x="200" y="255" text-anchor="middle" fill="#10b981" font-family="monospace, sans-serif" font-weight="600" font-size="13" letter-spacing="3">VICARDEV // ENG</text>
+</svg>
