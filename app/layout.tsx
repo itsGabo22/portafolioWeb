@@ -23,26 +23,28 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gabriel Esteban Paz Guerrero | Full-Stack Software Developer & Tech Entrepreneur",
+  title:
+    "Gabriel Esteban Paz Guerrero | Full-Stack Software Developer & Founder of VICARDEV",
   description:
-    "Portafolio profesional de Gabriel Esteban Paz Guerrero (@itsGabo22). Desarrollador Full-Stack, estudiante de 5.º semestre de Ingeniería de Software en la UCC (Pasto, Colombia) y fundador de VICARDEV, ElectroTech Pasto y Obsidion.",
+    "Portafolio profesional de Gabriel Esteban Paz Guerrero (@itsGabo22). Desarrollador Full-Stack, estudiante de 5.º semestre de Ingeniería de Software en la UCC (Pasto, Colombia) y fundador de VICARDEV.",
   keywords: [
     "Gabriel Esteban Paz Guerrero",
     "itsGabo22",
     "VICARDEV",
-    "ElectroTech Pasto",
-    "Obsidion",
     "Full-Stack Developer",
     "Ingeniería de Software",
     "Pasto Colombia",
     "Next.js",
     "TypeScript",
   ],
-  authors: [{ name: "Gabriel Esteban Paz Guerrero", url: "https://github.com/itsGabo22" }],
+  authors: [
+    { name: "Gabriel Esteban Paz Guerrero", url: "https://github.com/itsGabo22" },
+  ],
   openGraph: {
-    title: "Gabriel Esteban Paz Guerrero | Full-Stack Developer & Fundador de VICARDEV",
+    title:
+      "Gabriel Esteban Paz Guerrero | Full-Stack Developer & Fundador de VICARDEV",
     description:
-      "Arquitectando soluciones web escalables, automatización industrial e integraciones de IA desde Pasto, Colombia.",
+      "Arquitectando plataformas web escalables, comercio electrónico en producción e integraciones de inteligencia artificial desde Pasto, Colombia.",
     type: "website",
     locale: "es_CO",
   },

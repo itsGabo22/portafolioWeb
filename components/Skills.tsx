@@ -8,9 +8,6 @@ import TechBadge from "./TechBadge";
 
 interface SkillCategory {
   id: string;
-  indexCode: string;
-  layerTag: string;
-  proficiency: number;
   title: {
     es: string;
     en: string;
@@ -29,15 +26,12 @@ interface SkillCategory {
 const SKILL_CATEGORIES: SkillCategory[] = [
   {
     id: "frontend-mobile",
-    indexCode: "01",
-    layerTag: "LAYER // CLIENT, MOBILE & DESKTOP",
-    proficiency: 98,
     title: {
       es: "Frontend, Mobile & Desktop",
       en: "Frontend, Mobile & Desktop",
     },
     subtitle: {
-      es: "Interfaces Web, Desktop Nativo & Wearables",
+      es: "Interfaces Web, Escritorio Nativo & Wearables",
       en: "Web Interfaces, Native Desktop & Wearables",
     },
     serviceSummary: {
@@ -58,9 +52,6 @@ const SKILL_CATEGORIES: SkillCategory[] = [
   },
   {
     id: "backend-ai",
-    indexCode: "02",
-    layerTag: "LAYER // DISTRIBUTED CORE & AI",
-    proficiency: 95,
     title: {
       es: "Backend, APIs & IA",
       en: "Backend, APIs & AI",
@@ -86,9 +77,6 @@ const SKILL_CATEGORIES: SkillCategory[] = [
   },
   {
     id: "cloud-devops",
-    indexCode: "03",
-    layerTag: "LAYER // DATA PERSISTENCE & CLOUD",
-    proficiency: 94,
     title: {
       es: "Bases de Datos, Cloud & DevOps",
       en: "Databases, Cloud & DevOps",
@@ -114,9 +102,6 @@ const SKILL_CATEGORIES: SkillCategory[] = [
   },
   {
     id: "hardware-systems",
-    indexCode: "04",
-    layerTag: "LAYER // UNIX SYSTEMS & TOOLING",
-    proficiency: 96,
     title: {
       es: "Sistemas, Linux & Herramientas",
       en: "Systems, Linux & Tooling",
@@ -149,7 +134,7 @@ export default function Skills() {
       className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Centered Monumental Section Header (exact naresh_ref Tech Stack style) */}
+        {/* Centered Monumental Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -161,7 +146,7 @@ export default function Skills() {
             {lang === "es" ? "Tech Stack" : "Tech Stack"}
           </h2>
 
-          <p className="mx-auto mt-2 text-base text-zinc-500 dark:text-zinc-400">
+          <p className="mx-auto mt-2 text-base text-zinc-600 dark:text-zinc-400">
             {lang === "es"
               ? "(pista: pasa el cursor o presiona una tecla en el teclado 3D)"
               : "(hint: hover or press a key on the 3D keyboard)"}
@@ -174,17 +159,19 @@ export default function Skills() {
           className="pointer-events-none h-[400px] sm:h-[480px] lg:h-[540px] w-full"
         />
 
-        {/* Engineering Specification Matrix Header & Filter Bar */}
-        <div className="mb-6 flex flex-col items-center justify-between gap-4 border-t border-zinc-300/80 dark:border-zinc-800 pt-10 sm:flex-row">
+        {/* Editorial Header & Clean Filter Pill Bar */}
+        <div className="mb-8 flex flex-col items-center justify-between gap-4 border-t border-zinc-300/60 dark:border-zinc-800 pt-10 sm:flex-row">
           <div className="text-center sm:text-left">
-            <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
-              SPECIFICATION MATRIX // 01 – 04
-            </span>
-            <h3 className="mt-1 font-display text-2xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+            <h3 className="font-display text-2xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-3xl">
               {lang === "es"
-                ? "Arquitectura por Dominio"
-                : "Domain Architecture"}
+                ? "Arquitectura y Ecosistema Técnico"
+                : "Architecture & Tech Ecosystem"}
             </h3>
+            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+              {lang === "es"
+                ? "Tecnologías utilizadas en plataformas comerciales y sistemas universitarios"
+                : "Technologies deployed across commercial platforms and university systems"}
+            </p>
           </div>
 
           <div
@@ -194,7 +181,7 @@ export default function Skills() {
                 ? "Filtrar categorías técnicas"
                 : "Filter technical categories"
             }
-            className="flex flex-wrap justify-center gap-1.5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/80 p-1.5 backdrop-blur-md"
+            className="flex flex-wrap justify-center gap-1.5 rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 p-1.5 ring-1 ring-zinc-900/[0.06] shadow-[0_8px_30px_rgba(15,23,42,0.06),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl backdrop-saturate-150"
           >
             <button
               type="button"
@@ -207,7 +194,7 @@ export default function Skills() {
                   : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
               }`}
             >
-              {lang === "es" ? "Todos (4)" : "All (4)"}
+              {lang === "es" ? "Todos" : "All"}
             </button>
 
             {SKILL_CATEGORIES.map((category) => {
@@ -225,15 +212,15 @@ export default function Skills() {
                       : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
                   }`}
                 >
-                  {category.indexCode} · {category.title[lang]}
+                  {category.title[lang]}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Bespoke Horizontal Architectural Specification Bands (No repetitive card boxes) */}
-        <div className="divide-y divide-zinc-300/80 dark:divide-zinc-800/90 border-y border-zinc-300/80 dark:border-zinc-800/90 bg-white/75 dark:bg-zinc-950/70 backdrop-blur-xl rounded-3xl px-6 sm:px-10">
+        {/* Translucent Liquid Frosted Glass Domain Rows (Zero percentages, zero robotic labels) */}
+        <div className="divide-y divide-zinc-300/60 dark:divide-zinc-800/80 overflow-hidden rounded-3xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 px-6 sm:px-10 ring-1 ring-zinc-900/[0.06] shadow-[0_16px_48px_-12px_rgba(15,23,42,0.08),inset_0_1px_0_0_rgba(255,255,255,0.92)] dark:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl backdrop-saturate-150">
           <AnimatePresence mode="popLayout">
             {filteredCategories.map((category) => {
               const isExpanded =
@@ -250,41 +237,19 @@ export default function Skills() {
                   className="py-8 sm:py-10"
                 >
                   <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-center">
-                    {/* Col 1 (4 cols): Monumental Index + Title + Telemetry Bar */}
+                    {/* Col 1 (4 cols): Clean Editorial Domain Title & Subtitle */}
                     <div className="lg:col-span-4">
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-3xl sm:text-4xl font-black tracking-tighter text-emerald-600 dark:text-emerald-400">
-                          {category.indexCode}
-                        </span>
-                        <span className="rounded-md border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-zinc-600 dark:text-zinc-400">
-                          {category.layerTag}
-                        </span>
-                      </div>
-
-                      <h4 className="mt-2 font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                      <h4 className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                         {category.title[lang]}
                       </h4>
-                      <p className="mt-0.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                      <p className="mt-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
                         {category.subtitle[lang]}
                       </p>
-
-                      {/* Capability Telemetry Bar */}
-                      <div className="mt-4 flex items-center gap-3 max-w-xs">
-                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-                          <div
-                            className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-indigo-500"
-                            style={{ width: `${category.proficiency}%` }}
-                          />
-                        </div>
-                        <span className="font-mono text-[11px] font-bold text-zinc-700 dark:text-zinc-300">
-                          {category.proficiency}%
-                        </span>
-                      </div>
                     </div>
 
-                    {/* Col 2 (4 cols): Architectural Spec Summary */}
+                    {/* Col 2 (4 cols): Concise Domain Summary */}
                     <div className="lg:col-span-4">
-                      <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+                      <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
                         {category.serviceSummary[lang]}
                       </p>
                       <button
@@ -294,16 +259,16 @@ export default function Skills() {
                             prev === category.id ? null : category.id
                           )
                         }
-                        className="cursor-can-hover mt-3 inline-flex items-center gap-1 font-mono text-[11px] font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 lg:hidden"
+                        className="cursor-can-hover mt-3 inline-flex items-center gap-1 text-xs font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 lg:hidden"
                       >
                         <span>
                           {isExpanded
                             ? lang === "es"
-                              ? "Ocultar stack"
-                              : "Hide stack"
+                              ? "Ocultar tecnologías"
+                              : "Hide technologies"
                             : lang === "es"
-                              ? "Ver stack"
-                              : "Show stack"}
+                              ? "Ver tecnologías"
+                              : "Show technologies"}
                         </span>
                         <ChevronDown
                           className={`h-3.5 w-3.5 transition-transform ${
@@ -313,7 +278,7 @@ export default function Skills() {
                       </button>
                     </div>
 
-                    {/* Col 3 (4 cols): High-Contrast SVG Logo Matrix */}
+                    {/* Col 3 (4 cols): High-Contrast SVG Logo Pills */}
                     <div
                       className={`lg:col-span-4 flex flex-wrap gap-2 ${
                         isExpanded ? "flex" : "hidden lg:flex"

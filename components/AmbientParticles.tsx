@@ -3,33 +3,33 @@
 import { useEffect, useRef } from "react";
 import { useApp } from "@/context/AppContext";
 
-interface Circle {
+interface Particle {
   x: number;
   y: number;
-  translateX: number;
-  translateY: number;
+  vx: number;
+  vy: number;
+  baseDx: number;
+  baseDy: number;
   size: number;
+  aspect: number;
+  angle: number;
+  spin: number;
   alpha: number;
-  targetAlpha: number;
-  dx: number;
-  dy: number;
-  magnetism: number;
-  color: string;
+  baseAlpha: number;
+  twinkleSpeed: number;
+  phase: number;
+  depth: number;
+  colorRgb: string;
 }
 
 export default function AmbientParticles({
-  quantity = 65,
-  staticity = 55,
-  ease = 55,
+  quantity = 115,
 }: {
   quantity?: number;
-  staticity?: number;
-  ease?: number;
 }) {
   const { theme } = useApp();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const mouse = useRef({ x: 0, y: 0 });
   const themeRef = useRef(theme);
 
   useEffect(() => {
@@ -45,120 +45,236 @@ export default function AmbientParticles({
 
     let width = 0;
     let height = 0;
-    let rectLeft = 0;
-    let rectTop = 0;
     let rafId = 0;
     let paused = false;
+    let tickCount = 0;
     const dpr =
       typeof window !== "undefined"
-        ? Math.min(window.devicePixelRatio || 1, 1.5)
+        ? Math.min(window.devicePixelRatio || 1, 1.75)
         : 1;
-    const circles: Circle[] = [];
 
-    const paletteForTheme = () =>
-      themeRef.current === "dark"
-        ? ["16, 185, 129", "99, 102, 241", "244, 244, 245"]
-        : ["5, 150, 105", "79, 70, 229", "82, 82, 91"];
+    const particles: Particle[] = [];
 
-    const createCircle = (): Circle => {
-      const colors = paletteForTheme();
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      return {
-        x: Math.floor(Math.random() * width),
-        y: Math.floor(Math.random() * height),
-        translateX: 0,
-        translateY: 0,
-        size: Math.floor(Math.random() * 2) + 0.8,
-        alpha: 0,
-        targetAlpha: parseFloat((Math.random() * 0.42 + 0.1).toFixed(2)),
-        dx: (Math.random() - 0.5) * 0.2,
-        dy: (Math.random() - 0.5) * 0.2,
-        magnetism: 0.1 + Math.random() * 3.5,
-        color,
-      };
+    const pointer = {
+      x: -9999,
+      y: -9999,
+      vx: 0,
+      vy: 0,
+      lastX: -9999,
+      lastY: -9999,
+      normX: 0,
+      normY: 0,
     };
 
-    const resize = () => {
-      width = container.offsetWidth;
-      height = container.offsetHeight;
-      const rect = canvas.getBoundingClientRect();
-      rectLeft = rect.left;
-      rectTop = rect.top;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      circles.length = 0;
-      const count = window.innerWidth < 768 ? Math.floor(quantity * 0.55) : quantity;
-      for (let i = 0; i < count; i++) {
-        circles.push(createCircle());
+    const ashColors = [
+      "24, 24, 27",   // #18181b deep charcoal
+      "39, 39, 42",   // #27272a warm graphite
+      "63, 63, 70",   // #3f3f46 ash slate
+      "82, 82, 91",   // #52525b soft cinder
+      "15, 23, 42",   // #0f172a obsidian speck
+    ];
+
+    const starColors = [
+      "255, 255, 255", // pure starlight
+      "226, 232, 240", // cool silver-white
+      "167, 243, 208", // soft emerald nebula tint
+      "199, 210, 254", // soft indigo starlight
+    ];
+
+    const createParticle = (isDark: boolean, randomY = true): Particle => {
+      const depth = 0.35 + Math.random() * 0.85;
+      if (isDark) {
+        // Dark Mode: Cosmic Star
+        const colorRgb =
+          starColors[Math.floor(Math.random() * starColors.length)];
+        const size = (0.7 + Math.random() * 1.65) * depth;
+        return {
+          x: Math.random() * width,
+          y: randomY ? Math.random() * height : Math.random() * height,
+          vx: 0,
+          vy: 0,
+          baseDx: (Math.random() - 0.5) * 0.12 * depth,
+          baseDy: (Math.random() - 0.5) * 0.1 * depth,
+          size,
+          aspect: 1,
+          angle: 0,
+          spin: 0,
+          alpha: 0.2,
+          baseAlpha: 0.28 + Math.random() * 0.58,
+          twinkleSpeed: 0.02 + Math.random() * 0.035,
+          phase: Math.random() * Math.PI * 2,
+          depth,
+          colorRgb,
+        };
+      } else {
+        // Light Mode: Floating Ash Flake
+        const colorRgb =
+          ashColors[Math.floor(Math.random() * ashColors.length)];
+        const size = (1.6 + Math.random() * 2.3) * depth;
+        return {
+          x: Math.random() * width,
+          y: randomY ? Math.random() * height : height + 10,
+          vx: 0,
+          vy: 0,
+          baseDx: (Math.random() - 0.42) * 0.28 * depth,
+          baseDy: -(0.18 + Math.random() * 0.36) * depth, // gentle upward ash drift
+          size,
+          aspect: 0.42 + Math.random() * 0.38,
+          angle: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 0.035,
+          alpha: 0.2,
+          baseAlpha: 0.18 + Math.random() * 0.26,
+          twinkleSpeed: 0.015 + Math.random() * 0.02,
+          phase: Math.random() * Math.PI * 2,
+          depth,
+          colorRgb,
+        };
       }
     };
 
-    const remapValue = (
-      value: number,
-      start1: number,
-      end1: number,
-      start2: number,
-      end2: number
-    ): number => {
-      const remapped =
-        ((value - start1) * (end2 - start2)) / (end1 - start1) + start2;
-      return remapped > 0 ? remapped : 0;
+    const populate = () => {
+      particles.length = 0;
+      const isDark = themeRef.current === "dark";
+      const isSmall = window.innerWidth < 768;
+      const count = isSmall ? Math.floor(quantity * 0.55) : quantity;
+      for (let i = 0; i < count; i++) {
+        particles.push(createParticle(isDark, true));
+      }
     };
+
+    const resize = () => {
+      width = container.offsetWidth || window.innerWidth;
+      height = container.offsetHeight || window.innerHeight;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      populate();
+    };
+
+    let lastTheme = themeRef.current;
 
     const animate = () => {
       if (paused) return;
+      tickCount += 1;
+
+      const currentTheme = themeRef.current;
+      const isDark = currentTheme === "dark";
+      if (currentTheme !== lastTheme) {
+        lastTheme = currentTheme;
+        populate();
+      }
+
       ctx.clearRect(0, 0, width, height);
-      const isDark = themeRef.current === "dark";
 
-      for (let i = 0; i < circles.length; i++) {
-        const circle = circles[i];
-        const edge = [
-          circle.x + circle.translateX - circle.size,
-          width - circle.x - circle.translateX - circle.size,
-          circle.y + circle.translateY - circle.size,
-          height - circle.y - circle.translateY - circle.size,
-        ];
-        const closestEdge = Math.min(edge[0], edge[1], edge[2], edge[3]);
-        const remapClosestEdge = remapValue(closestEdge, 0, 20, 0, 1);
+      pointer.vx *= 0.88;
+      pointer.vy *= 0.88;
 
-        if (remapClosestEdge > 1) {
-          circle.alpha = Math.min(circle.targetAlpha, circle.alpha + 0.02);
-        } else {
-          circle.alpha = circle.targetAlpha * remapClosestEdge;
+      const wakeRadius = isDark ? 125 : 140;
+      const wakeRadiusSq = wakeRadius * wakeRadius;
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        // Cursor interaction: aerodynamic vortex for Ash (Light) / gravitational wake for Stars (Dark)
+        const dx = p.x - pointer.x;
+        const dy = p.y - pointer.y;
+        const distSq = dx * dx + dy * dy;
+
+        if (distSq < wakeRadiusSq && distSq > 1) {
+          const dist = Math.sqrt(distSq);
+          const falloff = 1 - dist / wakeRadius;
+          const nx = dx / dist;
+          const ny = dy / dist;
+
+          if (isDark) {
+            // Subtle star repulsion + cursor wake
+            p.vx += (nx * 0.18 + pointer.vx * 0.015) * falloff * p.depth;
+            p.vy += (ny * 0.18 + pointer.vy * 0.015) * falloff * p.depth;
+          } else {
+            // Aerodynamic breeze + swirl for floating ash flakes
+            const swirl = (i % 2 === 0 ? 1 : -1) * 0.24 * falloff;
+            p.vx += (nx * 0.26 - ny * swirl + pointer.vx * 0.032) * falloff;
+            p.vy += (ny * 0.26 + nx * swirl + pointer.vy * 0.032) * falloff;
+            p.angle += falloff * 0.06;
+          }
         }
-        circle.x += circle.dx;
-        circle.y += circle.dy;
-        circle.translateX +=
-          (mouse.current.x / (staticity / circle.magnetism) -
-            circle.translateX) /
-          ease;
-        circle.translateY +=
-          (mouse.current.y / (staticity / circle.magnetism) -
-            circle.translateY) /
-          ease;
 
-        if (
-          circle.x < -circle.size ||
-          circle.x > width + circle.size ||
-          circle.y < -circle.size ||
-          circle.y > height + circle.size
-        ) {
-          circles[i] = createCircle();
+        // Apply damping and base drift
+        p.vx *= 0.94;
+        p.vy *= 0.94;
+
+        if (isDark) {
+          p.x += p.baseDx + p.vx;
+          p.y += p.baseDy + p.vy;
+          const twinkle =
+            Math.sin(tickCount * p.twinkleSpeed + p.phase) * 0.22;
+          p.alpha = Math.max(0.08, Math.min(0.95, p.baseAlpha + twinkle));
         } else {
-          const alphaBoost = isDark ? circle.alpha : circle.alpha * 0.82;
+          // Organic lateral wind flutter for ash
+          const flutter =
+            Math.sin(tickCount * p.twinkleSpeed + p.phase) * 0.22;
+          p.x += p.baseDx + flutter + p.vx;
+          p.y += p.baseDy + p.vy;
+          p.angle += p.spin;
+          p.alpha = p.baseAlpha;
+        }
+
+        // Wrap around screen boundaries seamlessly
+        const margin = 16;
+        if (p.x < -margin) p.x = width + margin;
+        if (p.x > width + margin) p.x = -margin;
+        if (p.y < -margin) p.y = height + margin;
+        if (p.y > height + margin) p.y = -margin;
+
+        // Parallax offset from pointer position
+        const parX = p.x + pointer.normX * 14 * p.depth;
+        const parY = p.y + pointer.normY * 14 * p.depth;
+
+        if (isDark) {
+          // Render Star with soft halo & occasional 4-point cross-glint
           ctx.beginPath();
-          ctx.arc(
-            circle.x + circle.translateX,
-            circle.y + circle.translateY,
-            circle.size,
-            0,
-            2 * Math.PI
-          );
-          ctx.fillStyle = `rgba(${circle.color}, ${alphaBoost.toFixed(2)})`;
+          ctx.arc(parX, parY, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.colorRgb}, ${p.alpha.toFixed(2)})`;
           ctx.fill();
+
+          if (p.size > 1.45) {
+            const glowAlpha = (p.alpha * 0.28).toFixed(2);
+            ctx.beginPath();
+            ctx.arc(parX, parY, p.size * 2.4, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${p.colorRgb}, ${glowAlpha})`;
+            ctx.fill();
+
+            // Subtle 4-point starlight cross on brightest stars
+            if (i % 5 === 0) {
+              const arm = p.size * 3.1;
+              ctx.strokeStyle = `rgba(${p.colorRgb}, ${(p.alpha * 0.38).toFixed(2)})`;
+              ctx.lineWidth = 0.6;
+              ctx.beginPath();
+              ctx.moveTo(parX - arm, parY);
+              ctx.lineTo(parX + arm, parY);
+              ctx.moveTo(parX, parY - arm);
+              ctx.lineTo(parX, parY + arm);
+              ctx.stroke();
+            }
+          }
+        } else {
+          // Render tumbling irregular Ash Flake in Light Mode
+          ctx.save();
+          ctx.translate(parX, parY);
+          ctx.rotate(p.angle);
+          ctx.fillStyle = `rgba(${p.colorRgb}, ${p.alpha.toFixed(2)})`;
+          ctx.beginPath();
+          // Organic polygon/ellipse ash flake
+          const rx = p.size;
+          const ry = p.size * p.aspect;
+          ctx.moveTo(-rx, 0);
+          ctx.quadraticCurveTo(-rx * 0.3, -ry * 1.2, rx, -ry * 0.25);
+          ctx.quadraticCurveTo(rx * 0.4, ry * 1.15, -rx, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
         }
       }
 
@@ -166,12 +282,18 @@ export default function AmbientParticles({
     };
 
     const onMouseMove = (e: MouseEvent) => {
-      const x = e.clientX - rectLeft - width / 2;
-      const y = e.clientY - rectTop - height / 2;
-      if (x < width / 2 && x > -width / 2 && y < height / 2 && y > -height / 2) {
-        mouse.current.x = x;
-        mouse.current.y = y;
+      const x = e.clientX;
+      const y = e.clientY;
+      if (pointer.lastX !== -9999) {
+        pointer.vx = Math.max(-28, Math.min(28, x - pointer.lastX));
+        pointer.vy = Math.max(-28, Math.min(28, y - pointer.lastY));
       }
+      pointer.lastX = x;
+      pointer.lastY = y;
+      pointer.x = x;
+      pointer.y = y;
+      pointer.normX = (x / Math.max(1, width) - 0.5) * 2;
+      pointer.normY = (y / Math.max(1, height) - 0.5) * 2;
     };
 
     const onVisibilityChange = () => {
@@ -194,7 +316,7 @@ export default function AmbientParticles({
       window.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [quantity, staticity, ease]);
+  }, [quantity]);
 
   return (
     <div

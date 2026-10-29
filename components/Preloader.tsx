@@ -10,7 +10,6 @@ export default function Preloader() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    // Pre-warm 3D .glb assets in browser HTTP cache immediately
     const preloadAssets = [
       "/assets/keyboard/keycaps.glb",
       "/assets/keyboard/bongo-frames.glb",
@@ -29,7 +28,6 @@ export default function Preloader() {
       });
     }, 45);
 
-    // Hard fallback timeout of 1.35s max so the preloader never hangs on slow networks
     const fallbackTimer = window.setTimeout(() => {
       setProgress(100);
       window.setTimeout(() => setVisible(false), 260);
@@ -66,22 +64,22 @@ export default function Preloader() {
           className="pointer-events-none fixed inset-0 z-[120] flex flex-col justify-between bg-[#f4f4f0] dark:bg-zinc-950 px-6 py-8 sm:px-12 sm:py-10 border-b border-zinc-300/80 dark:border-zinc-800"
         >
           {/* Top Bar */}
-          <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.22em] text-zinc-500 dark:text-zinc-400">
+          <div className="flex items-center justify-between text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
             <div className="flex items-center gap-2.5">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                GABRIEL PAZ // PORTFOLIO
+                Gabriel Paz · Portafolio
               </span>
             </div>
-            <span>PASTO, CO · UTC-5</span>
+            <span>Pasto, CO · UTC-5</span>
           </div>
 
-          {/* Center Architectural Brand & Status */}
+          {/* Center Brand & Status */}
           <div className="my-auto flex flex-col items-start gap-4 max-w-xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-zinc-300/80 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 px-3 py-1 text-[10px] font-mono uppercase tracking-widest text-zinc-600 dark:text-zinc-300">
+            <span className="inline-flex items-center gap-2 rounded-full border border-zinc-300/80 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 px-3 py-1 text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
               {lang === "es"
-                ? "Inicializando motor 3D & WebGL"
-                : "Initializing 3D WebGL stage"}
+                ? "Preparando experiencia interactiva 3D"
+                : "Preparing interactive 3D experience"}
             </span>
             <p className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
               Gabriel Esteban Paz Guerrero
@@ -94,10 +92,10 @@ export default function Preloader() {
             </div>
           </div>
 
-          {/* Bottom Monumental Counter */}
+          {/* Bottom Counter */}
           <div className="flex items-end justify-between">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
-              VICARDEV · ELECTROTECH · OBSIDION
+            <span className="text-xs font-medium tracking-wider text-zinc-500 dark:text-zinc-400">
+              VICARDEV · Full-Stack & AI Architecture
             </span>
             <span className="font-display text-6xl sm:text-8xl font-black tracking-tighter tabular-nums leading-none text-zinc-900 dark:text-zinc-50">
               {String(progress).padStart(2, "0")}%

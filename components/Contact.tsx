@@ -17,7 +17,7 @@ import { useApp } from "@/context/AppContext";
 
 type FormStatus = "idle" | "submitting" | "success";
 
-const CONTACT_EMAIL = "contacto@vicardev.digital";
+const CONTACT_EMAIL = "vicardev2026@gmail.com";
 
 const DIRECT_CHANNELS = [
   {
@@ -111,21 +111,21 @@ export default function Contact() {
             className="lg:col-span-7"
           >
             {/* Studio Dispatch Header */}
-            <div className="border-b border-zinc-300/80 dark:border-zinc-800 pb-8">
+            <div className="border-b border-zinc-300/60 dark:border-zinc-800 pb-8">
               <div className="mb-4 flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-300">
+                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                   <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span>
                     {lang === "es"
-                      ? "ESTUDIO ABIERTO A PROYECTOS"
-                      : "STUDIO OPEN FOR COMMISSIONS"}
+                      ? "Disponible para nuevos proyectos"
+                      : "Available for new projects"}
                   </span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
                   <MapPin className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Pasto, Colombia</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
                   <Clock className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                   <span>
                     {lang === "es" ? "Respuesta < 24h" : "Response < 24h"}
@@ -151,26 +151,26 @@ export default function Contact() {
                 )}
               </h2>
 
-              {/* Magnetic Direct Email Strip */}
+              {/* Magnetic Direct Email Strip with Frosted Glass */}
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={handleCopyEmail}
-                  className="cursor-can-hover group inline-flex items-center gap-3 rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white/85 dark:bg-zinc-900/85 px-4 py-2.5 text-left shadow-xs backdrop-blur-md transition-all hover:border-emerald-500"
+                  className="cursor-can-hover group inline-flex items-center gap-3 rounded-2xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-4 py-2.5 text-left ring-1 ring-zinc-900/[0.06] shadow-[0_8px_30px_rgba(15,23,42,0.06),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl transition-all hover:border-emerald-500"
                 >
                   <span className="font-mono text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                     {CONTACT_EMAIL}
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-lg bg-zinc-900 dark:bg-zinc-100 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white dark:text-zinc-950">
+                  <span className="inline-flex items-center gap-1 rounded-lg bg-zinc-900 dark:bg-zinc-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white dark:text-zinc-950">
                     {copied ? (
                       <>
                         <Check className="h-3 w-3 text-emerald-400 dark:text-emerald-600" />
-                        <span>{lang === "es" ? "COPIADO" : "COPIED"}</span>
+                        <span>{lang === "es" ? "Copiado" : "Copied"}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3 w-3" />
-                        <span>{lang === "es" ? "COPIAR" : "COPY"}</span>
+                        <span>{lang === "es" ? "Copiar" : "Copy"}</span>
                       </>
                     )}
                   </span>
@@ -182,7 +182,7 @@ export default function Contact() {
                     href={ch.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="cursor-can-hover inline-flex items-center gap-1.5 rounded-2xl border border-zinc-300/80 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-900/70 px-3.5 py-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 backdrop-blur-md transition-colors hover:border-zinc-900 dark:hover:border-zinc-200 hover:text-zinc-950 dark:hover:text-white"
+                    className="cursor-can-hover inline-flex items-center gap-1.5 rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/55 px-3.5 py-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800 hover:text-zinc-950 dark:hover:text-white"
                   >
                     <span>{ch.label}</span>
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -191,23 +191,18 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Minimalist Architectural Studio Dispatch Form (Underline Ledger Style) */}
+            {/* Translucent Liquid Frosted Glass Studio Dispatch Form */}
             <form
               onSubmit={handleSubmit}
-              className="mt-8 space-y-6 rounded-3xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-950/80 p-6 sm:p-8 backdrop-blur-xl shadow-xl"
+              className="mt-8 space-y-6 rounded-3xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 p-6 sm:p-8 ring-1 ring-zinc-900/[0.06] shadow-[0_16px_48px_-12px_rgba(15,23,42,0.1),inset_0_1px_0_0_rgba(255,255,255,0.92)] dark:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl backdrop-saturate-150"
             >
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="group">
                   <label
                     htmlFor="contact-name"
-                    className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
+                    className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
                   >
-                    <span className="text-emerald-600 dark:text-emerald-400">
-                      01 //
-                    </span>
-                    <span>
-                      {lang === "es" ? "Nombre completo" : "Full Name"}
-                    </span>
+                    {lang === "es" ? "Nombre completo" : "Full Name"}
                   </label>
                   <input
                     id="contact-name"
@@ -224,21 +219,16 @@ export default function Contact() {
                         ? "Ej. Carlos Mendoza"
                         : "e.g. Alex Morgan"
                     }
-                    className="mt-2 w-full border-b-2 border-zinc-300 dark:border-zinc-800 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
                   />
                 </div>
 
                 <div className="group">
                   <label
                     htmlFor="contact-email"
-                    className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
+                    className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
                   >
-                    <span className="text-emerald-600 dark:text-emerald-400">
-                      02 //
-                    </span>
-                    <span>
-                      {lang === "es" ? "Correo electrónico" : "Email Address"}
-                    </span>
+                    {lang === "es" ? "Correo electrónico" : "Email Address"}
                   </label>
                   <input
                     id="contact-email"
@@ -255,7 +245,7 @@ export default function Contact() {
                         ? "carlos@empresa.com"
                         : "alex@company.com"
                     }
-                    className="mt-2 w-full border-b-2 border-zinc-300 dark:border-zinc-800 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
                   />
                 </div>
               </div>
@@ -263,16 +253,11 @@ export default function Contact() {
               <div className="group">
                 <label
                   htmlFor="contact-message"
-                  className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
+                  className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
                 >
-                  <span className="text-emerald-600 dark:text-emerald-400">
-                    03 //
-                  </span>
-                  <span>
-                    {lang === "es"
-                      ? "Brief o detalles del proyecto"
-                      : "Project Brief & Objectives"}
-                  </span>
+                  {lang === "es"
+                    ? "Detalles de tu proyecto"
+                    : "Project Details & Objectives"}
                 </label>
                 <textarea
                   id="contact-message"
@@ -289,7 +274,7 @@ export default function Contact() {
                       ? "Cuéntame sobre tu plataforma web, e-commerce o integración con IA..."
                       : "Tell me about your web platform, e-commerce store, or AI integration..."
                   }
-                  className="mt-2 w-full border-b-2 border-zinc-300 dark:border-zinc-800 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                  className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
                 />
               </div>
 
@@ -329,11 +314,12 @@ export default function Contact() {
               </AnimatePresence>
 
               <div className="flex flex-col items-stretch justify-between gap-4 pt-2 sm:flex-row sm:items-center">
-                <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                  {lang === "es"
-                    ? "VICARDEV · ElectroTech Pasto · Obsidion"
-                    : "VICARDEV · ElectroTech Pasto · Obsidion"}
-                </span>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="cursor-can-hover text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white"
+                >
+                  {CONTACT_EMAIL}
+                </a>
 
                 <button
                   type="submit"

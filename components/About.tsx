@@ -22,6 +22,9 @@ const TECH_STACK_PILLS = [
   "AWS",
 ];
 
+const GLASS_CARD_CLASS =
+  "rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 ring-1 ring-zinc-900/[0.06] shadow-[0_12px_40px_-12px_rgba(15,23,42,0.08),inset_0_1px_0_0_rgba(255,255,255,0.9)] dark:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl backdrop-saturate-150";
+
 export default function About() {
   const { lang } = useApp();
   const [imageError, setImageError] = useState(false);
@@ -45,10 +48,10 @@ export default function About() {
     },
     {
       id: "agency",
-      label: { es: "Ecosistema Fundado", en: "Founded Ventures" },
+      label: { es: "Marca Fundada", en: "Founded Brand" },
       value: {
-        es: "VICARDEV, ElectroTech Pasto & Obsidion",
-        en: "VICARDEV, ElectroTech Pasto & Obsidion",
+        es: "VICARDEV (vicardev.digital)",
+        en: "VICARDEV (vicardev.digital)",
       },
     },
     {
@@ -67,7 +70,7 @@ export default function About() {
       className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Clean Monumental Section Header (naresh_ref style) */}
+        {/* Clean Monumental Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -78,7 +81,7 @@ export default function About() {
           <h2 className="font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-6xl">
             {lang === "es" ? "Sobre mí" : "About Me"}
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-500 dark:text-zinc-400">
+          <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
             {lang === "es"
               ? "Ingeniería de software, arquitectura escalable y productos digitales en producción."
               : "Software engineering, scalable architecture, and digital products in live production."}
@@ -86,7 +89,7 @@ export default function About() {
         </motion.div>
 
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
-          {/* Left Column: 3D-Tilted Portrait Frame */}
+          {/* Left Column: 3D-Tilted Portrait Frame with Frosted Glass */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -95,7 +98,7 @@ export default function About() {
             className="lg:col-span-5"
           >
             <TiltSurface maxTilt={7}>
-              <div className="overflow-hidden rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/75 p-4 shadow-sm backdrop-blur-md">
+              <div className={`overflow-hidden p-4 ${GLASS_CARD_CLASS}`}>
                 <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-950">
                   {!imageError ? (
                     <Image
@@ -136,7 +139,7 @@ export default function About() {
             className="lg:col-span-7 space-y-8"
           >
             <TiltSurface maxTilt={4}>
-              <div className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/75 p-6 sm:p-8 shadow-sm backdrop-blur-md">
+              <div className={`p-6 sm:p-8 ${GLASS_CARD_CLASS}`}>
                 <p className="text-base sm:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300">
                   {lang === "es" ? (
                     <>
@@ -146,18 +149,25 @@ export default function About() {
                       <strong className="font-semibold text-zinc-950 dark:text-white">
                         VICARDEV
                       </strong>
+                      . Diseño arquitecturas web de alto rendimiento, tiendas de
+                      comercio electrónico en producción para clientes como{" "}
+                      <strong className="font-semibold text-zinc-950 dark:text-white">
+                        Brisal
+                      </strong>
                       ,{" "}
                       <strong className="font-semibold text-zinc-950 dark:text-white">
-                        ElectroTech Pasto
+                        Blue Velvet
+                      </strong>
+                      ,{" "}
+                      <strong className="font-semibold text-zinc-950 dark:text-white">
+                        Carlin Cosméticos
                       </strong>{" "}
                       y{" "}
                       <strong className="font-semibold text-zinc-950 dark:text-white">
-                        Obsidion
+                        ElectroTech Pasto
                       </strong>
-                      . Diseño arquitecturas web de alto rendimiento, tiendas de
-                      comercio electrónico en producción e integraciones de
-                      inteligencia artificial que convierten problemas reales en
-                      productos escalables.
+                      , además de integraciones de inteligencia artificial que
+                      convierten problemas reales en productos escalables.
                     </>
                   ) : (
                     <>
@@ -167,27 +177,34 @@ export default function About() {
                       <strong className="font-semibold text-zinc-950 dark:text-white">
                         VICARDEV
                       </strong>
+                      . I architect high-performance web systems and live
+                      production e-commerce platforms for clients including{" "}
+                      <strong className="font-semibold text-zinc-950 dark:text-white">
+                        Brisal
+                      </strong>
                       ,{" "}
                       <strong className="font-semibold text-zinc-950 dark:text-white">
-                        ElectroTech Pasto
+                        Blue Velvet
+                      </strong>
+                      ,{" "}
+                      <strong className="font-semibold text-zinc-950 dark:text-white">
+                        Carlin Cosmetics
                       </strong>
                       , and{" "}
                       <strong className="font-semibold text-zinc-950 dark:text-white">
-                        Obsidion
+                        ElectroTech Pasto
                       </strong>
-                      . I architect high-performance web systems, live
-                      production e-commerce platforms, and artificial
-                      intelligence integrations that turn real-world challenges
-                      into scalable products.
+                      , alongside artificial intelligence integrations that turn
+                      real-world challenges into scalable products.
                     </>
                   )}
                 </p>
 
-                {/* Clean Typographic Facts Grid (Zero boxed Lucide clichés) */}
-                <div className="mt-8 grid grid-cols-1 gap-6 border-t border-zinc-200/80 dark:border-zinc-800/80 pt-6 sm:grid-cols-2">
+                {/* Clean Typographic Facts Grid */}
+                <div className="mt-8 grid grid-cols-1 gap-6 border-t border-zinc-300/60 dark:border-zinc-800/80 pt-6 sm:grid-cols-2">
                   {quickFacts.map((fact) => (
                     <div key={fact.id} className="space-y-1">
-                      <div className="text-xs font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                      <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                         {fact.label[lang]}
                       </div>
                       <div className="font-display text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -201,7 +218,7 @@ export default function About() {
 
             {/* Real Vector SVG Tech Stack Badges */}
             <div className="space-y-3">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
                 {lang === "es" ? "Stack Principal" : "Core Stack"}
               </h3>
               <div className="flex flex-wrap gap-2">

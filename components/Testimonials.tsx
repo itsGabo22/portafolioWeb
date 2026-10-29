@@ -8,7 +8,6 @@ import { useApp } from "@/context/AppContext";
 
 export interface Testimonial {
   id: string;
-  code: string;
   name: string;
   role: {
     es: string;
@@ -34,15 +33,14 @@ export interface Testimonial {
 const TESTIMONIALS: Testimonial[] = [
   {
     id: "testimonial-brisal",
-    code: "REF // 01",
     name: "Brisal by Salvador",
     role: {
       es: "Cliente E-Commerce de Accesorios (brisal.com.co)",
       en: "Accessories E-Commerce Client (brisal.com.co)",
     },
     badge: {
-      es: "CLIENTE COMERCIAL VERIFICADO",
-      en: "VERIFIED COMMERCIAL CLIENT",
+      es: "Cliente Comercial Verificado",
+      en: "Verified Commercial Client",
     },
     impactMetric: {
       es: "Catálogo Mayorista & Minorista en Producción",
@@ -58,15 +56,14 @@ const TESTIMONIALS: Testimonial[] = [
   },
   {
     id: "testimonial-electrotech",
-    code: "REF // 02",
-    name: "Dirección Corporativa",
+    name: "Dirección Corporativa — ElectroTech Pasto",
     role: {
-      es: "Cliente, ElectroTech Pasto",
-      en: "Corporate Client, ElectroTech Pasto",
+      es: "Cliente Comercial de Automatización Industrial (electrotechpasto.com)",
+      en: "Industrial Automation Commercial Client (electrotechpasto.com)",
     },
     badge: {
-      es: "INFRAESTRUCTURA INDUSTRIAL",
-      en: "INDUSTRIAL INFRASTRUCTURE",
+      es: "Cliente Corporativo en Producción",
+      en: "Live Corporate Client",
     },
     impactMetric: {
       es: "Cotizaciones Automatizadas con Resend API",
@@ -74,23 +71,22 @@ const TESTIMONIALS: Testimonial[] = [
     },
     projectUrl: "https://electrotechpasto.com",
     content: {
-      es: "La infraestructura web y el sistema de cotización automatizada con Resend API que Gabriel construyó para ElectroTech Pasto modernizaron por completo nuestra captación de clientes industriales en Nariño.",
-      en: "The web infrastructure and automated quoting system with Resend API that Gabriel built for ElectroTech Pasto completely modernized our industrial client acquisition across Nariño.",
+      es: "La plataforma web corporativa y el sistema de cotización automatizada con Resend API que Gabriel desarrolló para ElectroTech Pasto modernizaron por completo nuestra captación de clientes industriales en Nariño.",
+      en: "The corporate web platform and automated quoting system with Resend API that Gabriel developed for ElectroTech Pasto completely modernized our industrial client acquisition across Nariño.",
     },
     avatar: "/images/testimonials/electrotech.jpg",
     rating: 5,
   },
   {
     id: "testimonial-ucc",
-    code: "REF // 03",
     name: "Docente de Ingeniería de Software",
     role: {
       es: "Profesor Universitario, UCC Pasto",
       en: "Software Engineering Professor, UCC",
     },
     badge: {
-      es: "AVAL ACADÉMICO · UCC PASTO",
-      en: "ACADEMIC ENDORSEMENT · UCC",
+      es: "Aval Académico · UCC Pasto",
+      en: "Academic Endorsement · UCC",
     },
     impactMetric: {
       es: "5 Proyectos Universitarios con IA Integrada",
@@ -104,26 +100,26 @@ const TESTIMONIALS: Testimonial[] = [
     rating: 5,
   },
   {
-    id: "testimonial-obsidion",
-    code: "REF // 04",
-    name: "Socio de Desarrollo",
+    id: "testimonial-bluevelvet",
+    name: "Blue Velvet & Carlin Cosméticos",
     role: {
-      es: "Co-fundador en Obsidion & Compañero de Ingeniería",
-      en: "Co-founder at Obsidion & Engineering Peer",
+      es: "Clientes Comerciales E-Commerce (bluevelvet0.com · carlincosmeticos.com)",
+      en: "Commercial E-Commerce Clients (bluevelvet0.com · carlincosmeticos.com)",
     },
     badge: {
-      es: "CO-FUNDADOR & ARQUITECTURA",
-      en: "CO-FOUNDER & ARCHITECTURE",
+      es: "E-Commerce Entregado con VICARDEV",
+      en: "Delivered E-Commerce via VICARDEV",
     },
     impactMetric: {
-      es: "Sistemas Modulares en TypeScript & Python",
-      en: "Modular Systems in TypeScript & Python",
+      es: "Tiendas Online de Moda y Cosméticos en Producción",
+      en: "Live Fashion & Cosmetics E-Commerce Stores",
     },
+    projectUrl: "https://bluevelvet0.com",
     content: {
-      es: "Trabajar junto a Gabriel en Obsidion y proyectos de optimización logística es garantía de código limpio, tipado estricto en TypeScript y entregas listas para escalar bajo presión real.",
-      en: "Working alongside Gabriel at Obsidion and on logistics optimization projects guarantees clean code, strict TypeScript typing, and deliverables ready to scale under real-world pressure.",
+      es: "A través de su agencia VICARDEV, Gabriel construyó y puso en producción nuestras tiendas online con un diseño impecable, buscador multicategoría ultrarrápido y gestión de pedidos lista para escalar.",
+      en: "Through his agency VICARDEV, Gabriel architected and launched our live online stores with an impeccable editorial design, lightning-fast multi-category search, and scalable order workflows.",
     },
-    avatar: "/images/testimonials/obsidion-peer.jpg",
+    avatar: "/images/testimonials/client-ecommerce.jpg",
     rating: 5,
   },
 ];
@@ -137,7 +133,7 @@ const PROOF_METRICS = [
     },
   },
   {
-    value: "05",
+    value: "5",
     label: {
       es: "Plataformas comerciales activas",
       en: "Live commercial platforms",
@@ -174,7 +170,7 @@ function AvatarBadge({
 
   return (
     <div
-      className={`relative ${sizeClass} shrink-0 overflow-hidden rounded-full border border-zinc-300 dark:border-zinc-700 bg-zinc-900 dark:bg-zinc-800 flex items-center justify-center text-white`}
+      className={`relative ${sizeClass} shrink-0 overflow-hidden rounded-full border border-white/80 dark:border-zinc-700 bg-zinc-900 dark:bg-zinc-800 flex items-center justify-center text-white shadow-xs`}
     >
       {!error ? (
         <Image
@@ -205,20 +201,20 @@ export default function Testimonials() {
       className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header + Kinetic Proof Strip */}
-        <div className="mb-14 flex flex-col justify-between gap-8 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-10 lg:flex-row lg:items-end">
+        {/* Header + Proof Strip */}
+        <div className="mb-14 flex flex-col justify-between gap-8 border-b border-zinc-300/60 dark:border-zinc-800/80 pb-10 lg:flex-row lg:items-end">
           <div>
-            <span className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-400">
               {lang === "es"
-                ? "RESPALDO COMERCIAL & ACADÉMICO"
-                : "COMMERCIAL & ACADEMIC ENDORSEMENTS"}
+                ? "Respaldo Comercial y Académico"
+                : "Commercial & Academic Endorsements"}
             </span>
             <h2 className="mt-2 font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-7xl">
               {lang === "es" ? "Testimonios" : "Testimonials"}
             </h2>
           </div>
 
-          {/* Architectural Proof Metrics Bar */}
+          {/* Proof Metrics Bar */}
           <div className="grid grid-cols-3 gap-6 sm:gap-10">
             {PROOF_METRICS.map((m) => (
               <div
@@ -228,7 +224,7 @@ export default function Testimonials() {
                 <span className="block font-display text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">
                   {m.value}
                 </span>
-                <span className="mt-0.5 block text-[11px] leading-snug text-zinc-500 dark:text-zinc-400">
+                <span className="mt-0.5 block text-[11px] leading-snug text-zinc-600 dark:text-zinc-400">
                   {m.label[lang]}
                 </span>
               </div>
@@ -236,20 +232,20 @@ export default function Testimonials() {
           </div>
         </div>
 
-        {/* Bespoke Split Architecture: Left Editorial Spotlight Stage + Right Interactive Index Deck */}
+        {/* Bespoke Split Architecture with True Translucent Frosted Glass */}
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-stretch">
-          {/* Left Column (7 cols): Monumental Editorial Quote Spotlight */}
+          {/* Left Column (7 cols): Frosted Glass Editorial Quote Spotlight */}
           <div className="lg:col-span-7 flex">
-            <div className="relative flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-zinc-300/80 dark:border-zinc-800 bg-zinc-900 dark:bg-zinc-900/90 p-8 sm:p-10 lg:p-12 text-zinc-50 shadow-2xl">
+            <div className="relative flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/65 p-8 sm:p-10 lg:p-12 text-zinc-900 dark:text-zinc-50 ring-1 ring-zinc-900/[0.06] shadow-[0_16px_48px_-12px_rgba(15,23,42,0.1),inset_0_1px_0_0_rgba(255,255,255,0.92)] dark:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl backdrop-saturate-150">
               {/* Giant Typographic Quote Watermark */}
               <Quote
                 aria-hidden="true"
-                className="pointer-events-none absolute -right-4 -top-4 h-40 w-40 rotate-12 text-white/[0.04]"
+                className="pointer-events-none absolute -right-4 -top-4 h-40 w-40 rotate-12 text-zinc-900/[0.04] dark:text-white/[0.04]"
               />
 
               {/* Top Verified Seal & Stars */}
-              <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 pb-6">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-widest text-emerald-400">
+              <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-300/60 dark:border-zinc-800 pb-6">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   <span>{activeTestimonial.badge[lang]}</span>
                 </span>
@@ -278,7 +274,7 @@ export default function Testimonials() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
                     transition={{ duration: 0.28, ease: "easeOut" }}
-                    className="font-serif italic text-xl sm:text-2xl lg:text-[26px] leading-relaxed text-zinc-100"
+                    className="font-serif italic text-xl sm:text-2xl lg:text-[26px] leading-relaxed text-zinc-900 dark:text-zinc-100"
                   >
                     &ldquo;{activeTestimonial.content[lang]}&rdquo;
                   </motion.blockquote>
@@ -286,7 +282,7 @@ export default function Testimonials() {
               </div>
 
               {/* Bottom Attribution & Live Impact Strip */}
-              <div className="relative z-10 flex flex-col justify-between gap-4 border-t border-zinc-800 pt-6 sm:flex-row sm:items-center">
+              <div className="relative z-10 flex flex-col justify-between gap-4 border-t border-zinc-300/60 dark:border-zinc-800 pt-6 sm:flex-row sm:items-center">
                 <div className="flex items-center gap-3.5">
                   <AvatarBadge
                     src={activeTestimonial.avatar}
@@ -294,17 +290,17 @@ export default function Testimonials() {
                     sizeClass="h-12 w-12"
                   />
                   <div>
-                    <h3 className="font-display text-base font-bold text-white">
+                    <h3 className="font-display text-base font-bold text-zinc-900 dark:text-white">
                       {activeTestimonial.name}
                     </h3>
-                    <p className="text-xs text-zinc-400">
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400">
                       {activeTestimonial.role[lang]}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <span className="rounded-lg bg-zinc-800/90 px-3 py-1.5 font-mono text-[11px] text-zinc-300">
+                <div className="flex items-center gap-2.5">
+                  <span className="rounded-xl border border-white/80 dark:border-zinc-700/80 bg-white/70 dark:bg-zinc-800/80 px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300">
                     {activeTestimonial.impactMetric[lang]}
                   </span>
                   {activeTestimonial.projectUrl && (
@@ -312,7 +308,7 @@ export default function Testimonials() {
                       href={activeTestimonial.projectUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="cursor-can-hover inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-200 transition-colors hover:border-emerald-500 hover:text-emerald-400"
+                      className="cursor-can-hover inline-flex h-8 w-8 items-center justify-center rounded-xl border border-white/80 dark:border-zinc-700 bg-white/80 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition-colors hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400"
                       aria-label={activeTestimonial.name}
                     >
                       <ArrowUpRight className="h-4 w-4" />
@@ -323,8 +319,8 @@ export default function Testimonials() {
             </div>
           </div>
 
-          {/* Right Column (5 cols): Interactive Architectural Ledger Deck (All 4 Testimonials accessible in DOM) */}
-          <div className="lg:col-span-5 flex flex-col justify-between divide-y divide-zinc-200/80 dark:divide-zinc-800/80 rounded-3xl border border-zinc-200/90 dark:border-zinc-800/90 bg-white/80 dark:bg-zinc-900/70 backdrop-blur-xl overflow-hidden">
+          {/* Right Column (5 cols): Interactive Frosted Glass Selector Deck */}
+          <div className="lg:col-span-5 flex flex-col justify-between divide-y divide-zinc-300/60 dark:divide-zinc-800/80 rounded-3xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 ring-1 ring-zinc-900/[0.06] shadow-[0_12px_40px_-12px_rgba(15,23,42,0.08),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl backdrop-saturate-150 overflow-hidden">
             {TESTIMONIALS.map((item, idx) => {
               const isSelected = idx === activeIndex;
               return (
@@ -335,8 +331,8 @@ export default function Testimonials() {
                   onMouseEnter={() => setActiveIndex(idx)}
                   className={`cursor-can-hover group relative flex w-full flex-col gap-2.5 p-5 sm:p-6 text-left transition-all duration-200 ${
                     isSelected
-                      ? "bg-zinc-900/5 dark:bg-white/5"
-                      : "hover:bg-zinc-900/[0.02] dark:hover:bg-white/[0.02]"
+                      ? "bg-white/65 dark:bg-white/[0.06]"
+                      : "hover:bg-white/40 dark:hover:bg-white/[0.03]"
                   }`}
                 >
                   {/* Active Left Accent Indicator */}
@@ -360,21 +356,11 @@ export default function Testimonials() {
                         <h4 className="truncate font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
                           {item.name}
                         </h4>
-                        <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                        <p className="truncate text-xs text-zinc-600 dark:text-zinc-400">
                           {item.role[lang]}
                         </p>
                       </div>
                     </div>
-
-                    <span
-                      className={`shrink-0 font-mono text-[11px] font-bold ${
-                        isSelected
-                          ? "text-emerald-600 dark:text-emerald-400"
-                          : "text-zinc-400 dark:text-zinc-600"
-                      }`}
-                    >
-                      {item.code}
-                    </span>
                   </div>
 
                   <p className="line-clamp-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">

@@ -47,7 +47,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative z-20 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-white/85 dark:bg-zinc-950/85 backdrop-blur-md text-zinc-600 dark:text-zinc-400 transition-colors duration-200">
+    <footer className="relative z-20 border-t border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-950/65 backdrop-blur-2xl backdrop-saturate-150 text-zinc-600 dark:text-zinc-400 transition-colors duration-200">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           {/* Brand & Mandatory Credit */}
@@ -59,10 +59,10 @@ export default function Footer() {
               <span>Gabriel Esteban Paz Guerrero</span>
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
             </a>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
               {lang === "es"
-                ? "Hecho con Next.js + Tailwind CSS · VICARDEV · ElectroTech Pasto · Obsidion"
-                : "Built with Next.js + Tailwind CSS · VICARDEV · ElectroTech Pasto · Obsidion"}
+                ? "Hecho con Next.js + Tailwind CSS · Fundador de VICARDEV"
+                : "Built with Next.js + Tailwind CSS · Founder of VICARDEV"}
             </p>
           </div>
 
@@ -89,7 +89,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub @itsGabo22"
-              className="cursor-can-hover inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900"
+              className="cursor-can-hover inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/70 text-zinc-700 dark:text-zinc-300 backdrop-blur-xl transition-colors hover:bg-white/90 dark:hover:bg-zinc-800"
             >
               <GitHubSvg className="h-4 w-4" />
             </a>
@@ -99,17 +99,17 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn Gabriel Esteban Paz Guerrero"
-              className="cursor-can-hover inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900"
+              className="cursor-can-hover inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/70 text-zinc-700 dark:text-zinc-300 backdrop-blur-xl transition-colors hover:bg-white/90 dark:hover:bg-zinc-800"
             >
               <LinkedInSvg className="h-4 w-4" />
             </a>
 
             <a
-              href="mailto:contacto@vicardev.digital"
+              href="mailto:vicardev2026@gmail.com"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Email contacto@vicardev.digital"
-              className="cursor-can-hover inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900"
+              aria-label="Email vicardev2026@gmail.com"
+              className="cursor-can-hover inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/70 text-zinc-700 dark:text-zinc-300 backdrop-blur-xl transition-colors hover:bg-white/90 dark:hover:bg-zinc-800"
             >
               <Mail className="h-4 w-4" />
             </a>
@@ -117,7 +117,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={handleBackToTop}
-              className="cursor-can-hover inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 px-3 text-xs font-medium text-zinc-800 dark:text-zinc-200 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900"
+              className="cursor-can-hover inline-flex h-9 items-center gap-1.5 rounded-xl border border-white/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/70 px-3 text-xs font-medium text-zinc-800 dark:text-zinc-200 backdrop-blur-xl transition-colors hover:bg-white/90 dark:hover:bg-zinc-800"
             >
               <ArrowUp className="h-3.5 w-3.5" />
               <span>{lang === "es" ? "Volver arriba" : "Back to top"}</span>
@@ -125,7 +125,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-zinc-200/70 dark:border-zinc-800/70 pt-6 text-xs text-zinc-500 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-zinc-300/60 dark:border-zinc-800/70 pt-6 text-xs text-zinc-500 sm:flex-row">
           <p>
             © {currentYear} Gabriel Esteban Paz Guerrero.{" "}
             {lang === "es"

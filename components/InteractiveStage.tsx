@@ -14,7 +14,7 @@ export default function InteractiveStage() {
   return (
     <>
       <Preloader />
-      <AmbientParticles quantity={65} />
+      <AmbientParticles quantity={115} />
       <InteractiveKeyboard3D />
       <CustomCursor />
     </>

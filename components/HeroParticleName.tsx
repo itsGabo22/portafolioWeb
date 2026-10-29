@@ -16,13 +16,13 @@ interface DustParticle {
   a: number;
   size: number;
   seed: number;
-  isAccent: boolean;
 }
 
 export default function HeroParticleName() {
   const { theme, lang } = useApp();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fontProbeRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -52,23 +52,33 @@ export default function HeroParticleName() {
       trail: [] as { x: number; y: number; r: number; age: number }[],
     };
 
+    const resolveDisplayFontFamily = (): string => {
+      if (fontProbeRef.current) {
+        const computed = window.getComputedStyle(fontProbeRef.current).fontFamily;
+        if (computed && !computed.includes("var(")) {
+          return computed;
+        }
+      }
+      return '"Space Grotesk", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    };
+
     const buildScene = () => {
       const rect = container.getBoundingClientRect();
       width = Math.max(300, Math.floor(rect.width));
 
-      // Responsive font sizing matching monumental Hero scale
+      // Monumental display scale across all 3 lines
       const baseFontSize =
-        width < 420
-          ? 46
+        width < 400
+          ? 48
           : width < 640
-            ? 58
+            ? 60
             : width < 1024
-              ? 74
-              : Math.min(94, Math.floor(width * 0.138));
+              ? 76
+              : Math.min(92, Math.floor(width * 0.136));
 
-      const lineHeight = Math.round(baseFontSize * 0.94);
-      const topPad = 14;
-      const bottomPad = 22;
+      const lineHeight = Math.round(baseFontSize * 0.96);
+      const topPad = 10;
+      const bottomPad = 24;
       height = topPad + lineHeight * 3 + bottomPad;
 
       canvas.width = Math.floor(width * dpr);
@@ -90,18 +100,20 @@ export default function HeroParticleName() {
 
       const isDark = theme === "dark";
       const primaryColor = isDark ? "#fafafa" : "#09090b";
+      const displayFamily = resolveDisplayFontFamily();
 
-      // Lines 1 & 2: Ultra-Bold Geometric Sans ("Gabriel" / "Esteban")
-      vctx.font = `900 ${baseFontSize}px var(--font-space-grotesk), system-ui, -apple-system, sans-serif`;
+      // Lines 1 & 2: Monumental Geometric Display Sans ("Gabriel" / "Esteban")
+      // IMPORTANT: Never pass CSS var(...) to canvas ctx.font; use resolved font family string!
+      vctx.font = `800 ${baseFontSize}px ${displayFamily}`;
       vctx.fillStyle = primaryColor;
       vctx.fillText("Gabriel", 2, topPad);
       vctx.fillText("Esteban", 2, topPad + lineHeight);
 
-      // Line 3: Contrasting Editorial Italic Metallic Display ("Paz Guerrero")
-      const accentFontSize = Math.round(baseFontSize * 0.93);
+      // Line 3: Contrasting Editorial Italic Display ("Paz Guerrero") at matching monumental scale
+      const accentFontSize = Math.round(baseFontSize * 0.94);
       vctx.font = `italic 700 ${accentFontSize}px Georgia, "Times New Roman", serif`;
 
-      const grad = vctx.createLinearGradient(0, 0, width * 0.88, 0);
+      const grad = vctx.createLinearGradient(0, 0, width * 0.9, 0);
       if (isDark) {
         grad.addColorStop(0, "#34d399");
         grad.addColorStop(0.52, "#2dd4bf");
@@ -112,7 +124,7 @@ export default function HeroParticleName() {
         grad.addColorStop(1, "#4338ca");
       }
       vctx.fillStyle = grad;
-      const line3Y = topPad + lineHeight * 2 + Math.round(baseFontSize * 0.04);
+      const line3Y = topPad + lineHeight * 2 + Math.round(baseFontSize * 0.03);
       vctx.fillText("Paz Guerrero", 2, line3Y);
 
       offscreenVector = vectorCanvas;
@@ -129,7 +141,6 @@ export default function HeroParticleName() {
       particles.length = 0;
 
       const step = width < 640 ? 3 : 2;
-      const accentThresholdY = topPad + lineHeight * 1.92;
 
       for (let y = 0; y < height; y += step) {
         for (let x = 0; x < width; x += step) {
@@ -149,7 +160,6 @@ export default function HeroParticleName() {
               a: a / 255,
               size: step * 0.95,
               seed: (x * 17 + y * 31) % 100,
-              isAccent: y >= accentThresholdY,
             });
           }
         }
@@ -179,7 +189,6 @@ export default function HeroParticleName() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, width, height);
 
-      // Update trail of recent disintegration wake
       for (let i = pointer.trail.length - 1; i >= 0; i--) {
         pointer.trail[i].age += 1;
         if (pointer.trail[i].age > 26) {
@@ -204,7 +213,6 @@ export default function HeroParticleName() {
       ctx.restore();
 
       // 2. Punch out smooth circular disintegration cavities along the cursor wake
-      // so the vector glyphs dissolve seamlessly into individual floating dust particles
       if (pointer.active || pointer.trail.length > 0) {
         ctx.save();
         ctx.globalCompositeOperation = "destination-out";
@@ -263,8 +271,7 @@ export default function HeroParticleName() {
             const force = (1 - dist / REPULSION_RADIUS) * 5.2;
             const nx = dx / dist;
             const ny = dy / dist;
-            // Swirl + radial scatter + cursor velocity transfer
-            const swirl = ((p.seed % 2 === 0 ? 1 : -1) * force) * 0.38;
+            const swirl = (p.seed % 2 === 0 ? 1 : -1) * force * 0.38;
             p.vx += nx * force - ny * swirl + pvx * 0.14;
             p.vy += ny * force + nx * swirl + pvy * 0.14;
           }
@@ -284,7 +291,6 @@ export default function HeroParticleName() {
           anyDisplaced = true;
           const disp = Math.min(1, Math.sqrt(dispSq) / 28);
 
-          // Quantum dust spark color shift while airborne
           if (disp > 0.22 && p.seed % 4 === 0) {
             ctx.fillStyle = isDark
               ? `rgba(52, 211, 153, ${(p.a * (0.95 - disp * 0.2)).toFixed(2)})`
@@ -293,12 +299,11 @@ export default function HeroParticleName() {
             ctx.fillStyle = `rgba(${p.r}, ${p.g}, ${p.b}, ${p.a.toFixed(2)})`;
           }
 
-          const radius = (p.size * (0.62 + disp * 0.35));
+          const radius = p.size * (0.62 + disp * 0.35);
           ctx.beginPath();
           ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
           ctx.fill();
         } else if (pointer.active || pointer.trail.length > 0) {
-          // Draw particles near the cursor cavity so the transition edge is seamless
           const nearCursor =
             (p.ox - px) * (p.ox - px) + (p.oy - py) * (p.oy - py) <
             REPULSION_RADIUS_SQ * 1.45;
@@ -393,14 +398,23 @@ export default function HeroParticleName() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full max-w-[640px] select-none"
+      className="relative w-full max-w-[650px] select-none"
       title={
         lang === "es"
           ? "Pasa el cursor sobre las letras para desintegrarlas en partículas"
           : "Move cursor across the letters to disintegrate into quantum dust"
       }
     >
-      {/* Semantic & Screen-Reader Accessible H1 (Preserves 100% SEO & Academic Rubric Checks) */}
+      {/* Hidden probe to resolve --font-space-grotesk actual font-family name for HTML5 Canvas */}
+      <span
+        ref={fontProbeRef}
+        aria-hidden="true"
+        className="font-display pointer-events-none invisible absolute h-0 w-0 overflow-hidden"
+      >
+        Gabriel Esteban
+      </span>
+
+      {/* Semantic & Screen-Reader Accessible H1 */}
       <h1 className="sr-only">
         <span>Gabriel</span> <span>Esteban</span> <span>Paz Guerrero</span>
       </h1>

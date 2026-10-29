@@ -81,13 +81,13 @@ export default function Hero() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-start lg:col-span-7"
           >
-            {/* Bespoke Multi-Segment Interactive Telemetry Header Capsule */}
+            {/* Bespoke Multi-Segment Interactive Telemetry Header Capsule with True Frosted Glass */}
             <a
               href="#about"
-              className="cursor-can-hover group mb-4 inline-flex flex-wrap items-center gap-2 rounded-2xl border border-zinc-300/80 dark:border-zinc-800/90 bg-white/85 dark:bg-zinc-900/85 p-1.5 pr-3.5 shadow-sm backdrop-blur-xl transition-all duration-300 hover:border-emerald-500/50 hover:shadow-md"
+              className="cursor-can-hover group mb-4 inline-flex flex-wrap items-center gap-2 rounded-2xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 p-1.5 pr-3.5 ring-1 ring-zinc-900/[0.06] shadow-[0_8px_30px_rgba(15,23,42,0.06),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 hover:border-emerald-500/50 hover:shadow-md"
             >
-              {/* Left Segment: Glowing Avatar + Serif-Italic Greeting + Expanding Micro-Badge */}
-              <div className="flex items-center gap-2.5 rounded-xl bg-zinc-100/90 dark:bg-zinc-800/80 pl-1.5 pr-3 py-1 transition-colors group-hover:bg-emerald-500/10">
+              {/* Left Segment: Glowing Avatar + Serif-Italic Greeting */}
+              <div className="flex items-center gap-2.5 rounded-xl bg-white/75 dark:bg-zinc-800/80 pl-1.5 pr-3 py-1 transition-colors group-hover:bg-emerald-500/10">
                 <div className="relative h-7 w-7 overflow-hidden rounded-full ring-2 ring-emerald-500/70 transition-transform duration-300 group-hover:scale-110">
                   {!imageError ? (
                     <Image
@@ -134,7 +134,7 @@ export default function Hero() {
               </div>
 
               {/* Right Segment: Live Pasto UTC-5 Telemetry Clock */}
-              <span className="hidden sm:inline-flex items-center gap-1.5 border-l border-zinc-200 dark:border-zinc-800 pl-2.5 font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+              <span className="hidden sm:inline-flex items-center gap-1.5 border-l border-zinc-300/70 dark:border-zinc-800 pl-2.5 font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
                 <span>Pasto, CO</span>
                 <span className="text-zinc-300 dark:text-zinc-700">·</span>
                 <span className="tabular-nums font-medium text-zinc-700 dark:text-zinc-300">
@@ -149,8 +149,8 @@ export default function Hero() {
             {/* Clean Understated Role Subtitle */}
             <p className="mt-3 font-display text-lg font-medium text-zinc-700 dark:text-zinc-300 sm:text-xl md:text-2xl">
               {lang === "es"
-                ? "Desarrollador de Software Full-Stack & Fundador Tecnológico"
-                : "A Full-Stack Software Developer & Tech Founder"}
+                ? "Desarrollador de Software Full-Stack & Fundador de VICARDEV"
+                : "A Full-Stack Software Developer & Founder of VICARDEV"}
             </p>
 
             {/* Unboxed High-Legibility Editorial Copy */}
@@ -163,13 +163,22 @@ export default function Hero() {
                   <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
                     VICARDEV
                   </strong>
+                  , desarrollando plataformas en producción para marcas y
+                  empresas como{" "}
+                  <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
+                    Brisal
+                  </strong>
                   ,{" "}
                   <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    ElectroTech Pasto
+                    Blue Velvet
+                  </strong>
+                  ,{" "}
+                  <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
+                    Carlin Cosméticos
                   </strong>{" "}
                   y{" "}
                   <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    Obsidion
+                    ElectroTech Pasto
                   </strong>{" "}
                   — 5.º semestre de Ingeniería de Software en la UCC.
                 </>
@@ -181,20 +190,29 @@ export default function Hero() {
                   <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
                     VICARDEV
                   </strong>
+                  , delivering live production platforms for commercial clients
+                  including{" "}
+                  <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
+                    Brisal
+                  </strong>
                   ,{" "}
                   <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    ElectroTech Pasto
+                    Blue Velvet
+                  </strong>
+                  ,{" "}
+                  <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
+                    Carlin Cosmetics
                   </strong>
                   , and{" "}
                   <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
-                    Obsidion
+                    ElectroTech Pasto
                   </strong>{" "}
                   — 5th-semester Software Engineering at UCC.
                 </>
               )}
             </p>
 
-            {/* Tactile CTA Cluster (matching naresh_ref Hero button layout) */}
+            {/* Tactile CTA Cluster */}
             <div className="mt-7 flex flex-col gap-3 w-fit">
               <a
                 href="/cv.pdf"
@@ -208,7 +226,7 @@ export default function Hero() {
               <div className="flex flex-wrap items-center gap-2.5">
                 <a
                   href="#projects"
-                  className="cursor-can-hover group inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 px-5 text-sm font-medium text-zinc-900 dark:text-zinc-100 backdrop-blur-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="cursor-can-hover group inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-5 text-sm font-medium text-zinc-900 dark:text-zinc-100 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800"
                 >
                   <span>
                     {lang === "es" ? "Ver proyectos" : "View Projects"}
@@ -218,7 +236,7 @@ export default function Hero() {
 
                 <a
                   href="#contact"
-                  className="cursor-can-hover inline-flex h-11 items-center justify-center rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 px-5 text-sm font-medium text-zinc-900 dark:text-zinc-100 backdrop-blur-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="cursor-can-hover inline-flex h-11 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-5 text-sm font-medium text-zinc-900 dark:text-zinc-100 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800"
                 >
                   <span>{lang === "es" ? "Contratar" : "Hire Me"}</span>
                 </a>
@@ -228,7 +246,7 @@ export default function Hero() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="GitHub @itsGabo22"
-                  className="cursor-can-hover inline-flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 text-zinc-800 dark:text-zinc-200 backdrop-blur-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="cursor-can-hover inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800"
                 >
                   <GitHubSvg className="h-5 w-5" />
                 </a>
@@ -238,7 +256,7 @@ export default function Hero() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn Gabriel Esteban Paz Guerrero"
-                  className="cursor-can-hover inline-flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 text-zinc-800 dark:text-zinc-200 backdrop-blur-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="cursor-can-hover inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800"
                 >
                   <LinkedInSvg className="h-5 w-5" />
                 </a>
