@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f8fafc;
+  --foreground: #09090b;
+  --accent-emerald: #10b981;
+  --accent-indigo: #6366f1;
+}
+
+.dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.08), transparent 44%),
+    radial-gradient(circle at 16% 78%, rgba(99, 102, 241, 0.07), transparent 46%),
+    linear-gradient(180deg, #ffffff 0%, #f4f4f5 52%, #fafafa 100%);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.dark body {
+  background-image:
+    radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.09), transparent 44%),
+    radial-gradient(circle at 16% 78%, rgba(99, 102, 241, 0.08), transparent 46%),
+    linear-gradient(180deg, #09090b 0%, #09090b 100%);
+}
+
+/* Canvas Overlay Mode: Permite interactuar con el teclado 3D en los espacios abiertos
+   mientras conserva todos los enlaces, botones, formularios y tarjetas 100% interactivos */
+main {
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}
+
+main a,
+main button,
+main input,
+main label,
+main select,
+main textarea,
+main form,
+main [role="button"],
+main [role="tab"],
+main [role="tablist"] {
+  pointer-events: auto;
+}
+
+/* Utilidades de matriz técnica y cuadrícula (adaptadas a Light y Dark mode) */
+.bg-tech-grid {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(228, 228, 231, 0.55) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(228, 228, 231, 0.55) 1px, transparent 1px);
+}
+
+.dark .bg-tech-grid {
+  background-image:
+    linear-gradient(to right, rgba(39, 39, 42, 0.3) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(39, 39, 42, 0.3) 1px, transparent 1px);
+}
+
+.bg-dot-matrix {
+  background-image: radial-gradient(rgba(16, 185, 129, 0.2) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dark .bg-dot-matrix {
+  background-image: radial-gradient(rgba(16, 185, 129, 0.16) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Zoom sutil para capturas panorámicas de proyectos */
+.sp-shot {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .sp-shot {
+  transform: scale(1.04);
+}
+
+/* Selección de texto personalizada */
+::selection {
+  background-color: rgba(16, 185, 129, 0.22);
+  color: inherit;
+}
