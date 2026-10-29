@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import TechBadge from "./TechBadge";
+import HeroParticleName from "./HeroParticleName";
 
 function GitHubSvg({ className = "h-5 w-5" }: { className?: string }) {
   return (
@@ -36,34 +37,64 @@ const HERO_TECH = [
   "AWS",
 ];
 
+function usePastoClock() {
+  const [timeStr, setTimeStr] = useState<string>("UTC-5");
+
+  useEffect(() => {
+    const updateClock = () => {
+      try {
+        const formatted = new Intl.DateTimeFormat("es-CO", {
+          timeZone: "America/Bogota",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }).format(new Date());
+        setTimeStr(`${formatted} UTC-5`);
+      } catch {
+        setTimeStr("UTC-5");
+      }
+    };
+    updateClock();
+    const timer = window.setInterval(updateClock, 15000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return timeStr;
+}
+
 export default function Hero() {
   const { lang } = useApp();
   const [imageError, setImageError] = useState(false);
+  const pastoTime = usePastoClock();
 
   return (
     <section
       id="hero"
-      className="relative min-h-[calc(100dvh-4rem)] w-full overflow-hidden bg-transparent py-16 sm:py-24 lg:py-28 flex items-center"
+      className="relative min-h-[calc(100dvh-4rem)] w-full overflow-hidden bg-transparent py-14 sm:py-20 lg:py-24 flex items-center"
     >
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
-          {/* Left Column: Monumental Typography & Tactile CTAs (nareshkhatri.dev aesthetic) */}
+          {/* Left Column: Bespoke Telemetry Capsule, Particle-Dust Dual Typography & Tactile CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-start lg:col-span-7"
           >
-            {/* Subtle Greeting + Verified Avatar Pill */}
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex items-center gap-2 rounded-full border border-zinc-200/80 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-900/70 pr-3 pl-1 py-1 backdrop-blur-md">
-                <div className="relative h-6 w-6 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+            {/* Bespoke Multi-Segment Interactive Telemetry Header Capsule */}
+            <a
+              href="#about"
+              className="cursor-can-hover group mb-4 inline-flex flex-wrap items-center gap-2 rounded-2xl border border-zinc-300/80 dark:border-zinc-800/90 bg-white/85 dark:bg-zinc-900/85 p-1.5 pr-3.5 shadow-sm backdrop-blur-xl transition-all duration-300 hover:border-emerald-500/50 hover:shadow-md"
+            >
+              {/* Left Segment: Glowing Avatar + Serif-Italic Greeting + Expanding Micro-Badge */}
+              <div className="flex items-center gap-2.5 rounded-xl bg-zinc-100/90 dark:bg-zinc-800/80 pl-1.5 pr-3 py-1 transition-colors group-hover:bg-emerald-500/10">
+                <div className="relative h-7 w-7 overflow-hidden rounded-full ring-2 ring-emerald-500/70 transition-transform duration-300 group-hover:scale-110">
                   {!imageError ? (
                     <Image
                       src="/images/avatar.jpeg"
                       alt="Gabriel Esteban Paz Guerrero"
                       fill
-                      sizes="24px"
+                      sizes="28px"
                       priority
                       onError={() => setImageError(true)}
                       className="object-cover"
@@ -74,37 +105,56 @@ export default function Hero() {
                     </span>
                   )}
                 </div>
-                <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
-                  {lang === "es" ? "Hola, soy" : "Hi, I am"}
+
+                <div className="flex items-baseline gap-1.5">
+                  <span className="font-serif italic text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                    {lang === "es" ? "Hola, soy" : "Hi, I'm"}
+                  </span>
+                  <span className="font-mono text-[11px] font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+                    @itsGabo22
+                  </span>
+                </div>
+              </div>
+
+              {/* Center Segment: Live Equalizer Waveform + Status */}
+              <div className="flex items-center gap-2 px-1.5">
+                <span
+                  aria-hidden="true"
+                  className="inline-flex h-3 items-end gap-0.5"
+                >
+                  <span className="w-0.5 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-0.5 h-3 rounded-full bg-emerald-500 animate-bounce" />
+                  <span className="w-0.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                </span>
+                <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                  {lang === "es"
+                    ? "Disponible para proyectos"
+                    : "Available for projects"}
                 </span>
               </div>
 
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                {lang === "es"
-                  ? "Disponible para proyectos"
-                  : "Available for projects"}
+              {/* Right Segment: Live Pasto UTC-5 Telemetry Clock */}
+              <span className="hidden sm:inline-flex items-center gap-1.5 border-l border-zinc-200 dark:border-zinc-800 pl-2.5 font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                <span>Pasto, CO</span>
+                <span className="text-zinc-300 dark:text-zinc-700">·</span>
+                <span className="tabular-nums font-medium text-zinc-700 dark:text-zinc-300">
+                  {pastoTime}
+                </span>
               </span>
-            </div>
+            </a>
 
-            {/* Monumental Solid Stacked Name (Zero gradient clichés, pure architectural weight) */}
-            <h1 className="-ml-[3px] font-display text-6xl font-bold tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-7xl lg:text-8xl xl:text-[6.25rem] leading-[0.9]">
-              <span className="block">Gabriel</span>
-              <span className="block">Esteban</span>
-              <span className="block text-zinc-700 dark:text-zinc-300">
-                Paz Guerrero
-              </span>
-            </h1>
+            {/* Dual-Typography + Interactive Particle-Dust Disintegration Hero Title */}
+            <HeroParticleName />
 
             {/* Clean Understated Role Subtitle */}
-            <p className="mt-5 font-display text-lg font-medium text-zinc-600 dark:text-zinc-400 sm:text-xl md:text-2xl">
+            <p className="mt-3 font-display text-lg font-medium text-zinc-700 dark:text-zinc-300 sm:text-xl md:text-2xl">
               {lang === "es"
                 ? "Desarrollador de Software Full-Stack & Fundador Tecnológico"
                 : "A Full-Stack Software Developer & Tech Founder"}
             </p>
 
             {/* Unboxed High-Legibility Editorial Copy */}
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-base">
+            <p className="mt-3.5 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-base">
               {lang === "es" ? (
                 <>
                   Construyo plataformas web de alta conversión, comercio
@@ -145,7 +195,7 @@ export default function Hero() {
             </p>
 
             {/* Tactile CTA Cluster (matching naresh_ref Hero button layout) */}
-            <div className="mt-8 flex flex-col gap-3 w-fit">
+            <div className="mt-7 flex flex-col gap-3 w-fit">
               <a
                 href="/cv.pdf"
                 download
@@ -196,7 +246,7 @@ export default function Hero() {
             </div>
 
             {/* Real Vector SVG Tech Stack Badges */}
-            <div className="mt-8 flex flex-wrap items-center gap-2">
+            <div className="mt-7 flex flex-wrap items-center gap-2">
               {HERO_TECH.map((tech) => (
                 <TechBadge key={tech} name={tech} size="xs" />
               ))}
@@ -208,7 +258,7 @@ export default function Hero() {
         </div>
 
         {/* Minimalist Scroll Down Indicator */}
-        <div className="mt-10 flex justify-center">
+        <div className="mt-8 flex justify-center">
           <a
             href="#about"
             aria-label={

@@ -10,13 +10,13 @@ import {
   useSyncExternalStore,
   type CSSProperties,
 } from "react";
+import { AnimatePresence, motion as fmMotion } from "framer-motion";
 import {
   ChibiScene,
   type ChibiSceneApi,
   type ScenePointerEvent,
   type RuntimeEvent,
 } from "@chibi3d/runtime";
-import { Keyboard, Volume2, VolumeX, Sparkles } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { KEYBOARD_SKILLS } from "./keyboard/keyboard-skills";
 import {
@@ -68,7 +68,7 @@ const INTERACTIVE_HTML_SELECTOR =
   'a, button, input, textarea, select, label, [role="button"], [role="tab"]';
 
 export default function InteractiveKeyboard3D() {
-  const { theme, lang } = useApp();
+  const { theme, lang, sfxMuted, setSceneReady } = useApp();
   const hasWebGL = useSyncExternalStore(
     subscribeNoop,
     getWebGLSnapshot,
@@ -87,10 +87,11 @@ export default function InteractiveKeyboard3D() {
   const ready = loadVersion > 0;
   const [section, setSection] = useState<KeyboardSection>("hero");
   const [selected, setSelected] = useState<KeyboardSkill | null>(null);
-  const [muted, setMuted] = useState(false);
+  const [isFooterOrContactInView, setIsFooterOrContactInView] = useState(false);
   const [pressCount, setPressCount] = useState(1428);
+  const hudDismissTimerRef = useRef<number | null>(null);
 
-  const playSound = useKeyboardSounds(muted);
+  const playSound = useKeyboardSounds(sfxMuted);
   const scene = useMemo(() => createKeyboardScene(KEYBOARD_SKILLS, 6), []);
 
   const environment = useMemo(
@@ -131,8 +132,6 @@ export default function InteractiveKeyboard3D() {
   );
 
   // Sync 3D chassis and 3D extruded heading material with Light/Dark theme
-  // Light Mode: Teenage Engineering / Apple Studio anodized warm silver (#e4e4e7) + graphite plate (#27272a)
-  // Dark Mode: Stealth matte obsidian (#18181b) + deep carbon plate (#09090b)
   useEffect(() => {
     if (!ready || !api.current) return;
     if (theme === "dark") {
@@ -209,11 +208,62 @@ export default function InteractiveKeyboard3D() {
         const shown = heldKeys.current.at(-1) ?? null;
         activeKeyRef.current = shown;
         syncActive3DLabel(shown, lang);
-        setSelected(shown?.skill ?? null);
+
+        if (hudDismissTimerRef.current) {
+          window.clearTimeout(hudDismissTimerRef.current);
+          hudDismissTimerRef.current = null;
+        }
+
+        if (shown) {
+          setSelected(shown.skill);
+          hudDismissTimerRef.current = window.setTimeout(() => {
+            if (heldKeys.current.length === 0) {
+              setSelected(null);
+            }
+          }, 1800);
+        } else {
+          hudDismissTimerRef.current = window.setTimeout(() => {
+            setSelected(null);
+          }, 350);
+        }
+
         playSound(pressed);
       }),
     [input, scene, playSound, ready, lang, syncActive3DLabel]
   );
+
+  // Monitor #contact and <footer> visibility so the HUD card NEVER covers Footer.tsx or Contact
+  useEffect(() => {
+    const checkBottomSections = () => {
+      const contactEl = document.getElementById("contact");
+      const footerEl = document.querySelector("footer");
+      const vh = window.innerHeight;
+      let nearBottom = false;
+
+      if (contactEl) {
+        const rect = contactEl.getBoundingClientRect();
+        if (rect.top < vh * 0.65) {
+          nearBottom = true;
+        }
+      }
+      if (footerEl) {
+        const rect = footerEl.getBoundingClientRect();
+        if (rect.top < vh) {
+          nearBottom = true;
+        }
+      }
+
+      setIsFooterOrContactInView(nearBottom);
+      if (nearBottom) {
+        input.release("hover");
+        setSelected(null);
+      }
+    };
+
+    window.addEventListener("scroll", checkBottomSections, { passive: true });
+    checkBottomSections();
+    return () => window.removeEventListener("scroll", checkBottomSections);
+  }, [input]);
 
   const onPointerEvent = useCallback(
     (event: ScenePointerEvent) => {
@@ -239,8 +289,7 @@ export default function InteractiveKeyboard3D() {
     [input]
   );
 
-  // Window-to-Canvas pointer bridge: ensures raycasting works 100% of the time in #hero, #skills, and #contact
-  // even if a transparent DOM wrapper sits above the fixed canvas
+  // Window-to-Canvas pointer bridge
   useEffect(() => {
     if (!ready) return;
 
@@ -307,12 +356,17 @@ export default function InteractiveKeyboard3D() {
   const onLoad = useCallback(() => {
     if (failed.current) return;
     setLoadVersion((version) => version + 1);
-  }, []);
+    setSceneReady(true);
+  }, [setSceneReady]);
 
-  const onError = useCallback((error: Error) => {
-    failed.current = true;
-    console.warn("3D Keyboard scene fallback active:", error);
-  }, []);
+  const onError = useCallback(
+    (error: Error) => {
+      failed.current = true;
+      setSceneReady(true);
+      console.warn("3D Keyboard scene fallback active:", error);
+    },
+    [setSceneReady]
+  );
 
   const onEvent = useCallback(
     (event: RuntimeEvent) => {
@@ -380,6 +434,12 @@ export default function InteractiveKeyboard3D() {
 
   if (!hasWebGL) return null;
 
+  const showFloatingHud =
+    ready &&
+    selected !== null &&
+    section !== "contact" &&
+    !isFooterOrContactInView;
+
   return (
     <div ref={stageWrapperRef}>
       <SceneCanvas
@@ -400,114 +460,60 @@ export default function InteractiveKeyboard3D() {
         onEvent={onEvent}
       />
 
-      {/* Floating Audio Switch + Key Counter Pill (Bottom Left) */}
-      {ready && (
-        <div className="fixed bottom-5 left-5 z-30 hidden items-center gap-2 sm:flex">
-          <button
-            type="button"
-            onClick={() => setMuted((prev) => !prev)}
-            aria-label={
-              muted
-                ? lang === "es"
-                  ? "Activar sonido mecánico"
-                  : "Enable mechanical switch sound"
-                : lang === "es"
-                  ? "Silenciar sonido mecánico"
-                  : "Mute mechanical switch sound"
-            }
-            className="cursor-can-hover inline-flex items-center gap-2 rounded-full border border-zinc-200/90 dark:border-zinc-800/80 bg-white/85 dark:bg-zinc-900/80 px-3.5 py-2 text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300 shadow-lg backdrop-blur-md transition-all hover:border-emerald-500/50 hover:text-emerald-600 dark:hover:text-emerald-400"
+      {/* Bilingual Live Keycap HUD Card — ONLY mounted when actively inspecting a keycap AND never blocking #contact or <footer> */}
+      <AnimatePresence>
+        {showFloatingHud && selected && (
+          <fmMotion.div
+            key={selected.name}
+            initial={{ opacity: 0, y: 18, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 14, scale: 0.96 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="pointer-events-none fixed inset-x-4 bottom-5 z-30 flex justify-center"
           >
-            {muted ? (
-              <VolumeX className="h-3.5 w-3.5 text-zinc-400" />
-            ) : (
-              <Volume2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-            )}
-            <span>
-              {muted
-                ? lang === "es"
-                  ? "SONIDO OFF"
-                  : "SFX OFF"
-                : lang === "es"
-                  ? "SONIDO ON"
-                  : "SFX ON"}
-            </span>
-            <span className="h-3 w-px bg-zinc-200 dark:bg-zinc-800" />
-            <Keyboard className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-            <span
-              title={
-                lang === "es"
-                  ? "Teclas presionadas en el teclado 3D"
-                  : "Keypresses on the 3D keyboard"
-              }
-              className="tabular-nums font-semibold text-zinc-900 dark:text-zinc-100"
+            <div
+              aria-live="polite"
+              className="pointer-events-auto flex max-w-xl items-center gap-4 rounded-2xl border border-zinc-200/90 dark:border-zinc-800/80 bg-white/95 dark:bg-zinc-900/95 px-5 py-3.5 shadow-2xl backdrop-blur-xl"
             >
-              {pressCount.toLocaleString()}
-            </span>
-          </button>
-        </div>
-      )}
-
-      {/* Bilingual Live Keycap HUD Banner when inspecting any keycap (#hero, #skills, #contact, etc.) */}
-      {ready && (selected || section === "skills") && (
-        <div className="pointer-events-none fixed inset-x-4 bottom-5 z-30 flex justify-center">
-          <div
-            aria-live="polite"
-            className="pointer-events-auto flex max-w-xl items-center gap-4 rounded-2xl border border-zinc-200/90 dark:border-zinc-800/80 bg-white/95 dark:bg-zinc-900/95 px-5 py-3.5 shadow-2xl backdrop-blur-xl transition-all duration-200"
-          >
-            {selected ? (
-              <>
-                <div
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-zinc-200/80 dark:border-zinc-700/80 shadow-inner"
-                  style={{ backgroundColor: `${selected.color}22` }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={selected.icon}
-                    alt={selected.label}
-                    className="h-6 w-6 object-contain"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                      {selected.label}
-                    </span>
-                    <span className="rounded-md bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
-                      {selected.category[lang]}
-                    </span>
-                    {selected.shortcut && (
-                      <kbd className="rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-mono text-zinc-600 dark:text-zinc-300">
-                        {selected.shortcut.replace("Key", "").replace("Digit", "")}
-                      </kbd>
-                    )}
-                  </div>
-                  <p className="mt-1 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-                    {selected.shortDescription[lang]}
-                  </p>
-                </div>
-              </>
-            ) : (
-              <div className="flex items-center gap-3 py-0.5">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  <Sparkles className="h-4 w-4" />
-                </span>
-                <div className="text-left">
-                  <p className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
-                    {lang === "es"
-                      ? "Explora mis habilidades en 3D"
-                      : "Explore my skills in 3D"}
-                  </p>
-                  <p className="text-[11px] text-zinc-600 dark:text-zinc-400">
-                    {lang === "es"
-                      ? "Pasa el cursor sobre las teclas, haz clic o presiona tu teclado físico (1-6, Q-Y, A-H, Z-N)"
-                      : "Hover over the keycaps, click, or press your physical keyboard (1-6, Q-Y, A-H, Z-N)"}
-                  </p>
-                </div>
+              {/* High-Contrast Obsidian Pedestal for Keycap SVG Logo */}
+              <div
+                className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 dark:bg-zinc-950 shadow-inner"
+              >
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-0 bottom-0 h-1"
+                  style={{ backgroundColor: selected.color }}
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={selected.icon}
+                  alt={selected.label}
+                  className="h-6 w-6 object-contain [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.6))]"
+                />
               </div>
-            )}
-          </div>
-        </div>
-      )}
+
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+                    {selected.label}
+                  </span>
+                  <span className="rounded-md bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                    {selected.category[lang]}
+                  </span>
+                  {selected.shortcut && (
+                    <kbd className="rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-mono text-zinc-600 dark:text-zinc-300">
+                      {selected.shortcut.replace("Key", "").replace("Digit", "")}
+                    </kbd>
+                  )}
+                </div>
+                <p className="mt-1 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+                  {selected.shortDescription[lang]}
+                </p>
+              </div>
+            </div>
+          </fmMotion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

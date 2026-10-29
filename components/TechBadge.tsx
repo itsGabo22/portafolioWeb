@@ -34,7 +34,7 @@ const TECH_LOGO_MAP: Record<string, string> = {
   "kotlin / wear os": "/assets/keyboard/logos/gcp.svg",
   "java": "/assets/keyboard/logos/proxmox.svg",
   "java 17": "/assets/keyboard/logos/proxmox.svg",
-  "spring boot": "/assets/keyboard/logos/leaf.svg",
+  "spring boot": "/assets/keyboard/logos/nodejs.svg",
   "python": "/assets/logos/python-mono.svg",
   "fastapi": "/assets/logos/python-mono.svg",
   "astro": "/assets/logos/astro-mono.svg",
@@ -48,7 +48,6 @@ const TECH_LOGO_MAP: Record<string, string> = {
 
 export function getTechLogo(techName: string): string {
   const key = techName.trim().toLowerCase();
-  if (key === "spring boot") return "/assets/keyboard/logos/nodejs.svg";
   return TECH_LOGO_MAP[key] ?? "/assets/keyboard/logos/ts.svg";
 }
 
@@ -64,25 +63,33 @@ export default function TechBadge({
   const logo = getTechLogo(name);
   const sizeClasses =
     size === "xs"
-      ? "px-2.5 py-1 text-[11px] gap-1.5"
+      ? "pl-1.5 pr-2.5 py-1 text-[11px] gap-1.5"
       : size === "md"
-        ? "px-3.5 py-2 text-xs gap-2"
-        : "px-3 py-1.5 text-xs gap-1.5";
-  const imgSize = size === "xs" ? "h-3.5 w-3.5" : size === "md" ? "h-4 w-4" : "h-3.5 w-3.5";
+        ? "pl-2 pr-3.5 py-1.5 text-xs gap-2"
+        : "pl-1.5 pr-3 py-1 text-xs gap-1.5";
+  const pedestalSize =
+    size === "xs" ? "h-5 w-5" : size === "md" ? "h-6 w-6" : "h-5 w-5";
+  const imgSize =
+    size === "xs" ? "h-3.5 w-3.5" : size === "md" ? "h-4 w-4" : "h-3.5 w-3.5";
 
   return (
     <span
       className={`${
         interactive ? "cursor-can-hover" : ""
-      } group/badge inline-flex items-center rounded-lg border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-100/80 dark:bg-zinc-900/70 font-medium text-zinc-700 dark:text-zinc-300 backdrop-blur-sm transition-all duration-200 hover:border-zinc-400 dark:hover:border-zinc-600 hover:text-zinc-950 dark:hover:text-white ${sizeClasses}`}
+      } group/badge inline-flex items-center rounded-lg border border-zinc-200/90 dark:border-zinc-800/90 bg-white/90 dark:bg-zinc-900/80 font-medium text-zinc-800 dark:text-zinc-200 shadow-2xs backdrop-blur-sm transition-all duration-200 hover:border-zinc-400 dark:hover:border-zinc-600 hover:text-zinc-950 dark:hover:text-white ${sizeClasses}`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={logo}
-        alt=""
-        aria-hidden="true"
-        className={`${imgSize} shrink-0 object-contain opacity-80 transition-all duration-300 group-hover/badge:scale-110 group-hover/badge:opacity-100 dark:brightness-110`}
-      />
+      {/* High-Contrast Obsidian Micro-Pedestal: guarantees 100% visibility for white/bright SVGs in Light Mode AND Dark Mode */}
+      <span
+        className={`inline-flex ${pedestalSize} shrink-0 items-center justify-center rounded-md bg-zinc-900 dark:bg-zinc-800/95 p-1 shadow-inner ring-1 ring-zinc-950/15 dark:ring-white/10 transition-transform duration-200 group-hover/badge:scale-105`}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={logo}
+          alt=""
+          aria-hidden="true"
+          className={`${imgSize} shrink-0 object-contain [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.45))]`}
+        />
+      </span>
       <span>{name}</span>
     </span>
   );

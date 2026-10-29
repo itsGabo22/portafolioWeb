@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, FileText, ChevronRight, Sun, Moon } from "lucide-react";
+import {
+  Menu,
+  X,
+  FileText,
+  ChevronRight,
+  Sun,
+  Moon,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 interface NavItem {
@@ -24,7 +33,8 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export default function Navbar() {
-  const { theme, toggleTheme, lang, toggleLang } = useApp();
+  const { theme, toggleTheme, lang, toggleLang, sfxMuted, toggleSfx } =
+    useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("hero");
   const [scrolled, setScrolled] = useState(false);
@@ -120,7 +130,7 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Sleek Right Controls: Language, Theme, CV */}
+        {/* Sleek Right Controls: Language, SFX Toggle, Theme, CV */}
         <div className="hidden md:flex md:items-center md:gap-2">
           <button
             type="button"
@@ -151,6 +161,37 @@ export default function Navbar() {
             >
               EN
             </span>
+          </button>
+
+          {/* Integrated Keyboard SFX Mute/Unmute Toggle */}
+          <button
+            type="button"
+            onClick={toggleSfx}
+            title={
+              sfxMuted
+                ? lang === "es"
+                  ? "Activar sonidos del teclado 3D"
+                  : "Unmute 3D keyboard sound effects"
+                : lang === "es"
+                  ? "Silenciar sonidos del teclado 3D"
+                  : "Mute 3D keyboard sound effects"
+            }
+            aria-label={
+              sfxMuted
+                ? lang === "es"
+                  ? "Activar sonidos del teclado"
+                  : "Toggle keyboard sound effects (Unmute)"
+                : lang === "es"
+                  ? "Silenciar sonidos del teclado"
+                  : "Toggle keyboard sound effects (Mute)"
+            }
+            className="cursor-can-hover inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200/90 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 backdrop-blur-sm transition-colors hover:border-zinc-400 dark:hover:border-zinc-700"
+          >
+            {sfxMuted ? (
+              <VolumeX className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />
+            ) : (
+              <Volume2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            )}
           </button>
 
           <button
@@ -185,7 +226,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Controls */}
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-1.5 lg:hidden">
           <button
             type="button"
             onClick={toggleLang}
@@ -197,6 +238,23 @@ export default function Navbar() {
             className="inline-flex h-9 items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 px-2.5 text-xs font-semibold text-zinc-800 dark:text-zinc-200 md:hidden"
           >
             {lang.toUpperCase()}
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleSfx}
+            aria-label={
+              lang === "es"
+                ? "Activar o silenciar sonidos del teclado"
+                : "Toggle keyboard sound effects"
+            }
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-200 md:hidden"
+          >
+            {sfxMuted ? (
+              <VolumeX className="h-4 w-4 text-zinc-400" />
+            ) : (
+              <Volume2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            )}
           </button>
 
           <button

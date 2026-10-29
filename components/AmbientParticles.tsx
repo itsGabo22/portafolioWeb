@@ -18,9 +18,9 @@ interface Circle {
 }
 
 export default function AmbientParticles({
-  quantity = 85,
-  staticity = 50,
-  ease = 50,
+  quantity = 65,
+  staticity = 55,
+  ease = 55,
 }: {
   quantity?: number;
   staticity?: number;
@@ -40,13 +40,19 @@ export default function AmbientParticles({
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     let width = 0;
     let height = 0;
+    let rectLeft = 0;
+    let rectTop = 0;
     let rafId = 0;
-    const dpr = typeof window !== "undefined" ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+    let paused = false;
+    const dpr =
+      typeof window !== "undefined"
+        ? Math.min(window.devicePixelRatio || 1, 1.5)
+        : 1;
     const circles: Circle[] = [];
 
     const paletteForTheme = () =>
@@ -64,10 +70,10 @@ export default function AmbientParticles({
         translateY: 0,
         size: Math.floor(Math.random() * 2) + 0.8,
         alpha: 0,
-        targetAlpha: parseFloat((Math.random() * 0.45 + 0.12).toFixed(2)),
-        dx: (Math.random() - 0.5) * 0.22,
-        dy: (Math.random() - 0.5) * 0.22,
-        magnetism: 0.1 + Math.random() * 4,
+        targetAlpha: parseFloat((Math.random() * 0.42 + 0.1).toFixed(2)),
+        dx: (Math.random() - 0.5) * 0.2,
+        dy: (Math.random() - 0.5) * 0.2,
+        magnetism: 0.1 + Math.random() * 3.5,
         color,
       };
     };
@@ -75,13 +81,17 @@ export default function AmbientParticles({
     const resize = () => {
       width = container.offsetWidth;
       height = container.offsetHeight;
+      const rect = canvas.getBoundingClientRect();
+      rectLeft = rect.left;
+      rectTop = rect.top;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       circles.length = 0;
-      for (let i = 0; i < quantity; i++) {
+      const count = window.innerWidth < 768 ? Math.floor(quantity * 0.55) : quantity;
+      for (let i = 0; i < count; i++) {
         circles.push(createCircle());
       }
     };
@@ -99,25 +109,23 @@ export default function AmbientParticles({
     };
 
     const animate = () => {
+      if (paused) return;
       ctx.clearRect(0, 0, width, height);
       const isDark = themeRef.current === "dark";
 
-      circles.forEach((circle, i) => {
+      for (let i = 0; i < circles.length; i++) {
+        const circle = circles[i];
         const edge = [
           circle.x + circle.translateX - circle.size,
           width - circle.x - circle.translateX - circle.size,
           circle.y + circle.translateY - circle.size,
           height - circle.y - circle.translateY - circle.size,
         ];
-        const closestEdge = edge.reduce((a, b) => Math.min(a, b));
-        const remapClosestEdge = parseFloat(
-          remapValue(closestEdge, 0, 20, 0, 1).toFixed(2)
-        );
+        const closestEdge = Math.min(edge[0], edge[1], edge[2], edge[3]);
+        const remapClosestEdge = remapValue(closestEdge, 0, 20, 0, 1);
+
         if (remapClosestEdge > 1) {
-          circle.alpha += 0.02;
-          if (circle.alpha > circle.targetAlpha) {
-            circle.alpha = circle.targetAlpha;
-          }
+          circle.alpha = Math.min(circle.targetAlpha, circle.alpha + 0.02);
         } else {
           circle.alpha = circle.targetAlpha * remapClosestEdge;
         }
@@ -140,39 +148,51 @@ export default function AmbientParticles({
         ) {
           circles[i] = createCircle();
         } else {
-          ctx.save();
-          ctx.translate(circle.translateX, circle.translateY);
+          const alphaBoost = isDark ? circle.alpha : circle.alpha * 0.82;
           ctx.beginPath();
-          ctx.arc(circle.x, circle.y, circle.size, 0, 2 * Math.PI);
-          const alphaBoost = isDark ? circle.alpha : circle.alpha * 0.85;
-          ctx.fillStyle = `rgba(${circle.color}, ${alphaBoost})`;
+          ctx.arc(
+            circle.x + circle.translateX,
+            circle.y + circle.translateY,
+            circle.size,
+            0,
+            2 * Math.PI
+          );
+          ctx.fillStyle = `rgba(${circle.color}, ${alphaBoost.toFixed(2)})`;
           ctx.fill();
-          ctx.restore();
         }
-      });
+      }
 
       rafId = window.requestAnimationFrame(animate);
     };
 
     const onMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left - width / 2;
-      const y = e.clientY - rect.top - height / 2;
+      const x = e.clientX - rectLeft - width / 2;
+      const y = e.clientY - rectTop - height / 2;
       if (x < width / 2 && x > -width / 2 && y < height / 2 && y > -height / 2) {
         mouse.current.x = x;
         mouse.current.y = y;
       }
     };
 
+    const onVisibilityChange = () => {
+      paused = document.hidden;
+      if (!paused) {
+        window.cancelAnimationFrame(rafId);
+        rafId = window.requestAnimationFrame(animate);
+      }
+    };
+
     resize();
     animate();
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", resize, { passive: true });
     window.addEventListener("mousemove", onMouseMove, { passive: true });
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       window.cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [quantity, staticity, ease]);
 
@@ -180,7 +200,7 @@ export default function AmbientParticles({
     <div
       ref={containerRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden will-change-transform"
     >
       <canvas ref={canvasRef} />
     </div>

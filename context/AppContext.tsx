@@ -5,6 +5,7 @@ import React, {
   useContext,
   useEffect,
   useCallback,
+  useState,
   useSyncExternalStore,
 } from "react";
 
@@ -18,12 +19,18 @@ interface AppContextValue {
   lang: Language;
   setLang: (lang: Language) => void;
   toggleLang: () => void;
+  sfxMuted: boolean;
+  setSfxMuted: (muted: boolean) => void;
+  toggleSfx: () => void;
+  sceneReady: boolean;
+  setSceneReady: (ready: boolean) => void;
 }
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
 const THEME_STORAGE_KEY = "gabo-portfolio-theme";
 const LANG_STORAGE_KEY = "gabo-portfolio-lang";
+const SFX_STORAGE_KEY = "gabo-portfolio-sfx-muted";
 const PREFS_EVENT = "gabo-portfolio-prefs-change";
 
 function subscribeToPrefs(callback: () => void) {
@@ -64,6 +71,19 @@ function getLangServerSnapshot(): Language {
   return "es";
 }
 
+function getSfxMutedSnapshot(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(SFX_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function getSfxMutedServerSnapshot(): boolean {
+  return false;
+}
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const theme = useSyncExternalStore(
     subscribeToPrefs,
@@ -76,6 +96,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     getLangSnapshot,
     getLangServerSnapshot
   );
+
+  const sfxMuted = useSyncExternalStore(
+    subscribeToPrefs,
+    getSfxMutedSnapshot,
+    getSfxMutedServerSnapshot
+  );
+
+  const [sceneReady, setSceneReady] = useState(false);
 
   // Sincronizar el DOM externo (<html>) con el tema activo
   useEffect(() => {
@@ -122,6 +150,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setLang(next);
   }, [setLang]);
 
+  const setSfxMuted = useCallback((muted: boolean) => {
+    try {
+      window.localStorage.setItem(SFX_STORAGE_KEY, String(muted));
+      window.dispatchEvent(new Event(PREFS_EVENT));
+    } catch {
+      // Ignorar errores de almacenamiento
+    }
+  }, []);
+
+  const toggleSfx = useCallback(() => {
+    const current = getSfxMutedSnapshot();
+    setSfxMuted(!current);
+  }, [setSfxMuted]);
+
   return (
     <AppContext.Provider
       value={{
@@ -131,6 +173,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         lang,
         setLang,
         toggleLang,
+        sfxMuted,
+        setSfxMuted,
+        toggleSfx,
+        sceneReady,
+        setSceneReady,
       }}
     >
       {children}

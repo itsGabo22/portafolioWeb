@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import AmbientParticles from "./AmbientParticles";
 import CustomCursor from "./CustomCursor";
+import Preloader from "./Preloader";
 
 const InteractiveKeyboard3D = dynamic(
   () => import("./InteractiveKeyboard3D"),
@@ -12,7 +13,8 @@ const InteractiveKeyboard3D = dynamic(
 export default function InteractiveStage() {
   return (
     <>
-      <AmbientParticles quantity={85} />
+      <Preloader />
+      <AmbientParticles quantity={65} />
       <InteractiveKeyboard3D />
       <CustomCursor />
     </>
