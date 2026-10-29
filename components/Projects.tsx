@@ -3,208 +3,143 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import {
-  FolderGit2,
-  ExternalLink,
-  Code2,
-  Globe,
-  Layers,
-  Terminal,
-  Sparkles,
-  Lock,
-  GraduationCap,
-  Briefcase,
-} from "lucide-react";
+import { ArrowUpRight, Lock } from "lucide-react";
 import { projects, Project, ProjectKind } from "@/data/projects";
 import { useApp } from "@/context/AppContext";
+import TechBadge from "./TechBadge";
+import TiltSurface from "./TiltSurface";
+
+function GitHubSvg({ className = "h-3.5 w-3.5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z" />
+    </svg>
+  );
+}
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const { lang } = useApp();
   const [imgError, setImgError] = useState(false);
-
-  const cleanHost = project.liveUrl
-    .replace(/^https?:\/\//, "")
-    .replace(/\/$/, "");
   const isAcademic = project.projectType === "academic";
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.45, delay: index * 0.05 }}
-      className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-zinc-200/90 dark:border-zinc-800/80 bg-white/85 dark:bg-zinc-900/80 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-500/60 hover:shadow-xl dark:hover:border-emerald-500/50 dark:hover:shadow-[0_16px_36px_rgba(0,0,0,0.55)]"
+      className="h-full"
     >
-      <div>
-        {/* Ventana Panorámica de Vista Previa */}
-        <div className="relative aspect-[3/2] w-full overflow-hidden border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-100 dark:bg-zinc-950">
-          {!imgError ? (
-            <>
-              <Image
-                src={project.image}
-                alt={project.title[lang]}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
-                onError={() => setImgError(true)}
-                className="sp-shot object-cover object-top"
-              />
-              {/* Insignia Superior de Tipo de Proyecto */}
+      <TiltSurface maxTilt={6} className="h-full">
+        <div className="group flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/85 dark:bg-zinc-900/75 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-xl">
+          <div>
+            {/* Panoramic Showcase Window (naresh_ref 3/2 aspect ratio with bottom gradient title overlay) */}
+            <div className="relative aspect-[3/2] w-full overflow-hidden bg-zinc-950">
+              {!imgError ? (
+                <Image
+                  src={project.image}
+                  alt={project.title[lang]}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+                  onError={() => setImgError(true)}
+                  className="sp-shot object-cover object-top"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-zinc-900 text-sm font-medium text-zinc-400">
+                  {project.title[lang]}
+                </div>
+              )}
+
+              {/* Subtle Top Pill for Commercial vs Academic */}
               <div className="pointer-events-none absolute top-3 left-3 right-3 z-10 flex items-center justify-between gap-2">
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider shadow-md backdrop-blur-md ${
-                    isAcademic
-                      ? "border-indigo-500/40 bg-zinc-950/85 text-indigo-300"
-                      : "border-emerald-500/40 bg-zinc-950/85 text-emerald-300"
-                  }`}
-                >
-                  {isAcademic ? (
-                    <GraduationCap className="h-3 w-3" />
-                  ) : (
-                    <Briefcase className="h-3 w-3" />
-                  )}
-                  <span>
-                    {isAcademic
-                      ? lang === "es"
-                        ? "Académico UCC + IA"
-                        : "UCC Academic + AI"
-                      : lang === "es"
-                        ? "Producción Comercial"
-                        : "Live Commercial"}
-                  </span>
+                <span className="rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-zinc-100 backdrop-blur-md">
+                  {isAcademic
+                    ? lang === "es"
+                      ? "Académico UCC · IA"
+                      : "UCC Academic · AI"
+                    : lang === "es"
+                      ? "Producción Comercial"
+                      : "Live Commercial"}
                 </span>
 
                 {project.isPrivateRepo && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-zinc-950/85 px-2.5 py-1 font-mono text-[10px] font-semibold text-amber-300 shadow-md backdrop-blur-md">
-                    <Lock className="h-2.5 w-2.5" />
-                    <span>
-                      {lang === "es" ? "Cliente / Privado" : "Client / Private"}
-                    </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-medium text-amber-300 backdrop-blur-md">
+                    <Lock className="h-3 w-3" />
+                    <span>NDA</span>
                   </span>
                 )}
               </div>
-            </>
-          ) : (
-            <div className="sp-shot relative flex h-full w-full flex-col justify-between bg-zinc-50 dark:bg-zinc-950 p-4">
-              <div className="pointer-events-none absolute inset-0 bg-tech-grid opacity-75 dark:opacity-50" />
-              <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-emerald-500/15 blur-2xl transition-opacity group-hover:opacity-100" />
-              <div className="pointer-events-none absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-indigo-500/15 blur-2xl transition-opacity group-hover:opacity-100" />
 
-              {/* Barra de Navegador / Terminal Mockup */}
-              <div className="relative z-10 flex items-center justify-between rounded-lg border border-zinc-200/90 dark:border-zinc-800/90 bg-white/90 dark:bg-zinc-900/90 px-3 py-1.5 backdrop-blur-xs">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  <span className="h-2 w-2 rounded-full bg-indigo-500" />
-                  <span className="h-2 w-2 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-                </div>
-                <div className="flex items-center gap-1 font-mono text-[10px] text-zinc-500 dark:text-zinc-400 truncate max-w-[180px]">
-                  <Globe className="h-3 w-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span className="truncate">{cleanHost}</span>
-                </div>
-                <span className="font-mono text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                  0{index + 1}
-                </span>
-              </div>
-
-              {/* Centro Geométrico del Proyecto */}
-              <div className="relative z-10 my-auto flex flex-col items-center justify-center py-2 text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shadow-inner transition-transform duration-300 group-hover:scale-110">
-                  <Layers className="h-6 w-6" />
-                </div>
-                <span className="mt-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+              {/* Bottom Gradient Overlay with Title & Category Pill (matching naresh_ref Projects card) */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-28 flex-col justify-end bg-gradient-to-t from-zinc-950 via-zinc-950/75 to-transparent p-4">
+                <h3 className="font-display text-lg font-bold leading-snug text-white drop-shadow-sm">
+                  {project.title[lang]}
+                </h3>
+                <span className="mt-1 w-fit rounded-md bg-white/15 px-2.5 py-0.5 text-[11px] font-medium text-zinc-100 backdrop-blur-sm">
                   {project.category[lang]}
                 </span>
               </div>
-
-              {/* Barra Glassmorphic Inferior con Título y Categoría */}
-              <div className="relative z-10 flex items-center justify-between rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/85 dark:bg-zinc-900/85 px-3 py-2 backdrop-blur-md">
-                <span className="flex items-center gap-1 font-mono text-[10px] font-semibold text-zinc-700 dark:text-zinc-300">
-                  <Terminal className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-                  PROD.READY
-                </span>
-                <span className="flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
-                  <Sparkles className="h-3 w-3" />
-                  {project.technologies[0]}
-                </span>
-              </div>
             </div>
-          )}
-        </div>
 
-        {/* Contenido Principal de la Tarjeta */}
-        <div className="p-6">
-          <div className="mb-2 flex items-center justify-between font-mono text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-            <span>{project.category[lang]}</span>
-            <span className="text-zinc-400 dark:text-zinc-500">
-              #0{index + 1}
-            </span>
+            {/* Editorial Description */}
+            <div className="p-5">
+              <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+                {project.description[lang]}
+              </p>
+            </div>
           </div>
 
-          <h3 className="font-display text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-            {project.title[lang]}
-          </h3>
+          {/* Card Footer: Real SVG Tech Badges + Mandatory Action Links */}
+          <div className="px-5 pb-5 pt-1">
+            <div className="mb-4 flex flex-wrap gap-1.5">
+              {project.technologies.map((tech) => (
+                <TechBadge key={tech} name={tech} size="xs" />
+              ))}
+            </div>
 
-          <p className="mt-2.5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
-            {project.description[lang]}
-          </p>
+            <div className="grid grid-cols-2 gap-2.5 border-t border-zinc-200/80 dark:border-zinc-800/80 pt-4">
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={
+                  project.isPrivateRepo
+                    ? lang === "es"
+                      ? "Repositorio privado de cliente comercial — Ver perfil de GitHub"
+                      : "Private commercial client repo — View GitHub profile"
+                    : undefined
+                }
+                className="cursor-can-hover inline-flex items-center justify-center gap-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              >
+                {project.isPrivateRepo ? (
+                  <Lock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                ) : (
+                  <GitHubSvg className="h-3.5 w-3.5 shrink-0" />
+                )}
+                <span className="truncate">
+                  {project.isPrivateRepo
+                    ? lang === "es"
+                      ? "Código (NDA / GitHub)"
+                      : "Code (Client NDA)"
+                    : lang === "es"
+                      ? "Código"
+                      : "Source"}
+                </span>
+              </a>
+
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-can-hover group/btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-3.5 py-2.5 text-xs font-semibold text-white dark:text-zinc-950 transition-colors hover:bg-zinc-800 dark:hover:bg-white"
+              >
+                <span>{lang === "es" ? "Demo en vivo" : "Live Demo"}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+              </a>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Pie de Tarjeta: Etiquetas de Tecnologías + Enlaces Obligatorios (Código & Demo en vivo) */}
-      <div className="px-6 pb-6 pt-2">
-        {/* Etiquetas de Tecnologías */}
-        <div className="mb-5 flex flex-wrap gap-1.5">
-          {project.technologies.map((tech) => (
-            <span
-              key={tech}
-              className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/90 dark:bg-zinc-950/90 px-2.5 py-1 font-mono text-[11px] font-medium text-zinc-700 dark:text-zinc-300"
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
-
-        {/* Enlaces Obligatorios: GitHub (Código / Code) y Demo (Demo en vivo / Live Demo) */}
-        <div className="grid grid-cols-2 gap-3 border-t border-zinc-200 dark:border-zinc-800/80 pt-4">
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={
-              project.isPrivateRepo
-                ? lang === "es"
-                  ? "Repositorio privado de cliente comercial — Ver perfil de GitHub"
-                  : "Private commercial client repo — View GitHub profile"
-                : undefined
-            }
-            className="cursor-can-hover inline-flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-2.5 py-2.5 font-mono text-[11px] font-semibold text-zinc-800 dark:text-zinc-200 transition-all hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-          >
-            {project.isPrivateRepo ? (
-              <Lock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-            ) : (
-              <Code2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-            )}
-            <span className="truncate">
-              {project.isPrivateRepo
-                ? lang === "es"
-                  ? "Código (NDA / Perfil GitHub)"
-                  : "Code (Client NDA / GitHub)"
-                : lang === "es"
-                  ? "Código"
-                  : "Code"}
-            </span>
-          </a>
-
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-can-hover inline-flex items-center justify-center gap-2 rounded-lg border border-emerald-600/30 dark:border-emerald-500/40 bg-emerald-500/10 px-3.5 py-2.5 font-mono text-xs font-bold text-emerald-700 dark:text-emerald-300 transition-all hover:border-emerald-500 hover:bg-emerald-500 hover:text-zinc-950"
-          >
-            <span>{lang === "es" ? "Demo en vivo" : "Live Demo"}</span>
-            <ExternalLink className="h-3.5 w-3.5 shrink-0" />
-          </a>
-        </div>
-      </div>
+      </TiltSurface>
     </motion.article>
   );
 }
@@ -228,63 +163,43 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="relative border-t border-zinc-200 dark:border-zinc-800/80 bg-transparent py-20 sm:py-28 transition-colors duration-200"
+      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Encabezado Monumental de Sección */}
+        {/* Centered Monumental Section Header (naresh_ref style) */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.45 }}
-          className="mb-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-end"
+          className="mb-12 text-center"
         >
-          <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 px-3.5 py-1 font-mono text-xs font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 shadow-2xs backdrop-blur-md">
-              <FolderGit2 className="h-3.5 w-3.5" />
-              <span>
-                {lang === "es"
-                  ? "02 // PROYECTOS DESTACADOS"
-                  : "02 // FEATURED PROJECTS"}
-              </span>
-            </div>
+          <h2 className="font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-7xl">
+            {lang === "es" ? "Proyectos" : "Projects"}
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-500 dark:text-zinc-400">
+            {lang === "es"
+              ? "Plataformas comerciales en producción y proyectos universitarios de Ingeniería de Software con IA."
+              : "Live commercial production platforms and university Software Engineering + AI projects."}
+          </p>
 
-            <h2 className="font-display text-4xl font-black uppercase tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl lg:text-6xl">
-              {lang === "es" ? (
-                <>
-                  Producción Comercial &amp;{" "}
-                  <span className="bg-gradient-to-r from-emerald-600 to-indigo-600 dark:from-emerald-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                    Ingeniería IA
-                  </span>
-                </>
-              ) : (
-                <>
-                  Commercial Production &amp;{" "}
-                  <span className="bg-gradient-to-r from-emerald-600 to-indigo-600 dark:from-emerald-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                    AI Engineering
-                  </span>
-                </>
-              )}
-            </h2>
-          </div>
-
-          {/* Filtros Interactivos: Todos / Comerciales & E-Commerce / Proyectos Académicos UCC */}
+          {/* Minimalist Filter Tabs */}
           <div
             role="tablist"
             aria-label={
               lang === "es" ? "Filtrar proyectos" : "Filter projects"
             }
-            className="flex flex-wrap items-center gap-2"
+            className="mt-8 inline-flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/75 dark:bg-zinc-900/75 p-1.5 backdrop-blur-md"
           >
             <button
               type="button"
               role="tab"
               aria-selected={filter === "all"}
               onClick={() => setFilter("all")}
-              className={`cursor-can-hover rounded-xl border px-3.5 py-2 font-mono text-xs font-bold transition-all ${
+              className={`cursor-can-hover rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
                 filter === "all"
-                  ? "border-emerald-500 bg-emerald-500 text-zinc-950 shadow-sm"
-                  : "border-zinc-200 dark:border-zinc-800 bg-white/85 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 hover:border-emerald-500/50"
+                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
               }`}
             >
               {lang === "es"
@@ -297,18 +212,15 @@ export default function Projects() {
               role="tab"
               aria-selected={filter === "commercial"}
               onClick={() => setFilter("commercial")}
-              className={`cursor-can-hover inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 font-mono text-xs font-bold transition-all ${
+              className={`cursor-can-hover rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
                 filter === "commercial"
-                  ? "border-emerald-500 bg-emerald-500 text-zinc-950 shadow-sm"
-                  : "border-zinc-200 dark:border-zinc-800 bg-white/85 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 hover:border-emerald-500/50"
+                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
               }`}
             >
-              <Briefcase className="h-3.5 w-3.5" />
-              <span>
-                {lang === "es"
-                  ? `Comerciales & E-Commerce (${commercialCount})`
-                  : `Commercial & E-Commerce (${commercialCount})`}
-              </span>
+              {lang === "es"
+                ? `Comerciales & E-Commerce (${commercialCount})`
+                : `Commercial & E-Commerce (${commercialCount})`}
             </button>
 
             <button
@@ -316,23 +228,20 @@ export default function Projects() {
               role="tab"
               aria-selected={filter === "academic"}
               onClick={() => setFilter("academic")}
-              className={`cursor-can-hover inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 font-mono text-xs font-bold transition-all ${
+              className={`cursor-can-hover rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
                 filter === "academic"
-                  ? "border-indigo-500 bg-indigo-500 text-white shadow-sm"
-                  : "border-zinc-200 dark:border-zinc-800 bg-white/85 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 hover:border-indigo-500/50"
+                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs"
+                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
               }`}
             >
-              <GraduationCap className="h-3.5 w-3.5" />
-              <span>
-                {lang === "es"
-                  ? `Académicos UCC & IA (${academicCount})`
-                  : `UCC Academic & AI (${academicCount})`}
-              </span>
+              {lang === "es"
+                ? `Académicos UCC & IA (${academicCount})`
+                : `UCC Academic & AI (${academicCount})`}
             </button>
           </div>
         </motion.div>
 
-        {/* Cuadrícula Responsiva Estricta: grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 */}
+        {/* Strict Responsive Grid: grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProjects.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />

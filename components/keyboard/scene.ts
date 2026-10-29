@@ -444,15 +444,14 @@ export function createKeyboardScene(
     };
   });
 
-  // Bongo Cat Topper (bongo-frames.glb) — Positioned upright on the top bezel of the keyboard
-  // so its paws tap along the top row of keys while facing the isometric camera!
-  const catId = group("Bongo cat", layout, [0.35, 2.38, -outerZ + 0.42]);
+  // Keep Bongo Cat anchored to the exact Spline showcase edge from naresh_ref
+  const catId = group("Bongo cat", layout, [-0.277, 2.356, outerZ - 0.631]);
   doc.nodes[catId].transform.rotation = [
-    -38 * (Math.PI / 180),
-    -12 * (Math.PI / 180),
-    -8 * (Math.PI / 180),
-  ] as Vec3;
-  doc.nodes[catId].visible = true;
+    -141.199253,
+    -1.535221,
+    -167.469916,
+  ].map((angle) => (angle * Math.PI) / 180) as Vec3;
+  doc.nodes[catId].visible = false;
 
   const catAssetId = newId("as");
   doc.assets[catAssetId] = {
