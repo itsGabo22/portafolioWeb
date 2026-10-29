@@ -10,13 +10,32 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  MapPin,
+  Clock,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
-import TiltSurface from "./TiltSurface";
 
 type FormStatus = "idle" | "submitting" | "success";
 
 const CONTACT_EMAIL = "contacto@vicardev.digital";
+
+const DIRECT_CHANNELS = [
+  {
+    label: "VICARDEV Agency",
+    handle: "vicardev.digital",
+    href: "https://vicardev.digital",
+  },
+  {
+    label: "GitHub",
+    handle: "@itsGabo22",
+    href: "https://github.com/itsGabo22",
+  },
+  {
+    label: "LinkedIn",
+    handle: "in/itsgabo22",
+    href: "https://www.linkedin.com/in/itsgabo22",
+  },
+];
 
 export default function Contact() {
   const { lang } = useApp();
@@ -82,29 +101,8 @@ export default function Contact() {
       className="relative min-h-screen border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Monumental Centered Header (exact naresh_ref LET'S WORK TOGETHER style) */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.45 }}
-          className="mb-14 text-center"
-        >
-          <h2 className="font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-7xl leading-[0.95]">
-            {lang === "es" ? (
-              <>
-                TRABAJEMOS <br /> JUNTOS
-              </>
-            ) : (
-              <>
-                LET&apos;S WORK <br /> TOGETHER
-              </>
-            )}
-          </h2>
-        </motion.div>
-
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-          {/* Left Column: Frosted Contact Form Card (7 columns on LG while 3D keycaps levitate on the right) */}
+        {/* Left/Center Studio Dispatch Desk (7 cols) + Right Spatial Stage for Levitating 3D Keycaps (5 cols) */}
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -112,230 +110,258 @@ export default function Contact() {
             transition={{ duration: 0.45 }}
             className="lg:col-span-7"
           >
-            <TiltSurface maxTilt={3}>
-              <div className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/75 dark:bg-zinc-950/75 p-6 sm:p-8 shadow-xl backdrop-blur-md">
-                <div className="mb-6">
-                  <h3 className="font-display text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                    {lang === "es" ? "Formulario de Contacto" : "Contact Form"}
-                  </h3>
-                  <p className="mt-1.5 text-sm text-zinc-500 dark:text-zinc-400">
-                    {lang === "es" ? (
-                      <>
-                        Escríbeme directamente a{" "}
-                        <a
-                          href={`mailto:${CONTACT_EMAIL}`}
-                          className="cursor-can-hover font-medium text-zinc-900 dark:text-zinc-200 underline underline-offset-4"
-                        >
-                          {CONTACT_EMAIL}
-                        </a>{" "}
-                        o deja tus datos aquí.
-                      </>
-                    ) : (
-                      <>
-                        Please contact me directly at{" "}
-                        <a
-                          href={`mailto:${CONTACT_EMAIL}`}
-                          className="cursor-can-hover font-medium text-zinc-900 dark:text-zinc-200 underline underline-offset-4"
-                        >
-                          {CONTACT_EMAIL}
-                        </a>{" "}
-                        or drop your info here.
-                      </>
-                    )}
-                  </p>
-                </div>
+            {/* Studio Dispatch Header */}
+            <div className="border-b border-zinc-300/80 dark:border-zinc-800 pb-8">
+              <div className="mb-4 flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-300">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>
+                    {lang === "es"
+                      ? "ESTUDIO ABIERTO A PROYECTOS"
+                      : "STUDIO OPEN FOR COMMISSIONS"}
+                  </span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                  <MapPin className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>Pasto, Colombia</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 dark:text-zinc-400">
+                  <Clock className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                  <span>
+                    {lang === "es" ? "Respuesta < 24h" : "Response < 24h"}
+                  </span>
+                </span>
+              </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div>
-                    <label
-                      htmlFor="contact-name"
-                      className="block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-                    >
-                      {lang === "es" ? "Nombre completo" : "Full Name"}
-                    </label>
-                    <input
-                      id="contact-name"
-                      name="name"
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => {
-                        setName(e.target.value);
-                        if (status === "success") setStatus("idle");
-                      }}
-                      placeholder={
-                        lang === "es" ? "Tu nombre" : "Your Name"
-                      }
-                      className="mt-2 w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-zinc-900 dark:focus:border-zinc-200 focus:outline-none"
-                    />
-                  </div>
+              <h2 className="font-display text-5xl font-black tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-6xl md:text-7xl leading-[0.92]">
+                {lang === "es" ? (
+                  <>
+                    TRABAJEMOS{" "}
+                    <span className="font-serif italic font-normal text-emerald-600 dark:text-emerald-400">
+                      JUNTOS
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    LET&apos;S WORK{" "}
+                    <span className="font-serif italic font-normal text-emerald-600 dark:text-emerald-400">
+                      TOGETHER
+                    </span>
+                  </>
+                )}
+              </h2>
 
-                  <div>
-                    <label
-                      htmlFor="contact-email"
-                      className="block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-                    >
-                      {lang === "es" ? "Correo electrónico" : "Email Address"}
-                    </label>
-                    <input
-                      id="contact-email"
-                      name="email"
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        if (status === "success") setStatus("idle");
-                      }}
-                      placeholder={
-                        lang === "es" ? "tu@correo.com" : "you@example.com"
-                      }
-                      className="mt-2 w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-zinc-900 dark:focus:border-zinc-200 focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="contact-message"
-                      className="block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-                    >
-                      {lang === "es" ? "Tu mensaje" : "Your Message"}
-                    </label>
-                    <textarea
-                      id="contact-message"
-                      name="message"
-                      rows={4}
-                      required
-                      value={message}
-                      onChange={(e) => {
-                        setMessage(e.target.value);
-                        if (status === "success") setStatus("idle");
-                      }}
-                      placeholder={
-                        lang === "es"
-                          ? "Cuéntame sobre tu proyecto..."
-                          : "Tell me about your project..."
-                      }
-                      className="mt-2 w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-zinc-900 dark:focus:border-zinc-200 focus:outline-none"
-                    />
-                  </div>
-
-                  <AnimatePresence>
-                    {errorMsg && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
-                        role="alert"
-                        className="flex items-center gap-2.5 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs font-medium text-red-700 dark:text-red-300"
-                      >
-                        <AlertCircle className="h-4 w-4 shrink-0" />
-                        <span>{errorMsg}</span>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <AnimatePresence>
-                    {status === "success" && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -6 }}
-                        role="status"
-                        aria-live="polite"
-                        className="flex items-center gap-3 rounded-xl border border-emerald-500/50 bg-emerald-500/15 px-4 py-3.5 text-sm font-semibold text-emerald-800 dark:text-emerald-200"
-                      >
-                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                        <span>
-                          {lang === "es"
-                            ? "¡Mensaje enviado con éxito! Te responderé muy pronto."
-                            : "Message sent successfully! I will get back to you soon."}
-                        </span>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <button
-                    type="submit"
-                    disabled={status === "submitting"}
-                    className="cursor-can-hover inline-flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-6 py-3.5 text-sm font-semibold text-white dark:text-zinc-950 transition-colors hover:bg-zinc-800 dark:hover:bg-white disabled:opacity-60"
-                  >
-                    {status === "submitting" ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>
-                          {lang === "es" ? "Enviando..." : "Sending..."}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span>
-                          {lang === "es" ? "Enviar mensaje" : "Send Message"}
-                        </span>
-                        <Send className="h-4 w-4" />
-                      </>
-                    )}
-                  </button>
-                </form>
-
-                {/* Minimalist Direct Contact Bar inside Card Footer */}
-                <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-200/80 dark:border-zinc-800/80 pt-5 text-xs">
-                  <button
-                    type="button"
-                    onClick={handleCopyEmail}
-                    className="cursor-can-hover inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 px-3 py-1.5 font-mono text-zinc-700 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900"
-                  >
+              {/* Magnetic Direct Email Strip */}
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  className="cursor-can-hover group inline-flex items-center gap-3 rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white/85 dark:bg-zinc-900/85 px-4 py-2.5 text-left shadow-xs backdrop-blur-md transition-all hover:border-emerald-500"
+                >
+                  <span className="font-mono text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                    {CONTACT_EMAIL}
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-lg bg-zinc-900 dark:bg-zinc-100 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white dark:text-zinc-950">
                     {copied ? (
                       <>
-                        <Check className="h-3.5 w-3.5 text-emerald-500" />
-                        <span>
-                          {lang === "es" ? "Correo copiado" : "Email copied"}
-                        </span>
+                        <Check className="h-3 w-3 text-emerald-400 dark:text-emerald-600" />
+                        <span>{lang === "es" ? "COPIADO" : "COPIED"}</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="h-3.5 w-3.5" />
-                        <span>{CONTACT_EMAIL}</span>
+                        <Copy className="h-3 w-3" />
+                        <span>{lang === "es" ? "COPIAR" : "COPY"}</span>
                       </>
                     )}
-                  </button>
+                  </span>
+                </button>
 
-                  <div className="flex items-center gap-3">
-                    <a
-                      href="https://github.com/itsGabo22"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="cursor-can-hover inline-flex items-center gap-1 font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
-                    >
-                      <span>GitHub</span>
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    </a>
-                    <a
-                      href="https://www.linkedin.com/in/itsgabo22"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="cursor-can-hover inline-flex items-center gap-1 font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
-                    >
-                      <span>LinkedIn</span>
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    </a>
-                    <a
-                      href="https://vicardev.digital"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="cursor-can-hover inline-flex items-center gap-1 font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white"
-                    >
-                      <span>VICARDEV</span>
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    </a>
-                  </div>
+                {DIRECT_CHANNELS.map((ch) => (
+                  <a
+                    key={ch.label}
+                    href={ch.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cursor-can-hover inline-flex items-center gap-1.5 rounded-2xl border border-zinc-300/80 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-900/70 px-3.5 py-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 backdrop-blur-md transition-colors hover:border-zinc-900 dark:hover:border-zinc-200 hover:text-zinc-950 dark:hover:text-white"
+                  >
+                    <span>{ch.label}</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Minimalist Architectural Studio Dispatch Form (Underline Ledger Style) */}
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 space-y-6 rounded-3xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-950/80 p-6 sm:p-8 backdrop-blur-xl shadow-xl"
+            >
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div className="group">
+                  <label
+                    htmlFor="contact-name"
+                    className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
+                  >
+                    <span className="text-emerald-600 dark:text-emerald-400">
+                      01 //
+                    </span>
+                    <span>
+                      {lang === "es" ? "Nombre completo" : "Full Name"}
+                    </span>
+                  </label>
+                  <input
+                    id="contact-name"
+                    name="name"
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      if (status === "success") setStatus("idle");
+                    }}
+                    placeholder={
+                      lang === "es"
+                        ? "Ej. Carlos Mendoza"
+                        : "e.g. Alex Morgan"
+                    }
+                    className="mt-2 w-full border-b-2 border-zinc-300 dark:border-zinc-800 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                  />
+                </div>
+
+                <div className="group">
+                  <label
+                    htmlFor="contact-email"
+                    className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
+                  >
+                    <span className="text-emerald-600 dark:text-emerald-400">
+                      02 //
+                    </span>
+                    <span>
+                      {lang === "es" ? "Correo electrónico" : "Email Address"}
+                    </span>
+                  </label>
+                  <input
+                    id="contact-email"
+                    name="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (status === "success") setStatus("idle");
+                    }}
+                    placeholder={
+                      lang === "es"
+                        ? "carlos@empresa.com"
+                        : "alex@company.com"
+                    }
+                    className="mt-2 w-full border-b-2 border-zinc-300 dark:border-zinc-800 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                  />
                 </div>
               </div>
-            </TiltSurface>
+
+              <div className="group">
+                <label
+                  htmlFor="contact-message"
+                  className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
+                >
+                  <span className="text-emerald-600 dark:text-emerald-400">
+                    03 //
+                  </span>
+                  <span>
+                    {lang === "es"
+                      ? "Brief o detalles del proyecto"
+                      : "Project Brief & Objectives"}
+                  </span>
+                </label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  rows={3}
+                  required
+                  value={message}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    if (status === "success") setStatus("idle");
+                  }}
+                  placeholder={
+                    lang === "es"
+                      ? "Cuéntame sobre tu plataforma web, e-commerce o integración con IA..."
+                      : "Tell me about your web platform, e-commerce store, or AI integration..."
+                  }
+                  className="mt-2 w-full border-b-2 border-zinc-300 dark:border-zinc-800 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-600 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                />
+              </div>
+
+              <AnimatePresence>
+                {errorMsg && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    role="alert"
+                    className="flex items-center gap-2.5 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs font-medium text-red-700 dark:text-red-300"
+                  >
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>{errorMsg}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {status === "success" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    role="status"
+                    aria-live="polite"
+                    className="flex items-center gap-3 rounded-xl border border-emerald-500/50 bg-emerald-500/15 px-4 py-3.5 text-sm font-semibold text-emerald-800 dark:text-emerald-200"
+                  >
+                    <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <span>
+                      {lang === "es"
+                        ? "¡Mensaje enviado con éxito! Te responderé muy pronto."
+                        : "Message sent successfully! I will get back to you soon."}
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="flex flex-col items-stretch justify-between gap-4 pt-2 sm:flex-row sm:items-center">
+                <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                  {lang === "es"
+                    ? "VICARDEV · ElectroTech Pasto · Obsidion"
+                    : "VICARDEV · ElectroTech Pasto · Obsidion"}
+                </span>
+
+                <button
+                  type="submit"
+                  disabled={status === "submitting"}
+                  className="cursor-can-hover inline-flex items-center justify-center gap-2.5 rounded-2xl bg-zinc-900 dark:bg-zinc-100 px-8 py-4 text-sm font-bold text-white dark:text-zinc-950 transition-all hover:bg-emerald-600 dark:hover:bg-emerald-400 dark:hover:text-zinc-950 disabled:opacity-60"
+                >
+                  {status === "submitting" ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>
+                        {lang === "es" ? "Enviando..." : "Sending..."}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span>
+                        {lang === "es" ? "Enviar mensaje" : "Send Message"}
+                      </span>
+                      <Send className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </motion.div>
 
-          {/* Right Column: Open Stage for the Levitating Zero-Gravity 3D Keycaps */}
-          <div className="pointer-events-none hidden min-h-[420px] lg:col-span-5 lg:block" />
+          {/* Right Column: Open Spatial Stage for the Levitating Zero-Gravity 3D Keycaps */}
+          <div className="pointer-events-none hidden min-h-[520px] lg:col-span-5 lg:block" />
         </div>
       </div>
     </section>

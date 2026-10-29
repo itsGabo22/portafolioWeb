@@ -28,9 +28,9 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.45, delay: index * 0.05 }}
-      className="h-full"
+      className="flex w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333333%-1rem)]"
     >
-      <TiltSurface maxTilt={6} className="h-full">
+      <TiltSurface maxTilt={6} className="w-full h-full">
         <div className="group flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/85 dark:bg-zinc-900/75 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-xl">
           <div>
             {/* Panoramic Showcase Window (naresh_ref 3/2 aspect ratio with bottom gradient title overlay) */}
@@ -241,8 +241,8 @@ export default function Projects() {
           </div>
         </motion.div>
 
-        {/* Strict Responsive Grid: grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Centered Responsive Flex-Grid Architecture (1 col mobile, 2 cols MD, 3 cols LG with automatic horizontal centering of orphan cards on the final row) */}
+        <div className="flex flex-wrap justify-center gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
           ))}

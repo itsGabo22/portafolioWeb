@@ -1,14 +1,28 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import React, { useRef, useState } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionValueEvent,
+} from "framer-motion";
+import {
+  ArrowUpRight,
+  Cpu,
+  Layers,
+  Cloud,
+  Sparkles,
+} from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import TechBadge from "./TechBadge";
 import TiltSurface from "./TiltSurface";
 
 interface TimelineItem {
   id: string;
+  eraIndex: number;
+  code: string;
   active?: boolean;
   period: {
     es: string;
@@ -30,9 +44,90 @@ interface TimelineItem {
   highlights: string[];
 }
 
+interface EngineeringEra {
+  index: number;
+  code: string;
+  year: string;
+  rangeLabel: string;
+  title: {
+    es: string;
+    en: string;
+  };
+  subtitle: {
+    es: string;
+    en: string;
+  };
+  accentColor: string;
+}
+
+const ENGINEERING_ERAS: EngineeringEra[] = [
+  {
+    index: 0,
+    code: "ERA 01 // LOGIC & FOUNDATIONS",
+    year: "2023",
+    rangeLabel: "00% – 25%",
+    title: {
+      es: "Lógica Algorítmica & Circuitos",
+      en: "Algorithmic Logic & Circuits",
+    },
+    subtitle: {
+      es: "Fundamentos de programación, Linux y electrónica aplicada",
+      en: "Foundational programming, Linux & applied electronics",
+    },
+    accentColor: "#10b981",
+  },
+  {
+    index: 1,
+    code: "ERA 02 // SOFTWARE ARCHITECTURE & ACADEMIA",
+    year: "2024 – 2025",
+    rangeLabel: "25% – 50%",
+    title: {
+      es: "Ingeniería de Software & Sistemas UCC",
+      en: "Software Engineering & UCC Systems",
+    },
+    subtitle: {
+      es: "Estructuras de datos, arquitectura relacional/PostGIS y backends tipados",
+      en: "Data structures, relational/PostGIS architecture & typed backends",
+    },
+    accentColor: "#06b6d4",
+  },
+  {
+    index: 2,
+    code: "ERA 03 // PRODUCTION E-COMMERCE & CLOUD",
+    year: "2025 – 2026",
+    rangeLabel: "50% – 75%",
+    title: {
+      es: "E-Commerce en Producción & Cloud",
+      en: "Production E-Commerce & Cloud Scale",
+    },
+    subtitle: {
+      es: "Despliegues comerciales para Brisal, Blue Velvet, Carlin y ElectroTech Pasto",
+      en: "Commercial rollouts for Brisal, Blue Velvet, Carlin & ElectroTech Pasto",
+    },
+    accentColor: "#6366f1",
+  },
+  {
+    index: 3,
+    code: "ERA 04 // AI ECOSYSTEMS & VICARDEV LEADERSHIP",
+    year: "2026+",
+    rangeLabel: "75% – 100%",
+    title: {
+      es: "Ecosistemas con IA & Liderazgo VICARDEV",
+      en: "AI Ecosystems & VICARDEV Leadership",
+    },
+    subtitle: {
+      es: "Agentes con Gemini AI, apps nativas Rust/Tauri, Wear OS y dirección técnica",
+      en: "Gemini AI agents, Rust/Tauri native apps, Wear OS & technical leadership",
+    },
+    accentColor: "#10b981",
+  },
+];
+
 const WORK_EXPERIENCE: TimelineItem[] = [
   {
     id: "work-vicardev",
+    eraIndex: 3,
+    code: "SYS-W01",
     active: true,
     period: {
       es: "Ene 2026 - Presente",
@@ -51,10 +146,19 @@ const WORK_EXPERIENCE: TimelineItem[] = [
       es: "Liderazgo de arquitectura y desarrollo integral de tiendas online (e-commerce) y landing pages de alta gama entregadas en producción (Brisal by Salvador, Blue Velvet, Carlin Cosméticos) con Next.js, Astro, Supabase y Vercel.",
       en: "Architecture leadership and end-to-end development of high-end commercial e-commerce stores and landing pages in live production (Brisal by Salvador, Blue Velvet, Carlin Cosmetics) with Next.js, Astro, Supabase, and Vercel.",
     },
-    highlights: ["Next.js", "Astro", "TypeScript", "Supabase", "PostgreSQL", "Vercel"],
+    highlights: [
+      "Next.js",
+      "Astro",
+      "TypeScript",
+      "Supabase",
+      "PostgreSQL",
+      "Vercel",
+    ],
   },
   {
     id: "work-electrotech",
+    eraIndex: 2,
+    code: "SYS-W02",
     active: true,
     period: {
       es: "Sep 2026 - Presente",
@@ -73,10 +177,18 @@ const WORK_EXPERIENCE: TimelineItem[] = [
       es: "Diseño y puesta en producción de la plataforma digital de automatización industrial y servicios electromecánicos, integrando flujos transaccionales con Resend API, configuración DNS y SEO técnico regional.",
       en: "Design and production rollout of the industrial automation and electromechanical services web platform, integrating transactional workflows with Resend API, DNS configuration, and regional technical SEO.",
     },
-    highlights: ["Next.js", "TypeScript", "Resend API", "Cloudflare", "Tailwind CSS"],
+    highlights: [
+      "Next.js",
+      "TypeScript",
+      "Resend API",
+      "Cloudflare",
+      "Tailwind CSS",
+    ],
   },
   {
     id: "work-obsidion",
+    eraIndex: 3,
+    code: "SYS-W03",
     active: true,
     period: {
       es: "Mar 2026 - Presente",
@@ -101,6 +213,8 @@ const WORK_EXPERIENCE: TimelineItem[] = [
 const ACADEMIC_EXPERIENCE: TimelineItem[] = [
   {
     id: "acad-ucc",
+    eraIndex: 1,
+    code: "EDU-A01",
     active: true,
     period: {
       es: "2024 - Presente (5.º Semestre)",
@@ -122,6 +236,8 @@ const ACADEMIC_EXPERIENCE: TimelineItem[] = [
   },
   {
     id: "acad-practicum",
+    eraIndex: 2,
+    code: "EDU-A02",
     active: false,
     period: {
       es: "2025 - 2026",
@@ -143,6 +259,8 @@ const ACADEMIC_EXPERIENCE: TimelineItem[] = [
   },
   {
     id: "acad-highschool",
+    eraIndex: 0,
+    code: "EDU-A03",
     active: false,
     period: {
       es: "Dic 2023",
@@ -164,52 +282,222 @@ const ACADEMIC_EXPERIENCE: TimelineItem[] = [
   },
 ];
 
+function EraSchematicBackdrop({ activeEra }: { activeEra: number }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 overflow-hidden opacity-45 dark:opacity-35"
+    >
+      {/* Ambient radial glow shifting with active Era */}
+      <div
+        className="absolute inset-0 transition-all duration-700"
+        style={{
+          background:
+            activeEra === 0
+              ? "radial-gradient(circle at 20% 25%, rgba(16,185,129,0.12), transparent 55%)"
+              : activeEra === 1
+                ? "radial-gradient(circle at 75% 35%, rgba(6,182,212,0.13), transparent 55%)"
+                : activeEra === 2
+                  ? "radial-gradient(circle at 30% 70%, rgba(99,102,241,0.14), transparent 55%)"
+                  : "radial-gradient(circle at 70% 75%, rgba(16,185,129,0.15), rgba(99,102,241,0.1), transparent 65%)",
+        }}
+      />
+
+      {/* Dynamic SVG Engineering Schematics per Era */}
+      <svg
+        viewBox="0 0 1200 800"
+        fill="none"
+        className="h-full w-full stroke-zinc-400/35 dark:stroke-zinc-600/35"
+      >
+        {/* Subtle blueprint coordinate crosshairs */}
+        <path
+          d="M 80 0 V 800 M 1120 0 V 800 M 0 120 H 1200 M 0 680 H 1200"
+          strokeWidth="0.75"
+          strokeDasharray="4 8"
+        />
+
+        {activeEra === 0 && (
+          <g className="stroke-emerald-600/35 dark:stroke-emerald-400/30" strokeWidth="1.2">
+            {/* Stage I: Logic Gates & Circuit Traces */}
+            <path d="M 140 220 H 320 L 370 270 H 540" />
+            <path d="M 140 320 H 290 L 340 270" />
+            <circle cx="140" cy="220" r="5" />
+            <circle cx="140" cy="320" r="5" />
+            <circle cx="540" cy="270" r="7" />
+            <rect x="640" y="180" width="180" height="120" rx="8" strokeDasharray="6 4" />
+            <path d="M 820 240 H 980 L 1030 300" />
+          </g>
+        )}
+
+        {activeEra === 1 && (
+          <g className="stroke-cyan-600/35 dark:stroke-cyan-400/30" strokeWidth="1.2">
+            {/* Stage II: Relational Architecture & Isometric Wireframes */}
+            <polygon points="600,140 760,220 600,300 440,220" />
+            <polygon points="600,240 760,320 600,400 440,320" />
+            <polygon points="600,340 760,420 600,500 440,420" />
+            <line x1="440" y1="220" x2="440" y2="420" />
+            <line x1="760" y1="220" x2="760" y2="420" />
+            <line x1="600" y1="300" x2="600" y2="500" />
+          </g>
+        )}
+
+        {activeEra === 2 && (
+          <g className="stroke-indigo-600/35 dark:stroke-indigo-400/30" strokeWidth="1.2">
+            {/* Stage III: Cloud Topology & High-Conversion Waves */}
+            <path d="M 100 450 Q 350 280, 600 450 T 1100 450" />
+            <path d="M 100 510 Q 350 340, 600 510 T 1100 510" strokeDasharray="5 5" />
+            <circle cx="350" cy="365" r="14" />
+            <circle cx="600" cy="450" r="18" />
+            <circle cx="850" cy="535" r="14" />
+          </g>
+        )}
+
+        {activeEra === 3 && (
+          <g className="stroke-emerald-500/40 dark:stroke-emerald-400/35" strokeWidth="1.2">
+            {/* Stage IV: Neural Constellation & Autonomous Nodes */}
+            <line x1="260" y1="240" x2="520" y2="190" />
+            <line x1="520" y1="190" x2="840" y2="280" />
+            <line x1="260" y1="240" x2="460" y2="460" />
+            <line x1="520" y1="190" x2="720" y2="520" />
+            <line x1="460" y1="460" x2="720" y2="520" />
+            <line x1="840" y1="280" x2="720" y2="520" />
+            <circle cx="260" cy="240" r="8" />
+            <circle cx="520" cy="190" r="12" />
+            <circle cx="840" cy="280" r="10" />
+            <circle cx="460" cy="460" r="9" />
+            <circle cx="720" cy="520" r="14" />
+          </g>
+        )}
+      </svg>
+    </div>
+  );
+}
+
 function TimelineColumn({
   items,
   trackLabel,
+  trackCode,
+  activeEra,
+  onHoverEra,
 }: {
   items: TimelineItem[];
   trackLabel: string;
+  trackCode: string;
+  activeEra: number;
+  onHoverEra: (eraIndex: number) => void;
 }) {
   const { lang } = useApp();
+  const columnRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: columnRef,
+    offset: ["start 80%", "end 35%"],
+  });
+
+  const smoothSpine = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 26,
+    mass: 0.4,
+  });
+
+  const orbTop = useTransform(smoothSpine, [0, 1], ["0%", "100%"]);
 
   return (
-    <div className="flex flex-col">
-      <div className="mb-8">
+    <div ref={columnRef} className="flex flex-col">
+      <div className="mb-8 flex items-baseline justify-between border-b border-zinc-200/80 dark:border-zinc-800/80 pb-4">
         <h3 className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
           {trackLabel}
         </h3>
+        <span className="font-mono text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+          {trackCode}
+        </span>
       </div>
 
       {/* Required Vertical Timeline Line: border-l-2 border-emerald-500/40 dark:border-emerald-400/40 */}
       <div className="relative ml-3 space-y-8 border-l-2 border-emerald-500/40 dark:border-emerald-400/40 pl-6 sm:pl-8">
-        {items.map((item, index) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.4, delay: index * 0.08 }}
-            className="group relative"
-          >
-            {/* Required Absolute Timeline Indicator Dot: absolute -left-[9px] */}
-            <span className="absolute -left-[9px] top-7 h-4 w-4 rounded-full border-2 border-zinc-900 dark:border-zinc-100 bg-white dark:bg-zinc-950 transition-transform duration-200 group-hover:scale-125 group-hover:border-emerald-500" />
+        {/* Scroll-Driven Progressive Laser Spine Overlay */}
+        <motion.div
+          aria-hidden="true"
+          style={{ scaleY: smoothSpine }}
+          className="pointer-events-none absolute -left-[2px] top-0 bottom-0 w-[2px] origin-top bg-gradient-to-b from-emerald-500 via-cyan-400 to-indigo-500 shadow-[0_0_12px_rgba(16,185,129,0.75)]"
+        />
 
-            <TiltSurface maxTilt={4}>
-              <div className="rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white/85 dark:bg-zinc-900/75 p-6 shadow-sm backdrop-blur-md transition-colors duration-300 hover:border-zinc-400 dark:hover:border-zinc-600">
-                <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+        {/* Glowing Leading Laser Orb */}
+        <motion.span
+          aria-hidden="true"
+          style={{ top: orbTop }}
+          className="pointer-events-none absolute -left-[6px] h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_14px_3px_rgba(16,185,129,0.9)]"
+        />
+
+        {items.map((item, index) => {
+          const isEraHighlighted = activeEra === item.eraIndex;
+
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.4, delay: index * 0.08 }}
+              onMouseEnter={() => onHoverEra(item.eraIndex)}
+              className="group relative"
+            >
+              {/* Required Absolute Timeline Indicator Dot: absolute -left-[9px] */}
+              <span
+                className={`absolute -left-[9px] top-7 h-4 w-4 rounded-full border-2 transition-all duration-300 ${
+                  isEraHighlighted
+                    ? "scale-125 border-emerald-500 bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.7)]"
+                    : "border-zinc-900 dark:border-zinc-100 bg-white dark:bg-zinc-950 group-hover:scale-125 group-hover:border-emerald-500"
+                }`}
+              />
+
+              <TiltSurface maxTilt={4}>
+                <div
+                  className={`rounded-2xl border p-6 shadow-sm backdrop-blur-md transition-all duration-300 ${
+                    isEraHighlighted
+                      ? "border-emerald-500/60 dark:border-emerald-400/50 bg-white/95 dark:bg-zinc-900/90 shadow-lg"
+                      : "border-zinc-200/80 dark:border-zinc-800/80 bg-white/85 dark:bg-zinc-900/75 hover:border-zinc-400 dark:hover:border-zinc-600"
+                  }`}
+                >
+                  {/* Top Telemetry Strip */}
+                  <div className="mb-3 flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800/90 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-300">
+                      <span>{item.code}</span>
+                      <span className="text-zinc-300 dark:text-zinc-600">·</span>
+                      <span className="text-emerald-600 dark:text-emerald-400">
+                        ERA 0{item.eraIndex + 1}
+                      </span>
+                    </span>
+
+                    <div className="flex items-center gap-2 font-mono text-xs text-zinc-500 dark:text-zinc-400 shrink-0">
+                      <span className="relative flex h-2 w-2 shrink-0">
+                        {item.active && (
+                          <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500/60" />
+                        )}
+                        <span
+                          className={`relative h-2 w-2 rounded-full ${
+                            item.active
+                              ? "bg-emerald-500"
+                              : "border border-zinc-400 dark:border-zinc-600"
+                          }`}
+                        />
+                      </span>
+                      <span>{item.period[lang]}</span>
+                    </div>
+                  </div>
+
                   <div>
                     <h4 className="font-display text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                       {item.title[lang]}
                     </h4>
-                    <div className="mt-0.5 flex items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
                       <span>{item.organization[lang]}</span>
                       {item.url && (
                         <a
                           href={item.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="cursor-can-hover inline-flex items-center gap-0.5 text-xs font-semibold text-zinc-900 dark:text-zinc-200 underline underline-offset-4"
+                          className="cursor-can-hover inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 underline underline-offset-4"
                         >
                           <span>Web</span>
                           <ArrowUpRight className="h-3 w-3" />
@@ -218,38 +506,21 @@ function TimelineColumn({
                     </div>
                   </div>
 
-                  {/* Period indicator with live ping dot (from naresh_ref ExperienceCard) */}
-                  <div className="flex items-center gap-2 font-mono text-xs text-zinc-500 dark:text-zinc-400 shrink-0">
-                    <span className="relative flex h-2 w-2 shrink-0">
-                      {item.active && (
-                        <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500/60" />
-                      )}
-                      <span
-                        className={`relative h-2 w-2 rounded-full ${
-                          item.active
-                            ? "bg-emerald-500"
-                            : "border border-zinc-400 dark:border-zinc-600"
-                        }`}
-                      />
-                    </span>
-                    <span>{item.period[lang]}</span>
+                  <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+                    {item.description[lang]}
+                  </p>
+
+                  {/* Real Vector SVG Tech Badges */}
+                  <div className="mt-5 flex flex-wrap gap-1.5 border-t border-zinc-200/60 dark:border-zinc-800/60 pt-4">
+                    {item.highlights.map((tech) => (
+                      <TechBadge key={tech} name={tech} size="xs" />
+                    ))}
                   </div>
                 </div>
-
-                <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
-                  {item.description[lang]}
-                </p>
-
-                {/* Real Vector SVG Tech Badges (matching naresh_ref Experience skills row) */}
-                <div className="mt-5 flex flex-wrap gap-1.5">
-                  {item.highlights.map((tech) => (
-                    <TechBadge key={tech} name={tech} size="xs" />
-                  ))}
-                </div>
-              </div>
-            </TiltSurface>
-          </motion.div>
-        ))}
+              </TiltSurface>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
@@ -257,37 +528,160 @@ function TimelineColumn({
 
 export default function Experience() {
   const { lang } = useApp();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [activeEra, setActiveEra] = useState<number>(0);
+  const [scrollPct, setScrollPct] = useState<number>(0);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 75%", "end 25%"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const clamped = Math.max(0, Math.min(1, latest));
+    const pct = Math.round(clamped * 100);
+    setScrollPct(pct);
+    const nextEra =
+      clamped < 0.25 ? 0 : clamped < 0.5 ? 1 : clamped < 0.75 ? 2 : 3;
+    setActiveEra(nextEra);
+  });
+
+  const currentEraObj = ENGINEERING_ERAS[activeEra] ?? ENGINEERING_ERAS[0];
+
+  const renderEraIcon = (idx: number) => {
+    switch (idx) {
+      case 0:
+        return <Cpu className="h-4 w-4" />;
+      case 1:
+        return <Layers className="h-4 w-4" />;
+      case 2:
+        return <Cloud className="h-4 w-4" />;
+      default:
+        return <Sparkles className="h-4 w-4" />;
+    }
+  };
 
   return (
     <section
       id="experience"
-      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200"
+      ref={sectionRef}
+      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Centered Monumental Section Header (naresh_ref style) */}
+      {/* Scroll-Driven 4-Stage Engineering Evolution Backdrop */}
+      <EraSchematicBackdrop activeEra={activeEra} />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Centered Monumental Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.45 }}
-          className="mb-16 text-center"
+          className="mb-10 text-center"
         >
-          <h2 className="font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-7xl">
+          <span className="inline-flex items-center gap-2 rounded-full border border-zinc-300/80 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 px-3.5 py-1 font-mono text-[11px] uppercase tracking-widest text-zinc-600 dark:text-zinc-300 backdrop-blur-md">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>
+              {lang === "es"
+                ? "Línea de Tiempo Reactiva al Scroll · 2023 -> 2026"
+                : "Scroll-Scrubbed Engineering Evolution · 2023 -> 2026"}
+            </span>
+          </span>
+          <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-7xl">
             {lang === "es" ? "Experiencia" : "Experience"}
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-500 dark:text-zinc-400">
             {lang === "es"
-              ? "Mi trayectoria profesional y académica."
-              : "My professional and academic journey."}
+              ? "Evolución en 4 etapas: desde fundamentos lógicos y formación en Ingeniería de Software hasta e-commerce en producción y ecosistemas con IA."
+              : "4-stage evolution: from algorithmic foundations and Software Engineering academia to live production e-commerce and AI ecosystems."}
           </p>
         </motion.div>
 
+        {/* Interactive Scroll-Scrubbed "Era Indicator HUD" Console */}
+        <div className="mb-14 rounded-2xl border border-zinc-200/90 dark:border-zinc-800/90 bg-white/85 dark:bg-zinc-900/85 p-4 sm:p-5 shadow-md backdrop-blur-xl">
+          <div className="flex flex-col justify-between gap-4 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-4 lg:flex-row lg:items-center">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 shadow-xs">
+                {renderEraIcon(currentEraObj.index)}
+              </span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                    {currentEraObj.code}
+                  </span>
+                  <span className="rounded bg-zinc-200/80 dark:bg-zinc-800 px-1.5 py-0.5 font-mono text-[10px] text-zinc-700 dark:text-zinc-300">
+                    {currentEraObj.year}
+                  </span>
+                </div>
+                <p className="font-display text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50">
+                  {currentEraObj.title[lang]}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 lg:justify-end">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm">
+                {currentEraObj.subtitle[lang]}
+              </p>
+              <div className="text-right font-mono">
+                <span className="block text-[10px] uppercase tracking-widest text-zinc-400">
+                  {lang === "es" ? "PROGRESO" : "TIMELINE"}
+                </span>
+                <span className="text-lg font-bold tabular-nums text-zinc-900 dark:text-zinc-100">
+                  {String(scrollPct).padStart(2, "0")}%
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* 4-Stage Interactive Era Selector Strip */}
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {ENGINEERING_ERAS.map((era) => {
+              const isSelected = activeEra === era.index;
+              return (
+                <button
+                  key={era.code}
+                  type="button"
+                  onClick={() => setActiveEra(era.index)}
+                  className={`cursor-can-hover flex flex-col items-start rounded-xl border p-2.5 text-left transition-all ${
+                    isSelected
+                      ? "border-emerald-500/60 bg-emerald-500/10 dark:bg-emerald-500/15"
+                      : "border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50/70 dark:bg-zinc-950/50 hover:border-zinc-400 dark:hover:border-zinc-700"
+                  }`}
+                >
+                  <div className="flex w-full items-center justify-between font-mono text-[10px]">
+                    <span
+                      className={
+                        isSelected
+                          ? "font-bold text-emerald-700 dark:text-emerald-300"
+                          : "text-zinc-500 dark:text-zinc-400"
+                      }
+                    >
+                      0{era.index + 1} · {era.year}
+                    </span>
+                    <span className="text-zinc-400 dark:text-zinc-500">
+                      {era.rangeLabel}
+                    </span>
+                  </div>
+                  <span className="mt-1 line-clamp-1 font-display text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                    {era.title[lang]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Dual Track Columns with Progressive Laser Spines */}
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-10">
           <TimelineColumn
             items={WORK_EXPERIENCE}
             trackLabel={
               lang === "es" ? "Experiencia Laboral" : "Work Experience"
             }
+            trackCode="TRACK // PRODUCTION & LEADERSHIP"
+            activeEra={activeEra}
+            onHoverEra={setActiveEra}
           />
 
           <TimelineColumn
@@ -295,6 +689,9 @@ export default function Experience() {
             trackLabel={
               lang === "es" ? "Formación Académica" : "Academic Background"
             }
+            trackCode="TRACK // UCC SOFTWARE ENGINEERING"
+            activeEra={activeEra}
+            onHoverEra={setActiveEra}
           />
         </div>
       </div>
