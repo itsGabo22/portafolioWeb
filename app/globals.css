@@ -271,6 +271,16 @@ main [data-interactive] {
   animation: indeterminate 1.3s var(--ease-in-out) infinite;
 }
 
+/* Device Lab 2D fallback: gentle float (frozen under reduced motion) */
+@keyframes device-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.device-float > * {
+  animation: device-float 5.5s var(--ease-in-out) infinite;
+  animation-delay: inherit;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
