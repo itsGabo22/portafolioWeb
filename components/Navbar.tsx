@@ -28,8 +28,8 @@ const NAV_ITEMS: NavItem[] = [
   { label: { es: "Proyectos", en: "Projects" }, href: "#projects" },
   { label: { es: "Testimonios", en: "Testimonials" }, href: "#testimonials" },
   { label: { es: "Experiencia", en: "Experience" }, href: "#experience" },
-  { label: { es: "Skills", en: "Skills" }, href: "#skills" },
   { label: { es: "Contacto", en: "Contact" }, href: "#contact" },
+  { label: { es: "Skills", en: "Skills" }, href: "#skills" },
 ];
 
 export default function Navbar() {
@@ -49,8 +49,8 @@ export default function Navbar() {
         "projects",
         "testimonials",
         "experience",
-        "skills",
         "contact",
+        "skills",
       ];
 
       const scrollPosition = window.scrollY + 160;

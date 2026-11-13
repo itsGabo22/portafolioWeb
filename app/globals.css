@@ -31,6 +31,12 @@ html.dark {
   color-scheme: dark;
 }
 
+/* Sticky navbar offset so anchored sections are not hidden under it */
+section[id],
+footer[id] {
+  scroll-margin-top: 4.5rem;
+}
+
 body {
   background-color: var(--background);
   background-image:

@@ -26,8 +26,8 @@ const QUICK_LINKS = [
   { href: "#projects", label: { es: "Proyectos", en: "Projects" } },
   { href: "#testimonials", label: { es: "Testimonios", en: "Testimonials" } },
   { href: "#experience", label: { es: "Experiencia", en: "Experience" } },
-  { href: "#skills", label: { es: "Skills", en: "Skills" } },
   { href: "#contact", label: { es: "Contacto", en: "Contact" } },
+  { href: "#skills", label: { es: "Skills", en: "Skills" } },
 ];
 
 const subscribeNoop = () => () => {};
@@ -47,7 +47,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative z-20 border-t border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-950/65 backdrop-blur-2xl backdrop-saturate-150 text-zinc-600 dark:text-zinc-400 transition-colors duration-200">
+    <footer id="footer" className="relative z-20 border-t border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-950/65 backdrop-blur-2xl backdrop-saturate-150 text-zinc-600 dark:text-zinc-400 transition-colors duration-200">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           {/* Brand & Mandatory Credit */}
