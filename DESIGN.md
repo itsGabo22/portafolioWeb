@@ -32,7 +32,7 @@ Todo texto cumple WCAG AA (≥4.5:1 normal, ≥3:1 grande). Los moods de la secc
 - **Mono:** pila del sistema (`ui-monospace`, Cascadia Code, Consolas) — no se descarga ninguna tercera familia.
 - **Serif de moods:** pila del sistema (`Iowan Old Style`, Palatino, Georgia) — solo dentro de los moods (RDR2, Bloodborne); no es una familia descargada.
 
-Escala fluida (clamp): `--text-display` 2.6→5.25 rem · `--text-h2` 2→3.25 rem · `--text-h3` 1.25→1.5 rem · `--text-lead` 1.05→1.25 rem · cuerpo 1 rem · small 0.875 rem · micro 0.75 rem. Interlineado: títulos 1.05, cuerpo 1.6. Línea de lectura ≤ 70 caracteres (`max-w-prose`/`max-w-2xl`).
+Escala fluida (clamp): `--text-display` 2.6→5.25 rem · `--text-h2` 2.25→4.5 rem · `--text-h3` 1.25→1.5 rem · `--text-lead` 1.05→1.25 rem · cuerpo 1 rem · small 0.875 rem · micro 0.75 rem. Interlineado: títulos 1.05, cuerpo 1.6. Línea de lectura ≤ 70 caracteres (`max-w-prose`/`max-w-2xl`).
 
 ## 4. Espaciado y layout
 
