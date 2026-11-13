@@ -2,24 +2,150 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ─────────────────────────────────────────────────────────────
+   Design tokens — see DESIGN.md. Components consume these through
+   the Tailwind theme (bg-surface, text-ink, rounded-card, ease-out-expo…)
+   or directly as var(--token). No raw hex values in components.
+   ───────────────────────────────────────────────────────────── */
+
+/* Mood variables are registered so the Beyond panel can morph them smoothly */
+@property --mood-bg { syntax: "<color>"; inherits: true; initial-value: #0b1210; }
+@property --mood-surface { syntax: "<color>"; inherits: true; initial-value: #121c19; }
+@property --mood-fg { syntax: "<color>"; inherits: true; initial-value: #ecfdf5; }
+@property --mood-muted { syntax: "<color>"; inherits: true; initial-value: #a7c4b8; }
+@property --mood-accent { syntax: "<color>"; inherits: true; initial-value: #34d399; }
+@property --mood-accent-2 { syntax: "<color>"; inherits: true; initial-value: #6366f1; }
+@property --mood-line { syntax: "<color>"; inherits: true; initial-value: #24443a; }
+
 :root {
-  --background: #f8fafc;
-  --foreground: #09090b;
-  --accent-emerald: #10b981;
-  --accent-indigo: #6366f1;
+  /* colour — light (default) */
+  --surface-0: #fafafa;          /* page */
+  --surface-1: #ffffff;          /* cards */
+  --surface-2: #f4f4f5;          /* insets, chips */
+  --ink: #18181b;                /* primary text  17.7:1 on surface-1 */
+  --ink-muted: #52525b;          /* secondary     7.7:1 */
+  --ink-subtle: #71717a;         /* tertiary      4.8:1 (≥14px only) */
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --accent: #047857;             /* emerald-700 text/links 5.5:1 */
+  --accent-strong: #065f46;
+  --accent-fill: #10b981;        /* emerald-500 fills, rings, glows */
+  --accent-soft: rgb(16 185 129 / 0.1);
+  --accent-2: #4f46e5;           /* indigo-600 secondary accent 6.3:1 */
+  --warn: #b45309;               /* amber-700, "in progress" 5.0:1 */
+  --warn-soft: rgb(245 158 11 / 0.12);
+  --danger: #b91c1c;
+  --scrim: rgb(250 250 250 / 0.72);
+
+  /* type — two families: display + text (mono falls back to the system stack) */
+  --text-display: clamp(2.6rem, 1.4rem + 5.2vw, 5.25rem);
+  --text-h2: clamp(2rem, 1.35rem + 2.6vw, 3.25rem);
+  --text-h3: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --text-lead: clamp(1.05rem, 0.98rem + 0.35vw, 1.25rem);
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-micro: 0.75rem;
+  --leading-tight: 1.05;
+  --leading-body: 1.6;
+
+  /* spacing rhythm (4px base) */
+  --space-section: clamp(5rem, 3.5rem + 6vw, 9rem);
+  --space-gutter: clamp(1rem, 0.6rem + 1.6vw, 2rem);
+
+  /* radii — hierarchy, not one radius everywhere */
+  --radius-chip: 0.5rem;
+  --radius-control: 0.75rem;
+  --radius-card: 1.25rem;
+  --radius-stage: 2rem;
+
+  /* elevation */
+  --shadow-1: 0 1px 2px rgb(24 24 27 / 0.06), 0 1px 1px rgb(24 24 27 / 0.04);
+  --shadow-2: 0 8px 24px -8px rgb(24 24 27 / 0.14), 0 2px 6px rgb(24 24 27 / 0.06);
+  --shadow-3: 0 24px 60px -20px rgb(24 24 27 / 0.28), 0 6px 16px rgb(24 24 27 / 0.08);
+  --glow-accent: 0 0 0 1px rgb(16 185 129 / 0.35), 0 10px 40px -12px rgb(16 185 129 / 0.45);
+
+  /* motion */
+  --dur-instant: 90ms;
+  --dur-fast: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 520ms;
+  --dur-mood: 700ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* layers */
+  --z-scene: 1;
+  --z-content: 10;
+  --z-nav: 50;
+  --z-overlay: 80;
 }
 
 .dark {
-  --background: #09090b;
-  --foreground: #fafafa;
+  --surface-0: #09090b;
+  --surface-1: #18181b;
+  --surface-2: #27272a;
+  --ink: #fafafa;                /* 19.1:1 on surface-0 */
+  --ink-muted: #d4d4d8;          /* 13.5:1 */
+  --ink-subtle: #a1a1aa;         /* 7.8:1 */
+  --line: #27272a;
+  --line-strong: #3f3f46;
+  --accent: #34d399;             /* emerald-400 10.4:1 */
+  --accent-strong: #6ee7b7;
+  --accent-fill: #10b981;
+  --accent-soft: rgb(16 185 129 / 0.14);
+  --accent-2: #818cf8;           /* indigo-400 6.7:1 */
+  --warn: #fbbf24;
+  --warn-soft: rgb(251 191 36 / 0.12);
+  --danger: #f87171;
+  --scrim: rgb(9 9 11 / 0.72);
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 10px 30px -10px rgb(0 0 0 / 0.6);
+  --shadow-3: 0 30px 70px -24px rgb(0 0 0 / 0.75);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  --color-background: var(--surface-0);
+  --color-foreground: var(--ink);
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-2: var(--accent-2);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-mood-bg: var(--mood-bg);
+  --color-mood-surface: var(--mood-surface);
+  --color-mood-fg: var(--mood-fg);
+  --color-mood-muted: var(--mood-muted);
+  --color-mood-accent: var(--mood-accent);
+  --color-mood-line: var(--mood-line);
+
+  --font-sans: var(--font-text), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), var(--font-text), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Code", Consolas, monospace;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+
+  --radius-chip: var(--radius-chip);
+  --radius-control: var(--radius-control);
+  --radius-card: var(--radius-card);
+  --radius-stage: var(--radius-stage);
+
+  --shadow-elev-1: var(--shadow-1);
+  --shadow-elev-2: var(--shadow-2);
+  --shadow-elev-3: var(--shadow-3);
+  --shadow-glow: var(--glow-accent);
+
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-spring: var(--ease-spring);
 }
 
 html {
@@ -38,30 +164,28 @@ footer[id] {
 }
 
 body {
-  background-color: var(--background);
+  background-color: var(--surface-0);
   background-image:
-    radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.08), transparent 44%),
-    radial-gradient(circle at 16% 78%, rgba(99, 102, 241, 0.07), transparent 46%),
-    linear-gradient(180deg, #ffffff 0%, #f4f4f5 52%, #fafafa 100%);
+    radial-gradient(circle at 82% 18%, rgb(16 185 129 / 0.08), transparent 44%),
+    radial-gradient(circle at 16% 78%, rgb(99 102 241 / 0.07), transparent 46%);
   background-attachment: fixed;
-  color: var(--foreground);
-  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink);
+  font-family: var(--font-text), ui-sans-serif, system-ui, sans-serif;
   overflow-x: hidden;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color var(--dur-base) ease, color var(--dur-base) ease;
 }
 
 html.dark body {
   background-image:
-    radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.09), transparent 44%),
-    radial-gradient(circle at 16% 78%, rgba(99, 102, 241, 0.08), transparent 46%),
-    linear-gradient(180deg, #09090b 0%, #09090b 100%);
+    radial-gradient(circle at 82% 18%, rgb(16 185 129 / 0.09), transparent 44%),
+    radial-gradient(circle at 16% 78%, rgb(99 102 241 / 0.08), transparent 46%);
 }
 
-/* Canvas Overlay Mode: Permite interactuar con el teclado 3D en los espacios abiertos
-   mientras conserva todos los enlaces, botones, formularios y tarjetas 100% interactivos */
+/* Canvas overlay: the hero/skills keyboard stays clickable in open space while
+   every link, button, form control and card keeps receiving pointer input. */
 main {
   position: relative;
-  z-index: 10;
+  z-index: var(--z-content);
   pointer-events: none;
 }
 
@@ -72,46 +196,95 @@ main label,
 main select,
 main textarea,
 main form,
+main iframe,
+main video,
 main [role="button"],
 main [role="tab"],
-main [role="tablist"] {
+main [role="tablist"],
+main [data-interactive] {
   pointer-events: auto;
 }
 
-/* Utilidades de matriz técnica y cuadrícula (adaptadas a Light y Dark mode) */
+/* One focus ring for the whole site */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-fill);
+  outline-offset: 3px;
+  border-radius: var(--radius-chip);
+}
+
+/* Scroll reveal: elements start visible (no-JS safe); JS adds .reveal-armed then .is-in */
+.reveal-armed [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--dur-slow) var(--ease-out-expo),
+    transform var(--dur-slow) var(--ease-out-expo);
+  transition-delay: calc(var(--reveal-i, 0) * 70ms);
+}
+.reveal-armed [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Technical grid utilities (light + dark) */
 .bg-tech-grid {
   background-size: 40px 40px;
   background-image:
-    linear-gradient(to right, rgba(228, 228, 231, 0.55) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(228, 228, 231, 0.55) 1px, transparent 1px);
+    linear-gradient(to right, rgb(228 228 231 / 0.55) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(228 228 231 / 0.55) 1px, transparent 1px);
 }
 
 .dark .bg-tech-grid {
   background-image:
-    linear-gradient(to right, rgba(39, 39, 42, 0.3) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(39, 39, 42, 0.3) 1px, transparent 1px);
+    linear-gradient(to right, rgb(39 39 42 / 0.3) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(39 39 42 / 0.3) 1px, transparent 1px);
 }
 
 .bg-dot-matrix {
-  background-image: radial-gradient(rgba(16, 185, 129, 0.2) 1px, transparent 1px);
+  background-image: radial-gradient(rgb(16 185 129 / 0.2) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .dark .bg-dot-matrix {
-  background-image: radial-gradient(rgba(16, 185, 129, 0.16) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(rgb(16 185 129 / 0.16) 1px, transparent 1px);
 }
 
-/* Zoom sutil para capturas panorámicas de proyectos */
+/* Subtle zoom for project screenshots */
 .sp-shot {
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform var(--dur-slow) var(--ease-out-expo);
 }
 .group:hover .sp-shot {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
-/* Selección de texto personalizada */
 ::selection {
-  background-color: rgba(16, 185, 129, 0.22);
+  background-color: rgb(16 185 129 / 0.22);
   color: inherit;
+}
+
+/* Indeterminate progress bar (Device Lab loader never shows a fake percentage) */
+@keyframes indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+.progress-indeterminate {
+  animation: indeterminate 1.3s var(--ease-in-out) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-armed [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
 }

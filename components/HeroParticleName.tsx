@@ -59,7 +59,7 @@ export default function HeroParticleName() {
           return computed;
         }
       }
-      return '"Space Grotesk", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      return '"Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     };
 
     const buildScene = () => {

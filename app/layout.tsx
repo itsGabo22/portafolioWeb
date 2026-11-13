@@ -1,25 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, IBM_Plex_Sans } from "next/font/google";
 import { AppProvider } from "@/context/AppContext";
 import InteractiveStage from "@/components/InteractiveStage";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+// Two families only (see DESIGN.md): a characterful display grotesque + a precise text face.
+const display = Bricolage_Grotesque({
+  variable: "--font-display-face",
   subsets: ["latin"],
   display: "swap",
+  weight: ["500", "600", "700", "800"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const text = IBM_Plex_Sans({
+  variable: "--font-text",
   subsets: ["latin"],
   display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -68,7 +65,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 antialiased selection:bg-emerald-500/25 selection:text-emerald-900 dark:selection:text-emerald-200 flex flex-col transition-colors duration-200`}
+        className={`${display.variable} ${text.variable} min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 antialiased selection:bg-emerald-500/25 selection:text-emerald-900 dark:selection:text-emerald-200 flex flex-col transition-colors duration-200`}
       >
         <AppProvider>
           <InteractiveStage />
