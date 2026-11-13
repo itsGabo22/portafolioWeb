@@ -28,6 +28,7 @@ import {
 import { createKeyInput, isTypingTarget } from "./keyboard/input";
 import {
   createKeyboardMotion,
+  detectKeyboardSection,
   isVividSection,
   type KeyboardSection,
 } from "./keyboard/motion";
@@ -97,6 +98,28 @@ export default function InteractiveKeyboard3D() {
   const [section, setSection] = useState<KeyboardSection>("hero");
   const vivid = isVividSection(section);
   const vividRef = useRef(true);
+
+  // Park/unpark from the scroll position even before the 3D scene has loaded.
+  useEffect(() => {
+    let raf = 0;
+    const sync = () => {
+      raf = 0;
+      const next = detectKeyboardSection();
+      vividRef.current = isVividSection(next);
+      setSection((prev) => (prev === next ? prev : next));
+    };
+    const onScroll = () => {
+      if (!raf) raf = window.requestAnimationFrame(sync);
+    };
+    raf = window.requestAnimationFrame(sync);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
   const [selected, setSelected] = useState<KeyboardSkill | null>(null);
   const [isFooterOrContactInView, setIsFooterOrContactInView] = useState(false);
   const [pressCount, setPressCount] = useState(1428);

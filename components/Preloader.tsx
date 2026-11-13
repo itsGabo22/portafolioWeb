@@ -10,10 +10,7 @@ export default function Preloader() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const preloadAssets = [
-      "/assets/keyboard/keycaps.glb",
-      "/assets/keyboard/bongo-frames.glb",
-    ];
+    const preloadAssets = ["/assets/keyboard/keycaps.glb"];
     preloadAssets.forEach((url) => {
       fetch(url, { cache: "force-cache" }).catch(() => {});
     });

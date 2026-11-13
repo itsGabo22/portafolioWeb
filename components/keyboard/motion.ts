@@ -29,6 +29,20 @@ const SECTION_ORDER: readonly KeyboardSection[] = [
   "beyond",
 ];
 
+/** Deterministic section detection based on scroll position (works before the scene loads). */
+export function detectKeyboardSection(): KeyboardSection {
+  if (typeof window === "undefined") return "hero";
+  if (window.scrollY < 160) return "hero";
+  const probeY = window.innerHeight * 0.48;
+  let active: KeyboardSection = "hero";
+  for (const id of SECTION_ORDER) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (el.getBoundingClientRect().top <= probeY) active = id;
+  }
+  return active;
+}
+
 type Vector = { x: number; y: number; z: number };
 const vector = (v: Vec3): Vector => ({ x: v[0], y: v[1], z: v[2] });
 const array = (v: Vector): Vec3 => [v.x, v.y, v.z];
@@ -341,24 +355,7 @@ export function createKeyboardMotion(
     idleLoop?.paused(hidden);
   };
 
-  // Deterministic section detection based on scroll position
-  const detectSection = (): KeyboardSection => {
-    if (typeof window === "undefined") return "hero";
-    if (window.scrollY < 160) return "hero";
-
-    const probeY = window.innerHeight * 0.48;
-    let active: KeyboardSection = "hero";
-
-    for (const id of SECTION_ORDER) {
-      const el = document.getElementById(id);
-      if (!el) continue;
-      const rect = el.getBoundingClientRect();
-      if (rect.top <= probeY) {
-        active = id;
-      }
-    }
-    return active;
-  };
+  const detectSection = detectKeyboardSection;
 
   let scrollRaf = 0;
 
