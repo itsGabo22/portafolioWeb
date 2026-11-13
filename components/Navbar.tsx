@@ -77,6 +77,24 @@ export default function Navbar() {
     setIsOpen(false);
   };
 
+  // Mobile drawer: closing it changes layout mid-jump and cancels the native
+  // smooth anchor scroll, so scroll programmatically after closing.
+  const handleDrawerAnchorClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    const target = document.getElementById(href.replace("#", ""));
+    setIsOpen(false);
+    if (!target) return;
+    e.preventDefault();
+    window.history.pushState(null, "", href);
+    // Wait for the drawer exit animation (0.22s) so layout is stable.
+    window.setTimeout(
+      () => target.scrollIntoView({ behavior: "smooth", block: "start" }),
+      260
+    );
+  };
+
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
@@ -319,7 +337,7 @@ export default function Navbar() {
                   <a
                     key={item.href}
                     href={item.href}
-                    onClick={handleLinkClick}
+                    onClick={(e) => handleDrawerAnchorClick(e, item.href)}
                     className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
                       isActive
                         ? "bg-white/70 dark:bg-zinc-900 text-zinc-950 dark:text-white font-semibold"
