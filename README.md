@@ -6,6 +6,8 @@ Portafolio profesional y académico de **Gabriel Esteban Paz Guerrero** (`@itsGa
 
 - **Framework**: Next.js 16 (App Router) + React 19
 - **Lenguaje**: TypeScript (`strict: true`)
+- **Backend ligero**: Route Handler de Next.js (`/api/contact`) + Resend
+- **Despliegue**: Vercel (GitHub)
 - **Estilos**: Tailwind CSS v4 (Modo Claro de estudio por defecto + Modo Oscuro conmutable)
 - **Escenario 3D Interactivo**: `@chibi3d/runtime` (Teclado mecánico 3D de 24 teclas con sonido de switches, contador mecánico y Bongo Cat animado)
 - **Coreografía & Animaciones**: GSAP (`ScrollTrigger`) + Framer Motion
@@ -31,12 +33,32 @@ Portafolio profesional y académico de **Gabriel Esteban Paz Guerrero** (`@itsGa
 
 ```bash
 npm install
+cp .env.example .env.local   # completa las variables del formulario de contacto
 npm run dev
 ```
 
-Compilación de producción:
+Verificación y compilación de producción:
 
 ```bash
+npx tsc --noEmit
 npm run lint
 npm run build
 ```
+
+## Variables de entorno
+
+El formulario de contacto (`app/api/contact/route.ts`) envía correos con [Resend](https://resend.com). Sin estas variables el endpoint responde `503` y el formulario muestra un mensaje de error con el correo directo.
+
+| Variable | Descripción |
+| --- | --- |
+| `RESEND_API_KEY` | API key de Resend |
+| `CONTACT_TO_EMAIL` | Bandeja que recibe los mensajes |
+| `CONTACT_FROM_EMAIL` | Remitente verificado en Resend (`onboarding@resend.dev` sirve para pruebas) |
+
+Nunca subas valores reales al repositorio (`.env*` está ignorado; solo `.env.example` se versiona).
+
+## Despliegue en Vercel
+
+1. En Vercel: **Add New… > Project** e importa este repositorio de GitHub (framework detectado: Next.js, sin configuración extra).
+2. En **Settings > Environment Variables** agrega `RESEND_API_KEY`, `CONTACT_TO_EMAIL` y `CONTACT_FROM_EMAIL`.
+3. Despliega. Cada push a una rama genera un preview; `main` publica producción.
