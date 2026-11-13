@@ -115,6 +115,7 @@ const ENGINEERING_ERAS: EngineeringEra[] = [
   },
 ];
 
+// Ordered most recent first.
 const WORK_EXPERIENCE: TimelineItem[] = [
   {
     id: "work-vicardev",
@@ -147,6 +148,29 @@ const WORK_EXPERIENCE: TimelineItem[] = [
     ],
   },
   {
+    id: "work-ecommerce-clients",
+    eraIndex: 2,
+    active: true,
+    period: {
+      es: "2025 - Presente",
+      en: "2025 - Present",
+    },
+    title: {
+      es: "Arquitecto E-Commerce Full-Stack (Proyectos Comerciales)",
+      en: "Full-Stack E-Commerce Architect (Commercial Clients)",
+    },
+    organization: {
+      es: "Brisal by Salvador, Blue Velvet & Carlin Cosméticos",
+      en: "Brisal by Salvador, Blue Velvet & Carlin Cosmetics",
+    },
+    url: "https://brisal.com.co",
+    description: {
+      es: "Arquitectura, desarrollo y despliegue en producción de tres plataformas completas de comercio electrónico con catálogos mayoristas/minoristas, bases de datos en Supabase/PostgreSQL y pasarelas de compra optimizadas.",
+      en: "Architecture, development, and production deployment of three complete e-commerce platforms featuring wholesale/retail catalogs, Supabase/PostgreSQL persistence, and conversion-optimized checkouts.",
+    },
+    highlights: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind CSS"],
+  },
+  {
     id: "work-electrotech",
     eraIndex: 2,
     active: true,
@@ -175,31 +199,9 @@ const WORK_EXPERIENCE: TimelineItem[] = [
       "Tailwind CSS",
     ],
   },
-  {
-    id: "work-ecommerce-clients",
-    eraIndex: 2,
-    active: true,
-    period: {
-      es: "2025 - Presente",
-      en: "2025 - Present",
-    },
-    title: {
-      es: "Arquitecto E-Commerce Full-Stack (Proyectos Comerciales)",
-      en: "Full-Stack E-Commerce Architect (Commercial Clients)",
-    },
-    organization: {
-      es: "Brisal by Salvador, Blue Velvet & Carlin Cosméticos",
-      en: "Brisal by Salvador, Blue Velvet & Carlin Cosmetics",
-    },
-    url: "https://brisal.com.co",
-    description: {
-      es: "Arquitectura, desarrollo y despliegue en producción de tres plataformas completas de comercio electrónico con catálogos mayoristas/minoristas, bases de datos en Supabase/PostgreSQL y pasarelas de compra optimizadas.",
-      en: "Architecture, development, and production deployment of three complete e-commerce platforms featuring wholesale/retail catalogs, Supabase/PostgreSQL persistence, and conversion-optimized checkouts.",
-    },
-    highlights: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind CSS"],
-  },
 ];
 
+// Ordered most recent first.
 const ACADEMIC_EXPERIENCE: TimelineItem[] = [
   {
     id: "acad-ucc",
@@ -650,7 +652,7 @@ export default function Experience() {
           <TimelineColumn
             items={ACADEMIC_EXPERIENCE}
             trackLabel={
-              lang === "es" ? "Formación Académica" : "Academic Background"
+              lang === "es" ? "Experiencia Académica" : "Academic Experience"
             }
             trackSubtitle={
               lang === "es"
