@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Lock } from "lucide-react";
-import { projects, Project, ProjectKind } from "@/data/projects";
+import { ArrowUpRight, Lock, Clock } from "lucide-react";
+import { projects, Project, isTodo } from "@/data/projects";
 import { useApp } from "@/context/AppContext";
 import TechBadge from "./TechBadge";
 import TiltSurface from "./TiltSurface";
@@ -28,14 +28,14 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.45, delay: index * 0.05 }}
-      className="flex w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333333%-1rem)]"
+      className="flex w-full"
     >
       <TiltSurface maxTilt={6} className="w-full h-full">
         <div className="group flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-white/80 dark:border-white/10 bg-white/52 dark:bg-zinc-900/60 ring-1 ring-zinc-900/[0.06] shadow-[0_12px_40px_-12px_rgba(15,23,42,0.08),inset_0_1px_0_0_rgba(255,255,255,0.9)] dark:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 hover:bg-white/65 dark:hover:bg-zinc-900/75 hover:shadow-xl">
           <div>
             {/* Panoramic Showcase Window */}
             <div className="relative aspect-[3/2] w-full overflow-hidden bg-zinc-950">
-              {!imgError ? (
+              {project.image && !imgError ? (
                 <Image
                   src={project.image}
                   alt={project.title[lang]}
@@ -62,10 +62,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                       : "Live Commercial"}
                 </span>
 
-                {project.isPrivateRepo && (
+                {project.nda && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-medium text-amber-300 backdrop-blur-md">
                     <Lock className="h-3 w-3" />
-                    <span>NDA</span>
+                    <span>{lang === "es" ? "Código privado" : "Private code"}</span>
                   </span>
                 )}
               </div>
@@ -76,7 +76,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                   {project.title[lang]}
                 </h3>
                 <span className="mt-1 w-fit rounded-md bg-white/15 px-2.5 py-0.5 text-[11px] font-medium text-zinc-100 backdrop-blur-sm">
-                  {project.category[lang]}
+                  {project.tagline[lang]}
                 </span>
               </div>
             </div>
@@ -92,50 +92,63 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           {/* Card Footer: Real SVG Tech Badges + Action Links */}
           <div className="px-5 pb-5 pt-1">
             <div className="mb-4 flex flex-wrap gap-1.5">
-              {project.technologies.map((tech) => (
+              {project.tags.map((tech) => (
                 <TechBadge key={tech} name={tech} size="xs" />
               ))}
             </div>
 
             <div className="grid grid-cols-2 gap-2.5 border-t border-zinc-300/60 dark:border-zinc-800/80 pt-4">
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={
-                  project.isPrivateRepo
-                    ? lang === "es"
-                      ? "Repositorio privado de cliente comercial — Ver perfil de GitHub"
-                      : "Private commercial client repo — View GitHub profile"
-                    : undefined
-                }
-                className="cursor-can-hover inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-950/80 px-3 py-2.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 backdrop-blur-md transition-colors hover:bg-white/90 dark:hover:bg-zinc-800"
-              >
-                {project.isPrivateRepo ? (
+              {project.nda || !project.github ? (
+                <span
+                  title={
+                    lang === "es"
+                      ? "Repositorio privado (cliente comercial / NDA)"
+                      : "Private repository (commercial client / NDA)"
+                  }
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-white/40 dark:bg-zinc-950/50 px-3 py-2.5 text-xs font-medium text-zinc-600 dark:text-zinc-400"
+                >
                   <Lock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                ) : (
-                  <GitHubSvg className="h-3.5 w-3.5 shrink-0" />
-                )}
-                <span className="truncate">
-                  {project.isPrivateRepo
-                    ? lang === "es"
-                      ? "Código (NDA / GitHub)"
-                      : "Code (Client NDA)"
-                    : lang === "es"
-                      ? "Código"
-                      : "Source"}
+                  <span className="truncate">
+                    {lang === "es" ? "Código privado (NDA)" : "Private code (NDA)"}
+                  </span>
                 </span>
-              </a>
+              ) : (
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-can-hover inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-950/80 px-3 py-2.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 backdrop-blur-md transition-colors hover:bg-white/90 dark:hover:bg-zinc-800"
+                >
+                  <GitHubSvg className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">
+                    {lang === "es" ? "Código en GitHub" : "GitHub code"}
+                  </span>
+                </a>
+              )}
 
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cursor-can-hover group/btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-3.5 py-2.5 text-xs font-semibold text-white dark:text-zinc-950 transition-colors hover:bg-zinc-800 dark:hover:bg-white"
-              >
-                <span>{lang === "es" ? "Demo en vivo" : "Live Demo"}</span>
-                <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-              </a>
+              {isTodo(project.demo) ? (
+                <span
+                  title={
+                    lang === "es"
+                      ? "Enlace de demo pendiente de publicar"
+                      : "Demo link pending publication"
+                  }
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 bg-white/40 dark:bg-zinc-950/50 px-3.5 py-2.5 text-xs font-medium text-zinc-600 dark:text-zinc-400"
+                >
+                  <Clock className="h-3.5 w-3.5 shrink-0" />
+                  <span>{lang === "es" ? "Demo próximamente" : "Demo coming soon"}</span>
+                </span>
+              ) : (
+                <a
+                  href={project.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-can-hover group/btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-3.5 py-2.5 text-xs font-semibold text-white dark:text-zinc-950 transition-colors hover:bg-zinc-800 dark:hover:bg-white"
+                >
+                  <span>{lang === "es" ? "Demo en vivo" : "Live Demo"}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -144,21 +157,39 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   );
 }
 
+function ProjectGroup({
+  title,
+  subtitle,
+  items,
+  columnsClass,
+}: {
+  title: string;
+  subtitle: string;
+  items: Project[];
+  columnsClass: string;
+}) {
+  return (
+    <div className="mt-14 first:mt-0">
+      <div className="mb-6 border-b border-zinc-300/60 dark:border-zinc-800/80 pb-3">
+        <h3 className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          {title}
+        </h3>
+        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{subtitle}</p>
+      </div>
+      <div className={`grid grid-cols-1 gap-6 ${columnsClass}`}>
+        {items.map((project, index) => (
+          <ProjectCard key={project.id} project={project} index={index} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Projects() {
   const { lang } = useApp();
-  const [filter, setFilter] = useState<"all" | ProjectKind>("all");
 
-  const filteredProjects =
-    filter === "all"
-      ? projects
-      : projects.filter((p) => p.projectType === filter);
-
-  const commercialCount = projects.filter(
-    (p) => p.projectType === "commercial"
-  ).length;
-  const academicCount = projects.filter(
-    (p) => p.projectType === "academic"
-  ).length;
+  const classProjects = projects.filter((p) => p.category === "interface-design");
+  const commercialProjects = projects.filter((p) => p.category === "commercial");
 
   return (
     <section
@@ -166,7 +197,6 @@ export default function Projects() {
       className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Centered Monumental Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -179,74 +209,40 @@ export default function Projects() {
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
             {lang === "es"
-              ? "Plataformas comerciales en producción y proyectos universitarios de Ingeniería de Software con IA."
-              : "Live commercial production platforms and university Software Engineering + AI projects."}
+              ? "Las aplicaciones de la clase de Diseño de Interfaces y las plataformas en producción de VICARDEV."
+              : "The Interface Design class apps and the live production platforms from VICARDEV."}
           </p>
-
-          {/* Frosted Glass Filter Tabs */}
-          <div
-            role="tablist"
-            aria-label={
-              lang === "es" ? "Filtrar proyectos" : "Filter projects"
-            }
-            className="mt-8 inline-flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 p-1.5 ring-1 ring-zinc-900/[0.06] shadow-[0_8px_30px_rgba(15,23,42,0.06),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl backdrop-saturate-150"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={filter === "all"}
-              onClick={() => setFilter("all")}
-              className={`cursor-can-hover rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
-                filter === "all"
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-              }`}
-            >
-              {lang === "es"
-                ? `Todos (${projects.length})`
-                : `All (${projects.length})`}
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={filter === "commercial"}
-              onClick={() => setFilter("commercial")}
-              className={`cursor-can-hover rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
-                filter === "commercial"
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-              }`}
-            >
-              {lang === "es"
-                ? `Comerciales & E-Commerce (${commercialCount})`
-                : `Commercial & E-Commerce (${commercialCount})`}
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={filter === "academic"}
-              onClick={() => setFilter("academic")}
-              className={`cursor-can-hover rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
-                filter === "academic"
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-              }`}
-            >
-              {lang === "es"
-                ? `Académicos UCC & IA (${academicCount})`
-                : `UCC Academic & AI (${academicCount})`}
-            </button>
-          </div>
         </motion.div>
 
-        {/* Centered Responsive Flex-Grid Architecture */}
-        <div className="flex flex-wrap justify-center gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProjects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} />
-          ))}
-        </div>
+        <ProjectGroup
+          title={
+            lang === "es"
+              ? "Proyectos de Diseño de Interfaces"
+              : "Interface Design Projects"
+          }
+          subtitle={
+            lang === "es"
+              ? "Smartwatch, escritorio, móvil y videojuego."
+              : "Smartwatch, desktop, mobile and video game."
+          }
+          items={classProjects}
+          columnsClass="md:grid-cols-2"
+        />
+
+        <ProjectGroup
+          title={
+            lang === "es"
+              ? "Producción comercial · VICARDEV"
+              : "Commercial Production · VICARDEV"
+          }
+          subtitle={
+            lang === "es"
+              ? "Plataformas web y de e-commerce entregadas a clientes, y otros proyectos."
+              : "Web and e-commerce platforms delivered to clients, plus other projects."
+          }
+          items={commercialProjects}
+          columnsClass="md:grid-cols-2 lg:grid-cols-3"
+        />
       </div>
     </section>
   );
