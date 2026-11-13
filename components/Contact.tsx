@@ -16,6 +16,7 @@ import {
 import { useApp } from "@/context/AppContext";
 
 type FormStatus = "idle" | "submitting" | "success";
+type FieldErrors = Partial<Record<"name" | "email" | "message", string>>;
 
 const CONTACT_EMAIL = "vicardev2026@gmail.com";
 
@@ -45,6 +46,8 @@ export default function Contact() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [website, setWebsite] = useState(""); // honeypot
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = async () => {
@@ -57,7 +60,7 @@ export default function Contact() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMsg(null);
 
@@ -66,33 +69,64 @@ export default function Contact() {
     const trimmedMessage = message.trim();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const es = lang === "es";
+    const errors: FieldErrors = {};
 
-    if (!trimmedName || !trimmedEmail || !trimmedMessage) {
-      setErrorMsg(
-        lang === "es"
-          ? "Por favor completa todos los campos obligatorios."
-          : "Please fill out all required fields."
-      );
-      return;
+    if (!trimmedName) errors.name = es ? "Escribe tu nombre." : "Please enter your name.";
+    if (!trimmedEmail) {
+      errors.email = es ? "Escribe tu correo electrónico." : "Please enter your email.";
+    } else if (!emailRegex.test(trimmedEmail)) {
+      errors.email = es
+        ? "Ingresa un correo electrónico válido."
+        : "Please enter a valid email address.";
+    }
+    if (!trimmedMessage) {
+      errors.message = es ? "Escribe un mensaje." : "Please enter a message.";
     }
 
-    if (!emailRegex.test(trimmedEmail)) {
-      setErrorMsg(
-        lang === "es"
-          ? "Por favor ingresa un correo electrónico válido."
-          : "Please enter a valid email address."
-      );
-      return;
-    }
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
 
     setStatus("submitting");
 
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: trimmedName,
+          email: trimmedEmail,
+          message: trimmedMessage,
+          website,
+        }),
+      });
+
+      if (!response.ok) {
+        setStatus("idle");
+        setErrorMsg(
+          response.status === 503
+            ? es
+              ? "El envío no está disponible por ahora. Escríbeme directamente a " + CONTACT_EMAIL + "."
+              : "Sending is unavailable right now. Please email me directly at " + CONTACT_EMAIL + "."
+            : es
+              ? "No se pudo enviar el mensaje. Inténtalo de nuevo en unos minutos."
+              : "The message could not be sent. Please try again in a few minutes."
+        );
+        return;
+      }
+
       setStatus("success");
       setName("");
       setEmail("");
       setMessage("");
-    }, 450);
+    } catch {
+      setStatus("idle");
+      setErrorMsg(
+        es
+          ? "Error de conexión. Revisa tu internet e inténtalo de nuevo."
+          : "Connection error. Check your internet and try again."
+      );
+    }
   };
 
   return (
@@ -194,8 +228,23 @@ export default function Contact() {
             {/* Translucent Liquid Frosted Glass Studio Dispatch Form */}
             <form
               onSubmit={handleSubmit}
+              noValidate
               className="mt-8 space-y-6 rounded-3xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 p-6 sm:p-8 ring-1 ring-zinc-900/[0.06] shadow-[0_16px_48px_-12px_rgba(15,23,42,0.1),inset_0_1px_0_0_rgba(255,255,255,0.92)] dark:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl backdrop-saturate-150"
             >
+              {/* Honeypot: hidden from users and assistive tech, bots fill it */}
+              <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                <label htmlFor="contact-website">Website</label>
+                <input
+                  id="contact-website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </div>
+
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="group">
                   <label
@@ -206,6 +255,8 @@ export default function Contact() {
                   </label>
                   <input
                     id="contact-name"
+                    aria-invalid={Boolean(fieldErrors.name)}
+                    aria-describedby={fieldErrors.name ? "contact-name-error" : undefined}
                     name="name"
                     type="text"
                     required
@@ -221,6 +272,11 @@ export default function Contact() {
                     }
                     className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
                   />
+                {fieldErrors.name && (
+                  <p id="contact-name-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700 dark:text-red-300">
+                    {fieldErrors.name}
+                  </p>
+                )}
                 </div>
 
                 <div className="group">
@@ -232,6 +288,8 @@ export default function Contact() {
                   </label>
                   <input
                     id="contact-email"
+                    aria-invalid={Boolean(fieldErrors.email)}
+                    aria-describedby={fieldErrors.email ? "contact-email-error" : undefined}
                     name="email"
                     type="email"
                     required
@@ -247,6 +305,11 @@ export default function Contact() {
                     }
                     className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
                   />
+                {fieldErrors.email && (
+                  <p id="contact-email-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700 dark:text-red-300">
+                    {fieldErrors.email}
+                  </p>
+                )}
                 </div>
               </div>
 
@@ -261,6 +324,8 @@ export default function Contact() {
                 </label>
                 <textarea
                   id="contact-message"
+                  aria-invalid={Boolean(fieldErrors.message)}
+                  aria-describedby={fieldErrors.message ? "contact-message-error" : undefined}
                   name="message"
                   rows={3}
                   required
@@ -276,6 +341,11 @@ export default function Contact() {
                   }
                   className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
                 />
+                {fieldErrors.message && (
+                  <p id="contact-message-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700 dark:text-red-300">
+                    {fieldErrors.message}
+                  </p>
+                )}
               </div>
 
               <AnimatePresence>
