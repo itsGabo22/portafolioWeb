@@ -26,7 +26,11 @@ import {
   type KeyboardSkill,
 } from "./keyboard/scene";
 import { createKeyInput, isTypingTarget } from "./keyboard/input";
-import { createKeyboardMotion, type KeyboardSection } from "./keyboard/motion";
+import {
+  createKeyboardMotion,
+  isVividSection,
+  type KeyboardSection,
+} from "./keyboard/motion";
 import { useKeyboardSounds } from "./keyboard/use-keyboard-sounds";
 import { createCounterMotion } from "./keyboard/counter-motion";
 
@@ -39,6 +43,11 @@ const SCENE_STYLE: CSSProperties = {
   height: "100dvh",
   zIndex: 1,
 };
+
+// Outside hero/skills the keyboard is parked: faded out (never behind text or cards)
+// and its render loop paused by the motion controller.
+const PARK_TRANSITION = "opacity 480ms cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 480ms";
+const VIVID_TRANSITION = "opacity 480ms cubic-bezier(0.22, 1, 0.36, 1), visibility 0s";
 
 function subscribeNoop() {
   return () => {};
@@ -86,6 +95,8 @@ export default function InteractiveKeyboard3D() {
   const [loadVersion, setLoadVersion] = useState(0);
   const ready = loadVersion > 0;
   const [section, setSection] = useState<KeyboardSection>("hero");
+  const vivid = isVividSection(section);
+  const vividRef = useRef(true);
   const [selected, setSelected] = useState<KeyboardSkill | null>(null);
   const [isFooterOrContactInView, setIsFooterOrContactInView] = useState(false);
   const [pressCount, setPressCount] = useState(1428);
@@ -203,7 +214,6 @@ export default function InteractiveKeyboard3D() {
             setPressCount((prev) => prev + 1);
           }
           heldKeys.current.push(key);
-          motion.current?.tapBongoCat();
         }
         const shown = heldKeys.current.at(-1) ?? null;
         activeKeyRef.current = shown;
@@ -297,6 +307,7 @@ export default function InteractiveKeyboard3D() {
       stageWrapperRef.current?.querySelector("canvas") ?? null;
 
     const forwardPointer = (event: PointerEvent) => {
+      if (!vividRef.current) return;
       const canvas = getCanvas();
       if (!canvas) return;
       const target = event.target as Element | null;
@@ -323,6 +334,7 @@ export default function InteractiveKeyboard3D() {
     };
 
     const forwardClick = (event: MouseEvent) => {
+      if (!vividRef.current) return;
       const canvas = getCanvas();
       if (!canvas) return;
       const target = event.target as Element | null;
@@ -381,6 +393,11 @@ export default function InteractiveKeyboard3D() {
   useEffect(() => {
     if (!ready || !api.current) return;
     const controller = createKeyboardMotion(api.current, scene, (next) => {
+      vividRef.current = isVividSection(next);
+      if (!vividRef.current) {
+        input.releaseAll();
+        setSelected(null);
+      }
       setSection(next);
     });
     motion.current = controller;
@@ -390,7 +407,7 @@ export default function InteractiveKeyboard3D() {
       controller.dispose();
       motion.current = null;
     };
-  }, [ready, loadVersion, scene]);
+  }, [ready, loadVersion, scene, input]);
 
   // Restore visible 3D label on remount or language switch (ES/EN)
   useEffect(() => {
@@ -411,6 +428,7 @@ export default function InteractiveKeyboard3D() {
       ) {
         return;
       }
+      if (!vividRef.current) return;
       const key = input.shortcuts.get(event.code);
       if (key) input.press(`key:${event.code}`, key.nodeId);
     };
@@ -441,7 +459,16 @@ export default function InteractiveKeyboard3D() {
     !isFooterOrContactInView;
 
   return (
-    <div ref={stageWrapperRef}>
+    <div
+      ref={stageWrapperRef}
+      aria-hidden="true"
+      data-keyboard-state={vivid ? "vivid" : "parked"}
+      style={{
+        opacity: vivid ? 1 : 0,
+        visibility: vivid ? "visible" : "hidden",
+        transition: vivid ? VIVID_TRANSITION : PARK_TRANSITION,
+      }}
+    >
       <SceneCanvas
         document={scene.document}
         environment={environment}

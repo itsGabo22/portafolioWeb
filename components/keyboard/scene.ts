@@ -34,8 +34,6 @@ export type KeyboardScene = {
   boardId: string;
   spinId: string;
   revealId: string;
-  catId: string;
-  frameIds: [string, string];
   labelsId: string;
   defaultLabelId: BilingualLabelIds;
   allLabelIds: string[];
@@ -444,43 +442,8 @@ export function createKeyboardScene(
     };
   });
 
-  // Keep Bongo Cat anchored to the exact Spline showcase edge from naresh_ref
-  const catId = group("Bongo cat", layout, [-0.277, 2.356, outerZ - 0.631]);
-  doc.nodes[catId].transform.rotation = [
-    -141.199253,
-    -1.535221,
-    -167.469916,
-  ].map((angle) => (angle * Math.PI) / 180) as Vec3;
-  doc.nodes[catId].visible = false;
-
-  const catAssetId = newId("as");
-  doc.assets[catAssetId] = {
-    id: catAssetId,
-    kind: "glb",
-    name: "/assets/keyboard/bongo-frames.glb",
-    hash: "2a16506ae6e6b571fc02a73e6822345a73e15de05a5a13b86a391fafd94fa908",
-    size: 28292,
-  };
-  const frameIds = [0, 1].map((frame) =>
-    add(
-      {
-        id: newId("nd"),
-        name: `Bongo frame ${frame + 1}`,
-        type: "model",
-        assetId: catAssetId,
-        path: String(frame),
-        transform: transform(
-          [0, (-5.336 * 289) / 457 / 2, 0],
-          [5.336, (5.336 * 289) / 457, 1]
-        ),
-        visible: frame === 0,
-        castShadow: false,
-        receiveShadow: false,
-        children: [],
-      },
-      catId
-    )
-  ) as [string, string];
+  // The third-party "Bongo Cat" topper that used to sit here was removed:
+  // the keyboard ships without any character mascot.
 
   return {
     document: doc,
@@ -488,8 +451,6 @@ export function createKeyboardScene(
     boardId,
     spinId,
     revealId,
-    catId,
-    frameIds,
     labelsId,
     defaultLabelId,
     allLabelIds,

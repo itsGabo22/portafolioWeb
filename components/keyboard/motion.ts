@@ -11,7 +11,12 @@ export type KeyboardSection =
   | "testimonials"
   | "experience"
   | "contact"
-  | "skills";
+  | "skills"
+  | "beyond";
+
+/** Sections where the keyboard is shown at full strength; everywhere else it is parked (hidden + paused). */
+export const VIVID_SECTIONS: readonly KeyboardSection[] = ["hero", "skills"];
+export const isVividSection = (s: KeyboardSection) => VIVID_SECTIONS.includes(s);
 
 const SECTION_ORDER: readonly KeyboardSection[] = [
   "hero",
@@ -21,6 +26,7 @@ const SECTION_ORDER: readonly KeyboardSection[] = [
   "experience",
   "contact",
   "skills",
+  "beyond",
 ];
 
 type Vector = { x: number; y: number; z: number };
@@ -79,16 +85,15 @@ export function createKeyboardMotion(
     });
   };
 
-  const catFrame = { value: 0 };
-  let activeBongoFrame = 0;
   const sectionTweens: gsap.core.Tween[] = [];
   const loops: gsap.core.Tween[] = [];
   const revealTweens: gsap.core.Tween[] = [];
   const keyTweens: gsap.core.Tween[] = [];
-  const waveTweens: gsap.core.Tween[] = [];
-  let catLoop: gsap.core.Tween | null = null;
   let idleLoop: gsap.core.Tween | null = null;
   let counterEnabled = true;
+  // Parked = outside hero/skills: the canvas is faded out by the component and rendering is paused.
+  let parked = false;
+  let parkTimer = 0;
 
   const updateVisibilityForSection = (currentSection: KeyboardSection) => {
     // 3D Extruded labels ONLY appear in #skills so they never overlap the #hero subtitle
@@ -140,14 +145,12 @@ export function createKeyboardMotion(
         rot = { x: 0, y: 0, z: 0 };
         break;
       case "about":
-        // Exact naresh_ref Bongo Cat showcase rotation so Bongo Cat faces the camera upright!
         sizeFactor = mobile ? 0.72 : 0.88;
         right = mobile ? 0 : 2.25;
         up = -0.15;
         rot = { x: Math.PI, y: Math.PI / 3, z: Math.PI };
         break;
       case "projects":
-        // Exact naresh_ref Bongo Cat showcase rotation in #projects
         sizeFactor = mobile ? 0.76 : 0.92;
         right = mobile ? 0 : 2.15;
         up = -0.12;
@@ -165,6 +168,7 @@ export function createKeyboardMotion(
         up = -0.25;
         rot = { x: 0.12, y: Math.PI / 7, z: 0.04 };
         break;
+      case "beyond":
       case "contact":
         sizeFactor = mobile ? 0.72 : 0.76;
         right = mobile ? 0 : 3.5;
@@ -197,131 +201,27 @@ export function createKeyboardMotion(
     tweens.splice(0).forEach((tween) => tween.kill());
   };
 
-  // Bongo Cat Topper (bongo-frames.glb): Visible & actively tapping in #about and #projects
-  // (where the keyboard uses the exact { x: Math.PI, y: Math.PI / 3, z: Math.PI } showcase rotation)
-  const updateBongoCatForSection = (currentSection: KeyboardSection) => {
-    if (catLoop) {
-      catLoop.kill();
-      catLoop = null;
-    }
-    const showCat =
-      currentSection === "about" ||
-      currentSection === "projects" ||
-      (window.innerWidth < 768 && currentSection === "contact");
-
-    api.setNodeVisible(scene.catId, showCat);
-    if (!showCat) {
-      scene.frameIds.forEach((id) => api.setNodeVisible(id, false));
-      return;
-    }
-
-    catFrame.value = 0;
-    let displayedFrame = -1;
-    const showFrame = () => {
-      const frame = Math.floor(catFrame.value) % 2;
-      if (frame === displayedFrame) return;
-      displayedFrame = frame;
-      activeBongoFrame = frame;
-      scene.frameIds.forEach((id, index) =>
-        api.setNodeVisible(id, index === frame)
-      );
-      onActivity?.();
-    };
-    showFrame();
-
-    catLoop = gsap.to(catFrame, {
-      value: 2,
-      duration: 0.2,
-      repeat: -1,
-      ease: "none",
-      onUpdate: showFrame,
-    });
-  };
-
-  const syncKeyAnimations = (next: KeyboardSection, immediate: boolean) => {
+  // Keys settle back to rest whenever the section changes.
+  const syncKeyAnimations = (immediate: boolean) => {
     kill(keyTweens);
-    kill(waveTweens);
-    if (next === "contact") {
-      // Exact naresh_ref zero-gravity levitating keycaps in #contact
-      const keys = scene.keys.map((key, index) => ({
-        key,
-        index,
-        offset: keyOffsets[index],
-      }));
-      keys.sort(() => Math.random() - 0.5);
-      keys.forEach(({ index: keyIndex, offset }, index) => {
+    scene.keys.forEach((_, keyIndex) => {
+      const offset = keyOffsets[keyIndex];
+      if (immediate || Math.abs(offset.y) < 0.001) {
+        offset.y = 0;
+        applyKey(keyIndex);
+      } else {
         keyTweens.push(
           gsap.to(offset, {
-            y: (200 + Math.random() * 200) / 296.741333,
-            duration: 2 + Math.random() * 2,
-            delay: index * 0.18,
-            repeat: -1,
-            yoyo: true,
-            yoyoEase: "none",
-            ease: "elastic.out(1, 0.3)",
+            y: 0,
+            duration: 1.2,
+            ease: "elastic.out(1, 0.7)",
             overwrite: "auto",
             onUpdate: () => {
               applyKey(keyIndex);
             },
           })
         );
-      });
-    } else {
-      scene.keys.forEach((_, keyIndex) => {
-        const offset = keyOffsets[keyIndex];
-        if (immediate || Math.abs(offset.y) < 0.001) {
-          offset.y = 0;
-          applyKey(keyIndex);
-        } else {
-          keyTweens.push(
-            gsap.to(offset, {
-              y: 0,
-              duration: 1.2,
-              ease: "elastic.out(1, 0.7)",
-              overwrite: "auto",
-              onUpdate: () => {
-                applyKey(keyIndex);
-              },
-            })
-          );
-        }
-      });
-    }
-  };
-
-  const triggerScrollKeyWave = (velocityFactor: number) => {
-    if (
-      disposed ||
-      !revealed ||
-      section === "contact" ||
-      (section !== "testimonials" && section !== "experience")
-    ) {
-      return;
-    }
-    kill(waveTweens);
-    const amp = Math.min(0.24, Math.max(0.06, velocityFactor * 0.16));
-    scene.keys.forEach((_, keyIndex) => {
-      const col = keyIndex % 6;
-      const row = Math.floor(keyIndex / 6);
-      const offset = keyOffsets[keyIndex];
-      waveTweens.push(
-        gsap.to(offset, {
-          y: amp,
-          duration: 0.18,
-          delay: (col + row) * 0.022,
-          yoyo: true,
-          repeat: 1,
-          ease: "sine.inOut",
-          overwrite: "auto",
-          onUpdate: () => {
-            applyKey(keyIndex);
-          },
-          onComplete: () => {
-            offset.y = 0;
-            applyKey(keyIndex);
-          },
-        })
-      );
+      }
     });
   };
 
@@ -381,26 +281,10 @@ export function createKeyboardMotion(
       );
     }
 
-    // Exact naresh_ref contact yaw oscillation on desktop
-    if (next === "contact" && window.innerWidth >= 768) {
-      loops.push(
-        gsap.to(rotation, {
-          y: -Math.PI / 2,
-          duration: 5,
-          delay: immediate ? 0.2 : 0.85,
-          repeat: -1,
-          yoyo: true,
-          yoyoEase: true,
-          ease: "power1.out",
-          onUpdate: applyPose,
-        })
-      );
-    }
 
     updateVisibilityForSection(next);
-    updateBongoCatForSection(next);
-    syncKeyAnimations(next, immediate);
-    onVisibility();
+    syncKeyAnimations(immediate);
+    setParked(!isVividSection(next));
   };
 
   // Continuous, gentle breathing float that composes additively
@@ -417,7 +301,7 @@ export function createKeyboardMotion(
 
   // Responsive cursor parallax tilt so the 3D keyboard responds to every cursor movement
   const onPointerMove = (e: PointerEvent) => {
-    if (disposed || window.innerWidth < 768) return;
+    if (disposed || parked || window.innerWidth < 768) return;
     const nx = (e.clientX / window.innerWidth - 0.5) * 2;
     const ny = (e.clientY / window.innerHeight - 0.5) * 2;
     const strength = section === "hero" || section === "skills" ? 0.095 : 0.05;
@@ -431,17 +315,29 @@ export function createKeyboardMotion(
     });
   };
 
+  const setParked = (next: boolean) => {
+    window.clearTimeout(parkTimer);
+    if (next) {
+      // wait for the CSS fade-out before freezing the render loop
+      parkTimer = window.setTimeout(() => {
+        parked = true;
+        onVisibility();
+      }, 520);
+    } else {
+      parked = false;
+      onVisibility();
+    }
+  };
+
   const onVisibility = () => {
-    const hidden = document.hidden;
+    const hidden = document.hidden || parked;
     api.setPaused(hidden);
     [
       ...loops,
       ...sectionTweens,
       ...revealTweens,
       ...keyTweens,
-      ...waveTweens,
     ].forEach((t) => t.paused(hidden));
-    catLoop?.paused(hidden);
     idleLoop?.paused(hidden);
   };
 
@@ -465,30 +361,16 @@ export function createKeyboardMotion(
   };
 
   let scrollRaf = 0;
-  let lastScrollY = typeof window !== "undefined" ? window.scrollY : 0;
-  let lastWaveTime = 0;
 
   const onScroll = () => {
     if (scrollRaf || !revealed || disposed) return;
     scrollRaf = window.requestAnimationFrame(() => {
       scrollRaf = 0;
       if (!revealed || disposed) return;
-      const currentY = window.scrollY;
-      const deltaY = Math.abs(currentY - lastScrollY);
-      lastScrollY = currentY;
 
       const next = detectSection();
       if (next !== section) {
         applySection(next, false);
-      } else if (
-        (section === "testimonials" || section === "experience") &&
-        deltaY > 18
-      ) {
-        const now = performance.now();
-        if (now - lastWaveTime > 380) {
-          lastWaveTime = now;
-          triggerScrollKeyWave(Math.min(1.5, deltaY / 60));
-        }
       }
     });
   };
@@ -509,15 +391,6 @@ export function createKeyboardMotion(
       if (disposed || enabled === counterEnabled) return;
       counterEnabled = enabled;
       updateVisibilityForSection(section);
-    },
-    tapBongoCat() {
-      if (disposed || !revealed) return;
-      if (section !== "about" && section !== "projects") return;
-      activeBongoFrame = (activeBongoFrame + 1) % 2;
-      scene.frameIds.forEach((id, index) =>
-        api.setNodeVisible(id, index === activeBongoFrame)
-      );
-      onActivity?.();
     },
     reveal() {
       if (revealed || disposed) return;
@@ -564,6 +437,7 @@ export function createKeyboardMotion(
     },
     dispose() {
       disposed = true;
+      window.clearTimeout(parkTimer);
       if (scrollRaf) {
         window.cancelAnimationFrame(scrollRaf);
         scrollRaf = 0;
@@ -572,8 +446,6 @@ export function createKeyboardMotion(
       kill(sectionTweens);
       kill(revealTweens);
       kill(keyTweens);
-      kill(waveTweens);
-      catLoop?.kill();
       idleLoop?.kill();
       gsap.killTweensOf(pointerTilt);
       window.removeEventListener("scroll", onScroll);
@@ -585,11 +457,9 @@ export function createKeyboardMotion(
         scene.spinId,
         scene.revealId,
         ...scene.keys.map((key) => key.motionId),
-        ...scene.frameIds,
         scene.labelsId,
       ].forEach((id) => api.clearNodeOverrides(id));
       api.clearNodeOverrides(scene.counterId);
-      api.setNodeVisible(scene.catId, false);
     },
   };
 }
