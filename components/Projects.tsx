@@ -121,7 +121,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                 >
                   <GitHubSvg className="h-3.5 w-3.5 shrink-0" />
                   <span className="truncate">
-                    {lang === "es" ? "Código en GitHub" : "GitHub code"}
+                    GitHub
                   </span>
                 </a>
               )}
