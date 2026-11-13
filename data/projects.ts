@@ -3,8 +3,16 @@ export interface BilingualText {
   en: string;
 }
 
-/** "interface-design" = class apps for Diseño de Interfaces; "commercial" = everything else. */
-export type ProjectCategory = "interface-design" | "commercial";
+/**
+ * UI groups:
+ * - "interface-design": the Diseño de Interfaces class apps (featured, Device Lab)
+ * - "academic": other UCC coursework
+ * - "commercial": client / VICARDEV production work
+ */
+export type ProjectCategory = "interface-design" | "academic" | "commercial";
+/** Decides the demo button label: live site, recorded video, downloadable build, or README. */
+export type DemoType = "live" | "video" | "release" | "readme";
+export type ProjectStatus = "completed" | "in-progress";
 export type ProjectPlatform = "web" | "mobile" | "desktop" | "smartwatch" | "game";
 export type ProjectKind = "commercial" | "academic";
 
@@ -21,13 +29,19 @@ export interface Project {
   tags: string[];
   /** Empty string = no screenshot yet (card renders a title placeholder). */
   image: string;
-  /** Empty string only when `nda` is true (private client/code repo). */
+  /** Empty string only when `nda` or `privateRepo` is true. */
   github: string;
   /** Live demo URL, or a `TODO_GABO...` placeholder. */
   demo: string;
   category: ProjectCategory;
+  demoType: DemoType;
+  /** Only set where the owner confirmed it; renders "Terminado" / "En desarrollo". */
+  status?: ProjectStatus;
   platform?: ProjectPlatform;
+  /** Client code under NDA (implies a private repo). */
   nda?: boolean;
+  /** Private repository without a client NDA. */
+  privateRepo?: boolean;
   featured?: boolean;
   /** Pill shown on the card: real client work vs university work. */
   projectType: ProjectKind;
@@ -45,6 +59,8 @@ export const projects: Project[] = [
       en: "UCC Academic Project · Mobile App & AI",
     },
     category: "interface-design",
+    demoType: "readme",
+    status: "in-progress",
     platform: "mobile",
     featured: true,
     projectType: "academic",
@@ -68,6 +84,8 @@ export const projects: Project[] = [
       en: "UCC Academic Project · Desktop App & AI",
     },
     category: "interface-design",
+    demoType: "readme",
+    status: "in-progress",
     platform: "desktop",
     featured: true,
     projectType: "academic",
@@ -91,6 +109,8 @@ export const projects: Project[] = [
       en: "Interface Design Project · Smartwatch",
     },
     category: "interface-design",
+    demoType: "video",
+    status: "completed",
     platform: "smartwatch",
     featured: true,
     projectType: "academic",
@@ -101,8 +121,8 @@ export const projects: Project[] = [
     },
     tags: ["Kotlin", "Jetpack Compose for Wear OS", "osmdroid", "Groq Whisper", "OSRM"],
     github: "https://github.com/itsGabo22/WGO",
-    // TODO_GABO: add a demo video or APK link for WGO.
-    demo: "TODO_GABO: demo video / APK URL",
+    // TODO_GABO: add the demo video URL (or drop public/media/wgo-smartwatch/demo.mp4).
+    demo: "TODO_GABO: demo video URL",
   },
   {
     id: "nexo-protocolo-sombra",
@@ -115,19 +135,21 @@ export const projects: Project[] = [
       en: "Interface Design Project · Team Video Game",
     },
     category: "interface-design",
+    demoType: "video",
+    status: "completed",
     platform: "game",
     featured: true,
     projectType: "academic",
     // TODO_GABO: add a screenshot at /images/projects/nexo.png and set it here.
     image: "",
     description: {
-      es: "Videojuego 3D en primera persona desarrollado en equipo con Unity 6, C# y UI Toolkit, con una interfaz de HUD propia y un personaje con IA (Gemini).",
-      en: "Team-built first-person 3D video game made with Unity 6, C# and UI Toolkit, featuring a custom HUD interface and an AI-driven character (Gemini).",
+      es: "Videojuego 3D en primera persona desarrollado en equipo con Unity 6 (6000.6.7f1), C# y UI Toolkit, con una interfaz de HUD propia y un personaje con IA (Gemini).",
+      en: "Team-built first-person 3D video game made with Unity 6 (6000.6.7f1), C# and UI Toolkit, featuring a custom HUD interface and an AI-driven character (Gemini).",
     },
     tags: ["Unity 6", "C#", "UI Toolkit", "Gemini AI"],
     github: "https://github.com/itsGabo22/NexoProtocoloSombra",
-    // TODO_GABO: add a gameplay video / build download URL.
-    demo: "TODO_GABO: gameplay video / build URL",
+    // TODO_GABO: add the gameplay video URL (or drop public/media/nexo-protocolo-sombra/demo.mp4).
+    demo: "TODO_GABO: gameplay video URL",
   },
   {
     id: "vicardev-agency",
@@ -140,6 +162,7 @@ export const projects: Project[] = [
       en: "Commercial · Agency & Cloud",
     },
     category: "commercial",
+    demoType: "live",
     platform: "web",
     projectType: "commercial",
     image: "/images/projects/vicardev.png",
@@ -162,6 +185,7 @@ export const projects: Project[] = [
       en: "Commercial Client · Industrial Automation",
     },
     category: "commercial",
+    demoType: "live",
     platform: "web",
     projectType: "commercial",
     image: "/images/projects/electrotech.png",
@@ -184,6 +208,7 @@ export const projects: Project[] = [
       en: "Commercial Client · Live E-Commerce",
     },
     category: "commercial",
+    demoType: "live",
     platform: "web",
     projectType: "commercial",
     nda: true,
@@ -207,6 +232,7 @@ export const projects: Project[] = [
       en: "Commercial Client · Live E-Commerce",
     },
     category: "commercial",
+    demoType: "live",
     platform: "web",
     projectType: "commercial",
     nda: true,
@@ -230,6 +256,7 @@ export const projects: Project[] = [
       en: "Commercial Client · Live E-Commerce",
     },
     category: "commercial",
+    demoType: "live",
     platform: "web",
     projectType: "commercial",
     nda: true,
@@ -252,7 +279,8 @@ export const projects: Project[] = [
       es: "Proyecto Académico UCC · Backend Pesado & IA",
       en: "UCC Academic Project · Heavy Backend & AI",
     },
-    category: "commercial",
+    category: "academic",
+    demoType: "live",
     platform: "web",
     projectType: "academic",
     image: "/images/projects/viberoute.png",
@@ -274,10 +302,11 @@ export const projects: Project[] = [
       es: "Proyecto Académico UCC · WebAPK & IA",
       en: "UCC Academic Project · WebAPK & AI",
     },
-    category: "commercial",
+    category: "academic",
+    demoType: "live",
     platform: "mobile",
     projectType: "academic",
-    nda: true,
+    privateRepo: true,
     image: "/images/projects/musicscript.png",
     description: {
       es: "Estación de audio y reproductor musical web instalable como WebAPK en móvil con Inteligencia Artificial integrada: incluye un chat musical inteligente que recomienda canciones y adopta la personalidad de tu artista o cantante favorito.",
@@ -288,3 +317,19 @@ export const projects: Project[] = [
     demo: "https://musicscript.vercel.app/",
   },
 ];
+
+/** Projects shown as 3D devices in the Device Lab, in stage order. */
+export const DEVICE_LAB_IDS = [
+  "wgo-smartwatch",
+  "gamerbox-ai",
+  "ocioflex-desktop",
+  "nexo-protocolo-sombra",
+] as const;
+export type DeviceLabId = (typeof DEVICE_LAB_IDS)[number];
+
+/** Demo media found at build time in public/media/<id>/ (see lib/media.ts). */
+export interface ProjectMedia {
+  video?: string;
+  poster?: string;
+}
+export type MediaManifest = Partial<Record<string, ProjectMedia>>;

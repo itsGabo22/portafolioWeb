@@ -7,15 +7,20 @@ import Experience from "@/components/Experience";
 import Contact from "@/components/Contact";
 import Skills from "@/components/Skills";
 import Footer from "@/components/Footer";
+import { DEVICE_LAB_IDS } from "@/data/projects";
+import { getMediaManifest } from "@/lib/media";
 
 export default function Home() {
+  // Resolved at build time: only media files that exist are ever referenced.
+  const media = getMediaManifest(DEVICE_LAB_IDS);
+
   return (
     <>
       <Navbar/>
       <main>
         <Hero/>
         <About/>
-        <Projects/>
+        <Projects media={media}/>
         <Testimonials/>
         <Experience/>
         <Contact/>
