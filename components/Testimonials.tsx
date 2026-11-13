@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ShieldCheck, ArrowUpRight, Quote } from "lucide-react";
 import { useApp } from "@/context/AppContext";
+import { projects } from "@/data/projects";
 
 export interface Testimonial {
   id: string;
@@ -124,26 +125,31 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
+// Only facts verifiable from data/projects.ts (no self-reported percentages or ratings).
+const LIVE_COMMERCIAL_COUNT = projects.filter(
+  (p) => p.projectType === "commercial" && p.platform === "web"
+).length;
+
 const PROOF_METRICS = [
   {
-    value: "100%",
-    label: {
-      es: "Entregas en producción a tiempo",
-      en: "On-time production delivery",
-    },
-  },
-  {
-    value: "5",
+    value: String(LIVE_COMMERCIAL_COUNT),
     label: {
       es: "Plataformas comerciales activas",
       en: "Live commercial platforms",
     },
   },
   {
-    value: "5.0 / 5",
+    value: String(projects.filter((p) => p.category === "interface-design").length),
     label: {
-      es: "Calificación de clientes & academia",
-      en: "Client & faculty satisfaction",
+      es: "Apps de Diseño de Interfaces",
+      en: "Interface Design apps",
+    },
+  },
+  {
+    value: String(projects.length),
+    label: {
+      es: "Proyectos en el portafolio",
+      en: "Projects in the portfolio",
     },
   },
 ];
