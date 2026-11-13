@@ -24,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title:
-    "Gabriel Esteban Paz Guerrero | Full-Stack Software Developer & Founder of VICARDEV",
+    "Gabriel Esteban Paz Guerrero | Desarrollador Full-Stack y fundador de VICARDEV",
   description:
     "Portafolio profesional de Gabriel Esteban Paz Guerrero (@itsGabo22). Desarrollador Full-Stack, estudiante de 5.º semestre de Ingeniería de Software en la UCC (Pasto, Colombia) y fundador de VICARDEV.",
   keywords: [
@@ -42,12 +42,22 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title:
-      "Gabriel Esteban Paz Guerrero | Full-Stack Developer & Fundador de VICARDEV",
+      "Gabriel Esteban Paz Guerrero | Desarrollador Full-Stack y fundador de VICARDEV",
     description:
       "Arquitectando plataformas web escalables, comercio electrónico en producción e integraciones de inteligencia artificial desde Pasto, Colombia.",
     type: "website",
     locale: "es_CO",
+    siteName: "Portafolio de Gabriel Esteban Paz Guerrero",
   },
+  twitter: {
+    card: "summary",
+    title:
+      "Gabriel Esteban Paz Guerrero | Desarrollador Full-Stack y fundador de VICARDEV",
+    description:
+      "Portafolio profesional: plataformas web, e-commerce y apps con IA desde Pasto, Colombia.",
+  },
+  // favicon: app/favicon.ico is picked up automatically by Next.js
+  // TODO_GABO: set metadataBase + an Open Graph image once the Vercel production URL is known.
 };
 
 export default function RootLayout({
