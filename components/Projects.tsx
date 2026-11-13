@@ -8,6 +8,7 @@ import { useApp } from "@/context/AppContext";
 import { fmt, useT } from "@/messages";
 import TechBadge from "./TechBadge";
 import { ProjectActions, StatusBadge } from "./projects/ProjectBits";
+import DeviceLab from "./devicelab/DeviceLab";
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const { lang } = useApp();
@@ -121,7 +122,6 @@ function ProjectGroup({
 
 export default function Projects({ media = {} }: { media?: MediaManifest }) {
   const t = useT();
-  void media;
 
   const designProjects = projects.filter((p) => p.category === "interface-design");
   const academicProjects = projects.filter((p) => p.category === "academic");
@@ -143,7 +143,9 @@ export default function Projects({ media = {} }: { media?: MediaManifest }) {
           subtitle={t.projects.groups.design.subtitle}
           items={designProjects}
           columnsClass="md:grid-cols-2"
-        />
+        >
+          <DeviceLab projects={designProjects} media={media} />
+        </ProjectGroup>
 
         <ProjectGroup
           id="projects-academic"
