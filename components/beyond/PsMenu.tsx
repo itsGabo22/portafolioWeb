@@ -287,6 +287,70 @@ export default function PsMenu({
     };
   }, [paused]);
 
+  // ── console-like keys while the menu is on screen (no click/Tab into it needed) ──
+  // ←/→ move the selection and bring focus into the menu (the local handlers then
+  // take over); Enter runs the primary action only when nothing else has focus.
+  // ↑/↓ are never captured here, so page scrolling is untouched.
+  const onGlobalKey = (event: globalThis.KeyboardEvent) => {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+    const frame = frameRef.current;
+    if (!frame) return;
+    const active = document.activeElement as HTMLElement | null;
+    if (active && frame.contains(active)) return; // handled by the menu's own handlers
+    const idle = !active || active === document.body || active === document.documentElement;
+    // never steal keys from fields or other arrow-key widgets
+    if (
+      active &&
+      !idle &&
+      active.matches(
+        "input, textarea, select, [contenteditable], [role=tab], [role=option], [role=slider], [role=radio], [role=menuitem], [role=listbox], [role=grid] *"
+      )
+    )
+      return;
+    const r = frame.getBoundingClientRect();
+    const visible = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+    if (visible < Math.min(r.height, window.innerHeight) * 0.5) return;
+    if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+      event.preventDefault();
+      select(tab, index + (event.key === "ArrowRight" ? 1 : -1), true);
+    } else if (event.key === "Enter" && idle) {
+      event.preventDefault();
+      runPrimary(item);
+    }
+  };
+  const globalKeyRef = useRef<(event: globalThis.KeyboardEvent) => void>(() => {});
+  useEffect(() => {
+    globalKeyRef.current = onGlobalKey;
+  });
+  useEffect(() => {
+    if (paused) return;
+    const listener = (event: globalThis.KeyboardEvent) => globalKeyRef.current(event);
+    window.addEventListener("keydown", listener);
+    return () => window.removeEventListener("keydown", listener);
+  }, [paused]);
+
+  // ── pointer: hovering a tile selects it (short intent delay), clicking the
+  //    selected tile runs its primary action ──
+  const hoverTimer = useRef(0);
+  useEffect(() => () => window.clearTimeout(hoverTimer.current), []);
+  const onTileEnter = (i: number, pointerType: string) => {
+    if (pointerType !== "mouse") return;
+    window.clearTimeout(hoverTimer.current);
+    // keep keyboard focus in step when it is already in the row
+    hoverTimer.current = window.setTimeout(
+      () => select(tab, i, Boolean(rowRef.current?.contains(document.activeElement))),
+      110
+    );
+  };
+  const onTileLeave = () => window.clearTimeout(hoverTimer.current);
+  const onTileClick = (i: number) => {
+    window.clearTimeout(hoverTimer.current);
+    if (i === index) {
+      focusEl(optionRefs.current[i]);
+      runPrimary(items[i]);
+    } else select(tab, i, true);
+  };
+
   // ── render ──
   const action = item.primaryAction;
   const embedOpen = action.kind === "play" && embedFor === item.id;
@@ -306,6 +370,8 @@ export default function PsMenu({
       data-mood={item.mood}
       data-photos={BEYOND_PHOTOS}
       data-embed={embedOpen}
+      // <main> is pointer-events:none (3D keyboard overlay): opt the whole menu back in
+      data-interactive
       role="region"
       aria-label={t.beyond.menuAria}
       onKeyDown={onFrameKeyDown}
@@ -344,8 +410,11 @@ export default function PsMenu({
                 aria-selected={isSel}
                 aria-label={it.title[lang]}
                 tabIndex={isSel ? 0 : -1}
-                onClick={() => select(tab, i, true)}
-                className="ps-option cursor-can-hover"
+                onClick={() => onTileClick(i)}
+                onPointerEnter={(event) => onTileEnter(i, event.pointerType)}
+                onPointerLeave={onTileLeave}
+                // no cursor-can-hover: the site cursor's invert blob would recolour the covers
+                className="ps-option"
                 data-selected={isSel}
               >
                 <span className="ps-tile" style={moodStyle(it.mood)}>
