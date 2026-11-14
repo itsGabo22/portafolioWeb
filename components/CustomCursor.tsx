@@ -106,8 +106,11 @@ type TargetMagnetState = {
 export default function CustomCursor() {
   const isClient = useIsClient();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const finePointer = useMediaQuery("(pointer: fine)");
+  // Hover-capable precise pointer only: never on touch, (hover: none) or (pointer: coarse).
+  const finePointer = useMediaQuery("(hover: hover) and (pointer: fine)");
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  // Nothing is rendered until the first real mouse movement (no stray circle on load).
+  const [armed, setArmed] = useState(false);
 
   const jellyRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
@@ -137,7 +140,7 @@ export default function CustomCursor() {
   const isDesktop = isClient && !isMobile && finePointer && !reducedMotion;
 
   useLayoutEffect(() => {
-    if (!isDesktop) return;
+    if (!isDesktop || !armed) return;
     const jellyEl = jellyRef.current;
     const dotEl = dotRef.current;
     if (!jellyEl || !dotEl) return;
@@ -159,7 +162,7 @@ export default function CustomCursor() {
       dotY: gsap.quickSetter(dotEl, "y", "px") as QuickSetterFn,
       dotOpacity: gsap.quickSetter(dotEl, "opacity") as QuickSetterFn,
     };
-  }, [isDesktop]);
+  }, [isDesktop, armed]);
 
   const render = useCallback(() => {
     const set = setRef.current;
@@ -310,7 +313,10 @@ export default function CustomCursor() {
       setHoveredTarget(hoverEl);
     };
 
-    const onMouseMove = (e: MouseEvent) => {
+    const onMouseMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      // Browsers fire a synthetic move (no movement) under a resting cursor on load/layout shifts.
+      if (!cursorMovedRef.current && e.movementX === 0 && e.movementY === 0) return;
       const x = e.clientX;
       const y = e.clientY;
       pointerRef.current.x = x;
@@ -318,6 +324,7 @@ export default function CustomCursor() {
 
       if (!cursorMovedRef.current) {
         cursorMovedRef.current = true;
+        setArmed(true);
         posRef.current.x = x;
         posRef.current.y = y;
         jellyStateRef.current.x = x;
@@ -352,7 +359,7 @@ export default function CustomCursor() {
     };
 
     gsap.ticker.add(render);
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("pointermove", onMouseMove, { passive: true });
     window.addEventListener("scroll", onScroll, {
       passive: true,
       capture: true,
@@ -361,7 +368,7 @@ export default function CustomCursor() {
     const activeSnapshot = targetMagnetRef.current;
     return () => {
       gsap.ticker.remove(render);
-      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("pointermove", onMouseMove);
       window.removeEventListener("scroll", onScroll, { capture: true });
       if (activeSnapshot.el) {
         gsap.set(activeSnapshot.el, { x: 0, y: 0 });
@@ -369,7 +376,7 @@ export default function CustomCursor() {
     };
   }, [isDesktop, render]);
 
-  if (!isDesktop) return null;
+  if (!isDesktop || !armed) return null;
 
   return (
     <>
