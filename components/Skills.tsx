@@ -6,6 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { useT } from "@/messages";
 import TechBadge from "./TechBadge";
+import SectionEyebrow from "./SectionEyebrow";
 
 interface SkillCategory {
   id: string;
@@ -140,6 +141,7 @@ export default function Skills() {
         <div data-reveal
           className="text-center"
         >
+          <SectionEyebrow id="skills" />
           <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
             {t.skills.title}
           </h2>
@@ -229,7 +231,7 @@ export default function Skills() {
                       <h4 className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
                         {category.title[lang]}
                       </h4>
-                      <p className="mt-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                      <p className="mt-1 text-xs font-medium text-primary-ink">
                         {category.subtitle[lang]}
                       </p>
                     </div>

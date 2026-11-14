@@ -105,7 +105,7 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
+      className="dark band-primary band-gradient-rev relative py-24 sm:py-32 overflow-hidden"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Left/Center Studio Dispatch Desk (7 cols) + Right Spatial Stage for Levitating 3D Keycaps (5 cols) */}
@@ -132,7 +132,7 @@ export default function Contact() {
 
               <h2 className="font-display text-5xl font-black tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-6xl md:text-7xl leading-[0.92] uppercase">
                 {t.contact.titleA}{" "}
-                <span className="font-serif italic font-normal text-emerald-700 dark:text-emerald-400">
+                <span className="font-serif italic font-normal text-primary-300">
                   {t.contact.titleB}
                 </span>
               </h2>
@@ -330,7 +330,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="cursor-can-hover inline-flex items-center justify-center gap-2.5 rounded-2xl bg-zinc-900 dark:bg-zinc-100 px-8 py-4 text-sm font-bold text-white dark:text-zinc-950 transition-all hover:bg-emerald-600 dark:hover:bg-emerald-400 dark:hover:text-zinc-950 disabled:opacity-60"
+                  className="cursor-can-hover inline-flex items-center justify-center gap-2.5 rounded-2xl bg-primary-200 px-8 py-4 text-sm font-bold text-primary-950 transition-all hover:bg-primary-100 disabled:opacity-60"
                 >
                   {status === "submitting" ? (
                     <>

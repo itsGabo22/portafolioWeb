@@ -6,6 +6,7 @@ import { Disc3, Gamepad2, Ticket } from "lucide-react";
 import { useT } from "@/messages";
 import Rich from "./Rich";
 import TechBadge from "./TechBadge";
+import SectionEyebrow from "./SectionEyebrow";
 
 const TECH_STACK_PILLS = [
   "JavaScript",
@@ -46,6 +47,7 @@ export default function About() {
     <section id="about" className="relative overflow-hidden border-t border-line py-24 sm:py-32">
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-16 text-center" data-reveal>
+            <SectionEyebrow id="about" />
           <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
             {t.about.title}
           </h2>
@@ -100,10 +102,10 @@ export default function About() {
                           <a
                             href={hash}
                             aria-label={`${t.about.interests.goTo} ${t.about.interests[key]}`}
-                            className="cursor-can-hover group inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface-2 px-4 py-2 text-sm font-semibold text-ink transition-[border-color,background-color,transform] duration-200 ease-out-expo hover:-translate-y-0.5 hover:border-accent-fill/60 hover:bg-accent-soft"
+                            className="cursor-can-hover group inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface-2 px-4 py-2 text-sm font-semibold text-ink transition-[border-color,background-color,transform] duration-200 ease-out-expo hover:-translate-y-0.5 hover:border-primary-line hover:bg-primary-soft"
                           >
                             <Icon
-                              className="h-4 w-4 text-accent transition-transform duration-300 group-hover:rotate-12"
+                              className="h-4 w-4 text-primary-ink transition-transform duration-300 group-hover:rotate-12"
                               aria-hidden="true"
                             />
                             <span>{t.about.interests[key]}</span>

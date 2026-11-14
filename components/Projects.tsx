@@ -9,6 +9,7 @@ import { fmt, useT } from "@/messages";
 import TechBadge from "./TechBadge";
 import { ProjectActions, StatusBadge } from "./projects/ProjectBits";
 import DeviceLab from "./devicelab/DeviceLab";
+import SectionEyebrow from "./SectionEyebrow";
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const { lang } = useApp();
@@ -131,6 +132,7 @@ export default function Projects({ media = {} }: { media?: MediaManifest }) {
     <section id="projects" className="relative border-t border-line py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-14 text-center" data-reveal>
+            <SectionEyebrow id="projects" />
           <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
             {t.projects.title}
           </h2>

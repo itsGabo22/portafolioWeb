@@ -83,7 +83,7 @@ export default function Testimonials({ avatars = {} }: { avatars?: Record<string
               className="pointer-events-none absolute -right-4 -top-4 h-40 w-40 rotate-12 text-ink/[0.05]"
             />
             {active.badge?.confirmed && (
-              <span className="relative mb-6 inline-flex w-fit items-center gap-1.5 rounded-full border border-accent-fill/35 bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
+              <span className="relative mb-6 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary-line bg-primary-soft px-3 py-1 text-xs font-semibold text-primary-ink">
                 <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>{active.badge[lang]}</span>
               </span>

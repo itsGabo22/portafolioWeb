@@ -93,7 +93,7 @@ export default function Hero() {
                 </div>
 
                 <div className="flex items-baseline gap-1.5">
-                  <span className="font-serif italic text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                  <span className="font-serif italic text-xs font-medium text-primary-ink">
                     {t.hero.greeting}
                   </span>
                   <span className="font-mono text-[11px] font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
@@ -145,7 +145,7 @@ export default function Hero() {
               <a
                 href="/cv.pdf"
                 download
-                className="cursor-can-hover inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-zinc-900 dark:bg-zinc-50 px-7 py-3.5 text-sm font-semibold text-white dark:text-zinc-950 shadow-sm transition-[background-color,transform,box-shadow] duration-150 hover:bg-zinc-800 hover:shadow-glow active:scale-[0.98] dark:hover:bg-zinc-200"
+                className="cursor-can-hover inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-primary px-7 py-3.5 text-sm font-semibold text-on-primary shadow-sm transition-[background-color,transform,box-shadow] duration-150 hover:bg-primary-strong hover:shadow-glow active:scale-[0.98]"
               >
                 <FileText className="h-4 w-4" />
                 <span>{t.hero.downloadCv}</span>

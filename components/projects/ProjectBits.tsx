@@ -23,7 +23,7 @@ export function StatusBadge({
         ? "bg-black/70 text-emerald-300"
         : "bg-black/70 text-amber-300"
       : done
-        ? "border border-accent-fill/35 bg-accent-soft text-accent"
+        ? "border border-primary-line bg-primary-soft text-primary-ink"
         : "border border-warn/35 bg-warn-soft text-warn";
   return (
     <span
@@ -40,7 +40,7 @@ const ghostButton =
 const secondaryButton =
   "cursor-can-hover inline-flex min-h-11 items-center justify-center gap-1.5 rounded-control border border-line bg-surface-1 px-3 py-2.5 text-xs font-medium text-ink transition-[background-color,transform] duration-150 hover:bg-surface-2 active:scale-[0.98]";
 const primaryButton =
-  "cursor-can-hover group/btn inline-flex min-h-11 items-center justify-center gap-1.5 rounded-control bg-ink px-3.5 py-2.5 text-xs font-semibold text-surface-0 transition-[background-color,transform] duration-150 hover:bg-accent-strong active:scale-[0.98] dark:hover:bg-accent";
+  "cursor-can-hover group/btn inline-flex min-h-11 items-center justify-center gap-1.5 rounded-control bg-primary px-3.5 py-2.5 text-xs font-semibold text-on-primary transition-[background-color,transform] duration-150 hover:bg-primary-strong active:scale-[0.98]";
 
 /** GitHub + demo actions shared by the project cards and the Device Lab panel. */
 export function ProjectActions({ project }: { project: Project }) {

@@ -18,6 +18,7 @@ import {
 import { useApp } from "@/context/AppContext";
 import { useT } from "@/messages";
 import TechBadge from "./TechBadge";
+import SectionEyebrow from "./SectionEyebrow";
 
 interface TimelineItem {
   id: string;
@@ -473,7 +474,7 @@ function TimelineColumn({
                           href={item.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="cursor-can-hover inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 underline underline-offset-4"
+                          className="cursor-can-hover inline-flex items-center gap-0.5 text-xs font-semibold text-primary-ink underline underline-offset-4"
                         >
                           <span>{t.experience.web}</span>
                           <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
@@ -539,7 +540,7 @@ export default function Experience() {
     <section
       id="experience"
       ref={sectionRef}
-      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
+      className="dark band-primary band-gradient relative py-24 sm:py-32 overflow-hidden"
     >
       {/* Scroll-Driven 4-Stage Engineering Evolution Backdrop */}
       <EraSchematicBackdrop activeEra={activeEra} />
@@ -549,6 +550,7 @@ export default function Experience() {
         <div data-reveal
           className="mb-10 text-center"
         >
+          <SectionEyebrow id="experience" />
           <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
             {t.experience.title}
           </h2>

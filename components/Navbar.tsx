@@ -143,7 +143,7 @@ export default function Navbar() {
                 href={href}
                 className={`cursor-can-hover relative rounded-xl px-3 py-1.5 text-sm font-medium transition-colors duration-200 ${
                   isActive
-                    ? "text-zinc-950 dark:text-white font-semibold"
+                    ? "text-primary-ink font-semibold"
                     : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100"
                 }`}
               >
@@ -151,7 +151,7 @@ export default function Navbar() {
                 {isActive && (
                   <motion.span
                     layoutId="navbar-active-indicator"
-                    className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-emerald-600 dark:bg-emerald-400"
+                    className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-primary-ink"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -220,7 +220,7 @@ export default function Navbar() {
           <a
             href="/cv.pdf"
             download
-            className="cursor-can-hover inline-flex h-9 items-center gap-1.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-3.5 text-xs font-semibold text-white dark:text-zinc-950 transition-all hover:bg-zinc-800 dark:hover:bg-white"
+            className="cursor-can-hover inline-flex h-9 items-center gap-1.5 rounded-xl px-3.5 text-xs font-semibold transition-all bg-primary text-on-primary hover:bg-primary-strong"
           >
             <FileText className="h-3.5 w-3.5" />
             <span>{t.nav.cv}</span>
@@ -316,7 +316,7 @@ export default function Navbar() {
                   href="/cv.pdf"
                   download
                   onClick={handleLinkClick}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-4 py-2.5 text-xs font-semibold text-white dark:text-zinc-950"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold bg-primary text-on-primary hover:bg-primary-strong"
                 >
                   <FileText className="h-4 w-4" />
                   <span>{t.nav.downloadCv}</span>

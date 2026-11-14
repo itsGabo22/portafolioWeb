@@ -33,7 +33,7 @@ export default function Footer() {
   };
 
   return (
-    <footer id="footer" className="relative z-20 border-t border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-950/65 backdrop-blur-2xl backdrop-saturate-150 text-zinc-600 dark:text-zinc-400 transition-colors duration-200">
+    <footer id="footer" className="dark band-primary relative z-20 text-zinc-400">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-8 xl:flex-row xl:items-center">
           {/* Brand & Mandatory Credit */}
@@ -43,7 +43,7 @@ export default function Footer() {
               className="cursor-can-hover inline-flex items-center gap-2 font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50"
             >
               <span>Gabriel Esteban Paz Guerrero</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="h-1.5 w-1.5 rounded-full bg-primary-400" />
             </a>
             <p className="text-xs text-zinc-600 dark:text-zinc-400">
               {t.footer.madeWith} · {t.footer.founder}
