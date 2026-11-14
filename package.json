@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "dependencies": {
     "@chibi3d/runtime": "^0.5.0",
     "@react-three/fiber": "^9.8.2",

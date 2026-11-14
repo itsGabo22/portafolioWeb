@@ -7,11 +7,13 @@ Portafolio profesional y académico de **Gabriel Esteban Paz Guerrero** (`@itsGa
 - **Framework**: Next.js 16 (App Router) + React 19
 - **Lenguaje**: TypeScript (`strict: true`)
 - **Backend ligero**: Route Handler de Next.js (`/api/contact`) + Resend
-- **Despliegue**: Vercel (GitHub)
+- **Despliegue**: Netlify (adaptador OpenNext de Next.js, cero configuración)
 - **Estilos**: Tailwind CSS v4 (Modo Claro de estudio por defecto + Modo Oscuro conmutable)
-- **Escenario 3D Interactivo**: `@chibi3d/runtime` (Teclado mecánico 3D de 24 teclas con sonido de switches, contador mecánico y Bongo Cat animado)
+- **Escenario 3D Interactivo**: `@chibi3d/runtime` (teclado mecánico 3D de 24 teclas con sonido de switches, vívido solo en Hero y Skills) + **Device Lab** con `@react-three/fiber` (dispositivos procedurales para las apps de Diseño de Interfaces)
 - **Coreografía & Animaciones**: GSAP (`ScrollTrigger`) + Framer Motion
-- **Internacionalización (i18n)**: Sistema bilingüe instantáneo Español (`es` por defecto) / Inglés (`en`) mediante `context/AppContext.tsx`
+- **Internacionalización (i18n)**: catálogos tipados `messages/es.ts` / `messages/en.ts` (paridad de claves comprobada por TypeScript) + `context/AppContext.tsx`
+- **Sistema de diseño**: ver [`DESIGN.md`](./DESIGN.md) (tokens en `app/globals.css`)
+- **Créditos y licencias de assets**: [`public/CREDITS.md`](./public/CREDITS.md)
 
 ## Proyectos Destacados (Comerciales & Académicos UCC)
 
@@ -57,8 +59,25 @@ El formulario de contacto (`app/api/contact/route.ts`) envía correos con [Resen
 
 Nunca subas valores reales al repositorio (`.env*` está ignorado; solo `.env.example` se versiona).
 
-## Despliegue en Vercel
+## Medios de demostración (Device Lab)
 
-1. En Vercel: **Add New… > Project** e importa este repositorio de GitHub (framework detectado: Next.js, sin configuración extra).
-2. En **Settings > Environment Variables** agrega `RESEND_API_KEY`, `CONTACT_TO_EMAIL` y `CONTACT_FROM_EMAIL`.
-3. Despliega. Cada push a una rama genera un preview; `main` publica producción.
+Cada dispositivo del Device Lab reproduce un video si existe en `public/media/<id>/` (se detecta al compilar; si falta, se muestra una pantalla honesta y nunca se pide un archivo inexistente):
+
+| Proyecto | Carpeta | Archivos |
+| --- | --- | --- |
+| WGO | `public/media/wgo-smartwatch/` | `demo.webm` (o `demo.mp4`) + `poster.webp` |
+| GamerBox | `public/media/gamerbox-ai/` | `demo.webm` (o `demo.mp4`) + `poster.webp` |
+| OcioFlex | `public/media/ocioflex-desktop/` | `demo.webm` (o `demo.mp4`) + `poster.webp` |
+| Nexo: Protocolo Sombra | `public/media/nexo-protocolo-sombra/` | `demo.webm` (o `demo.mp4`) + `poster.webp` |
+
+Recomendado: video sin audio, ≤ 15 s en bucle, ≤ 4 MB, 1280 px de ancho. Los avatares de testimonios siguen el mismo patrón: `public/images/testimonials/<id>.webp|jpg|png`.
+
+## Despliegue en Netlify
+
+Netlify ejecuta Next.js 16 sin configuración mediante su adaptador OpenNext (los Route Handlers como `/api/contact` funcionan como Netlify Functions). No hace falta `netlify.toml`, `output: "export"` ni instalar `@netlify/plugin-nextjs`.
+
+1. En Netlify: **Add new site → Import an existing project** y conecta este repositorio de GitHub.
+2. Build command: `npm run build` (Netlify detecta Next.js y gestiona el directorio de publicación).
+3. Versión de Node: la toma de `.nvmrc` (22; Next 16 requiere ≥ 20.9).
+4. En **Site configuration → Environment variables** agrega `RESEND_API_KEY`, `CONTACT_TO_EMAIL` y `CONTACT_FROM_EMAIL` con un *scope* que incluya **Functions / Runtime**.
+5. **Deploy previews:** abre un *draft pull request* contra `main`; Netlify publica una vista previa por cada push a esa rama. Hacer merge a `main` publica producción en `https://gabodevportafolio.netlify.app`.
