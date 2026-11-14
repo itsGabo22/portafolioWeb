@@ -28,7 +28,7 @@ const SKILL_CATEGORIES: SkillCategory[] = [
   {
     id: "frontend-mobile",
     title: {
-      es: "Frontend, Mobile & Desktop",
+      es: "Frontend, móvil y escritorio",
       en: "Frontend, Mobile & Desktop",
     },
     subtitle: {
