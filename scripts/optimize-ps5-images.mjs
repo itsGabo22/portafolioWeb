@@ -3,6 +3,7 @@
  * PS5-style menu art pipeline (npm run ps5:images).
  *
  * Input : assets-src/ps5Menu/<slug>.(jpg|jpeg|png|webp)   — raw drops, untracked (.git/info/exclude)
+ *         assets-src/ps5Menu/<slug>.tile.(…)            — optional separate source for the square cover
  * Output: public/images/ps5Menu/<slug>-stage.webp          — ≤ 2400 px wide, q≈78, target ≤ 250 KB
  *         public/images/ps5Menu/<slug>-tile.webp           — square crop (attention focus) ≤ 600 px, target ≤ 60 KB
  *         components/beyond/ps5-art.generated.ts           — manifest of slugs that have art
@@ -64,36 +65,61 @@ async function main() {
   }
   const ids = await menuIds();
 
-  const art = {};
-  const report = [];
+  // <slug>.<ext> = stage source (also the cover when there is no separate one);
+  // <slug>.tile.<ext> = square-cover source (e.g. official box art), alone or with a stage
+  const sources = new Map(); // slug -> { stage?: string, tile?: string }
   for (const file of files) {
-    const slug = path.basename(file, path.extname(file));
+    let slug = path.basename(file, path.extname(file));
+    const isTile = slug.endsWith(".tile");
+    if (isTile) slug = slug.slice(0, -".tile".length);
     if (!SLUG.test(slug)) {
       console.warn(`skip ${file}: slug must be lowercase-kebab (e.g. resident-evil-requiem.jpg)`);
       continue;
     }
-    if (art[slug]) {
-      console.warn(`skip ${file}: duplicate slug "${slug}"`);
+    const entry = sources.get(slug) ?? {};
+    const key = isTile ? "tile" : "stage";
+    if (entry[key]) {
+      console.warn(`skip ${file}: duplicate ${key} source for "${slug}"`);
       continue;
     }
-    if (ids && !ids.has(slug)) console.warn(`note: "${slug}" is not a menu item id in data/personal.ts (art will not be shown)`);
-    const input = path.join(SRC, file);
+    entry[key] = path.join(SRC, file);
+    sources.set(slug, entry);
+  }
+
+  const size = async (input) => {
     const meta = await sharp(input).metadata();
     // EXIF orientations 5–8 swap width and height once .rotate() applies them
     const swapped = (meta.orientation ?? 1) >= 5;
-    const srcW = (swapped ? meta.height : meta.width) ?? STAGE.maxWidth;
-    const srcH = (swapped ? meta.width : meta.height) ?? STAGE.maxWidth;
-    const width = Math.min(srcW, STAGE.maxWidth);
+    return { meta, w: (swapped ? meta.height : meta.width) ?? 0, h: (swapped ? meta.width : meta.height) ?? 0 };
+  };
 
-    const stage = await encode(
-      (_q, scale) => sharp(input).rotate().resize({ width: Math.round(width * scale), withoutEnlargement: true }),
-      STAGE,
-      true
-    );
-    const tileSize = Math.min(TILE.size, srcW, srcH);
+  const art = {};
+  const report = [];
+  for (const [slug, src] of [...sources].sort(([a], [b]) => a.localeCompare(b))) {
+    if (ids && !ids.has(slug)) console.warn(`note: "${slug}" is not a menu item id in data/personal.ts (art will not be shown)`);
+    const entry = {};
+    const row = { slug, stage: "—", tile: "—" };
+
+    if (src.stage) {
+      const { meta, w } = await size(src.stage);
+      const width = Math.min(w || STAGE.maxWidth, STAGE.maxWidth);
+      const stage = await encode(
+        (_q, scale) => sharp(src.stage).rotate().resize({ width: Math.round(width * scale), withoutEnlargement: true }),
+        STAGE,
+        true
+      );
+      await writeFile(path.join(OUT, `${slug}-stage.webp`), stage.buffer);
+      entry.stage = `/images/ps5Menu/${slug}-stage.webp`;
+      row.source = `${meta.width}×${meta.height} ${kb((await stat(src.stage)).size)} KB`;
+      row.stage = `${kb(stage.buffer.length)} KB (q${stage.q}${stage.scale < 1 ? `, ×${stage.scale.toFixed(1)}` : ""})${stage.overTarget ? " OVER TARGET" : ""}`;
+    }
+
+    const tileInput = src.tile ?? src.stage;
+    const { w, h } = await size(tileInput);
+    const tileSize = Math.min(TILE.size, w || TILE.size, h || TILE.size);
     const tile = await encode(
       (_q, scale) =>
-        sharp(input)
+        sharp(tileInput)
           .rotate()
           .resize(Math.round(tileSize * scale), Math.round(tileSize * scale), {
             fit: "cover",
@@ -102,22 +128,18 @@ async function main() {
       TILE,
       true
     );
-
-    await writeFile(path.join(OUT, `${slug}-stage.webp`), stage.buffer);
     await writeFile(path.join(OUT, `${slug}-tile.webp`), tile.buffer);
-    art[slug] = { stage: `/images/ps5Menu/${slug}-stage.webp`, tile: `/images/ps5Menu/${slug}-tile.webp` };
-    report.push({
-      slug,
-      source: `${meta.width}×${meta.height} ${kb((await stat(input)).size)} KB`,
-      stage: `${kb(stage.buffer.length)} KB (q${stage.q}${stage.scale < 1 ? `, ×${stage.scale.toFixed(1)}` : ""})${stage.overTarget ? " OVER TARGET" : ""}`,
-      tile: `${kb(tile.buffer.length)} KB (q${tile.q})${tile.overTarget ? " OVER TARGET" : ""}`,
-    });
+    entry.tile = `/images/ps5Menu/${slug}-tile.webp`;
+    row.tile = `${kb(tile.buffer.length)} KB (q${tile.q})${src.tile ? " [.tile]" : ""}${tile.overTarget ? " OVER TARGET" : ""}`;
+
+    art[slug] = entry;
+    report.push(row);
   }
 
   // prune outputs whose raw source was removed or renamed
   for (const out of await readdir(OUT)) {
     const m = out.match(/^(.+)-(stage|tile)\.webp$/);
-    if (m && !art[m[1]]) {
+    if (m && !art[m[1]]?.[m[2]]) {
       await unlink(path.join(OUT, out));
       console.log(`pruned ${out} (no raw source)`);
     }
@@ -125,13 +147,16 @@ async function main() {
 
   const slugs = Object.keys(art).sort();
   const body = slugs
-    .map((s) => `  "${s}": { stage: "${art[s].stage}", tile: "${art[s].tile}" },`)
+    .map((s) => {
+      const fields = ["stage", "tile"].filter((k) => art[s][k]).map((k) => `${k}: "${art[s][k]}"`);
+      return `  "${s}": { ${fields.join(", ")} },`;
+    })
     .join("\n");
   await writeFile(
     MANIFEST,
     `// GENERATED by scripts/optimize-ps5-images.mjs (npm run ps5:images) — do not edit by hand.
 // Slugs with optimized art in public/images/ps5Menu/. Items without an entry use the typographic fallback.
-export const PS5_ART: Readonly<Record<string, { stage: string; tile: string }>> = {
+export const PS5_ART: Readonly<Record<string, { stage?: string; tile?: string }>> = {
 ${body}${body ? "\n" : ""}};
 `
   );
