@@ -7,10 +7,13 @@
  *         public/images/ps5Menu/<slug>-tile.webp           — square crop (attention focus) ≤ 600 px, target ≤ 60 KB
  *         components/beyond/ps5-art.generated.ts           — manifest of slugs that have art
  *
- * Slugs must be lowercase-kebab (Netlify builds on a case-sensitive filesystem).
- * Reproducible: same inputs → same outputs; re-run after adding or replacing a raw file.
+ * Slugs must be lowercase-kebab (Netlify builds on a case-sensitive filesystem)
+ * and should match a menu item id in data/personal.ts.
+ * Reproducible: same inputs → same outputs; re-run after adding, replacing or
+ * removing a raw file (outputs without a raw source are pruned). Without an
+ * assets-src/ps5Menu folder (e.g. a fresh clone) nothing is touched.
  */
-import { mkdir, readdir, stat, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, stat, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 
@@ -26,27 +29,40 @@ const TILE = { size: 600, quality: 78, minQuality: 50, targetKB: 60 };
 
 const kb = (bytes) => Math.round((bytes / 1024) * 10) / 10;
 
-/** Encode, lowering quality (then size) until the target is met. */
+/** Encode, lowering quality (then size, in 10 % integer steps down to 50 %) until the target is met. */
 async function encode(make, { quality, minQuality, targetKB }, shrink) {
   let q = quality;
-  let scale = 1;
+  let step = 0;
   for (;;) {
+    const scale = 1 - step / 10;
     const buffer = await make(q, scale).webp({ quality: q, effort: 6 }).toBuffer();
     if (buffer.length <= targetKB * 1024) return { buffer, q, scale };
     if (q > minQuality) q -= 4;
-    else if (shrink && scale > 0.5) scale -= 0.1;
+    else if (shrink && step < 5) step += 1;
     else return { buffer, q, scale, overTarget: true };
+  }
+}
+
+/** Menu item ids declared in data/personal.ts (for a friendly warning on unknown slugs). */
+async function menuIds() {
+  try {
+    const src = await readFile(path.join(ROOT, "data", "personal.ts"), "utf8");
+    return new Set([...src.matchAll(/\bid: "([a-z0-9-]+)"/g)].map((m) => m[1]));
+  } catch {
+    return null;
   }
 }
 
 async function main() {
   await mkdir(OUT, { recursive: true });
-  let files = [];
+  let files;
   try {
     files = (await readdir(SRC)).filter((f) => EXT.test(f)).sort();
   } catch {
-    console.log(`No ${path.relative(ROOT, SRC)} folder — writing an empty manifest.`);
+    console.log(`No ${path.relative(ROOT, SRC)} folder — nothing to do (outputs and manifest left untouched).`);
+    return;
   }
+  const ids = await menuIds();
 
   const art = {};
   const report = [];
@@ -60,16 +76,21 @@ async function main() {
       console.warn(`skip ${file}: duplicate slug "${slug}"`);
       continue;
     }
+    if (ids && !ids.has(slug)) console.warn(`note: "${slug}" is not a menu item id in data/personal.ts (art will not be shown)`);
     const input = path.join(SRC, file);
     const meta = await sharp(input).metadata();
-    const width = Math.min(meta.width ?? STAGE.maxWidth, STAGE.maxWidth);
+    // EXIF orientations 5–8 swap width and height once .rotate() applies them
+    const swapped = (meta.orientation ?? 1) >= 5;
+    const srcW = (swapped ? meta.height : meta.width) ?? STAGE.maxWidth;
+    const srcH = (swapped ? meta.width : meta.height) ?? STAGE.maxWidth;
+    const width = Math.min(srcW, STAGE.maxWidth);
 
     const stage = await encode(
       (_q, scale) => sharp(input).rotate().resize({ width: Math.round(width * scale), withoutEnlargement: true }),
       STAGE,
       true
     );
-    const tileSize = Math.min(TILE.size, meta.width ?? TILE.size, meta.height ?? TILE.size);
+    const tileSize = Math.min(TILE.size, srcW, srcH);
     const tile = await encode(
       (_q, scale) =>
         sharp(input)
@@ -91,6 +112,15 @@ async function main() {
       stage: `${kb(stage.buffer.length)} KB (q${stage.q}${stage.scale < 1 ? `, ×${stage.scale.toFixed(1)}` : ""})${stage.overTarget ? " OVER TARGET" : ""}`,
       tile: `${kb(tile.buffer.length)} KB (q${tile.q})${tile.overTarget ? " OVER TARGET" : ""}`,
     });
+  }
+
+  // prune outputs whose raw source was removed or renamed
+  for (const out of await readdir(OUT)) {
+    const m = out.match(/^(.+)-(stage|tile)\.webp$/);
+    if (m && !art[m[1]]) {
+      await unlink(path.join(OUT, out));
+      console.log(`pruned ${out} (no raw source)`);
+    }
   }
 
   const slugs = Object.keys(art).sort();
