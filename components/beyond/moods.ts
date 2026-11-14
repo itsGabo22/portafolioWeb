@@ -69,6 +69,10 @@ export const MOODS: Record<MoodId, Mood> = {
     bg: "#0c1219", surface: "#152230", fg: "#edf2f7", muted: "#b6c4d3", accent: "#f0b14a", accent2: "#5f86a8", line: "#263a4f",
     texture: "grain", ease: "cubic-bezier(0.65, 0, 0.35, 1)", face: "display", caps: true,
   },
+  gtavi: {
+    bg: "#1a0f24", surface: "#2a1838", fg: "#fbeefe", muted: "#dcc6e8", accent: "#ff8ac2", accent2: "#ffb35c", line: "#3d2752",
+    texture: "sun", ease: "cubic-bezier(0.16, 1, 0.3, 1)", face: "display", caps: true,
+  },
   nexo: {
     bg: "#0b0b16", surface: "#15152a", fg: "#eeeefe", muted: "#bcbce0", accent: "#7cf0d0", accent2: "#8b5cf6", line: "#2a2a4a",
     texture: "scanlines", ease: "cubic-bezier(0.16, 1, 0.3, 1)", face: "mono", caps: true,

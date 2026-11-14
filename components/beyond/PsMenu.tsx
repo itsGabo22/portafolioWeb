@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowUpRight, Ellipsis, Gamepad2, Play, Square, Star } from "lucide-react";
+import { ArrowUpRight, CalendarClock, Ellipsis, Gamepad2, Play, Square, Star } from "lucide-react";
 import {
   BEYOND_TAB_IDS,
   INITIAL_ITEM,
@@ -448,6 +448,12 @@ export default function PsMenu({
               <span className="ps-pill ps-pill-static">
                 <Star aria-hidden="true" />
                 <span>{t.beyond.actions.favorite}</span>
+              </span>
+            )}
+            {action.kind === "upcoming" && (
+              <span className="ps-pill ps-pill-static">
+                <CalendarClock aria-hidden="true" />
+                <span>{t.beyond.actions.upcoming}</span>
               </span>
             )}
             {action.kind === "play" && (

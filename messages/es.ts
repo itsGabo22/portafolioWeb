@@ -232,7 +232,7 @@ export const es = {
     tabsAria: "Intereses personales",
     menuAria: "Menú de inicio de intereses personales",
     moodNote: "Interfaz inspirada en la pantalla de inicio de PlayStation 5 (marcas de Sony Interactive Entertainment, sin afiliación), para una única presentación del curso, sin fines comerciales. Paletas y texturas propias.",
-    photoNote: "Interfaz inspirada en la pantalla de inicio de PlayStation 5 (marcas de Sony Interactive Entertainment, sin afiliación), para una única presentación del curso, sin fines comerciales. Fotos de conciertos y del estadio con licencia libre; imágenes de juegos © de sus dueños; trofeos: datos de la consola del autor.",
+    photoNote: "Interfaz inspirada en la pantalla de inicio de PlayStation 5 (marcas de Sony Interactive Entertainment, sin afiliación), para una única presentación del curso, sin fines comerciales. Carátulas de juegos y portadas de álbumes © de sus titulares (uso decidido por el autor); fotos de conciertos, estadios y de Pedri con licencia libre; trofeos: datos de la consola del autor.",
     credits: "Créditos y licencias",
     tabs: {
       games: "Juegos",
@@ -242,7 +242,7 @@ export const es = {
     tilesAria: "{tab}: elige con las flechas y Enter",
     position: "{n} de {total}",
     announce: "{title}, {n} de {total}",
-    keyboardHint: "Flechas para moverte · Enter para elegir · Esc vuelve a las pestañas",
+    keyboardHint: "Flechas o cursor para moverte · Enter o clic para elegir · Esc vuelve a las pestañas",
     gamepadHint: "Mando detectado: cruceta o palanca para moverte, botón inferior para elegir, botón derecho para volver",
     kicker: {
       ownGame: "Mi videojuego",
@@ -252,10 +252,12 @@ export const es = {
       favoritePlayer: "Jugador favorito",
       match: "Partido",
       stadium: "Estadio",
+      upcoming: "Lo jugaré pronto",
       supporter: "Hincha desde",
     },
     actions: {
       favorite: "Favorito",
+      upcoming: "Próximamente",
       play: "Reproducir",
       viewProject: "Ver proyecto",
       more: "Más opciones para {title}",

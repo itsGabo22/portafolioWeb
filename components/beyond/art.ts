@@ -9,17 +9,17 @@ export interface ResolvedArt {
 }
 
 /**
- * Art for a menu item: explicit paths from data first (existing credited art),
- * then optimized drops from the ps5-art manifest, else nothing (typographic
- * fallback). With BEYOND_PHOTOS = false everything is typographic.
+ * Art for a menu item: optimized drops from the ps5-art manifest first
+ * (official covers, author-supplied art), then the paths in data (existing
+ * credited art), else nothing (typographic fallback). With BEYOND_PHOTOS = false everything is typographic.
  */
 export function artFor(item: MenuItem): ResolvedArt {
   const position = item.position ?? "50% 50%";
   if (!BEYOND_PHOTOS) return { position };
   const drop = PS5_ART[item.id];
   return {
-    tile: item.tile ?? drop?.tile,
-    stage: item.stage ?? drop?.stage,
+    tile: drop?.tile ?? item.tile,
+    stage: drop?.stage ?? item.stage,
     position,
   };
 }

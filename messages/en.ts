@@ -230,7 +230,7 @@ export const en: Messages = {
     tabsAria: "Personal interests",
     menuAria: "Personal interests home menu",
     moodNote: "Interface inspired by the PlayStation 5 home screen (marks of Sony Interactive Entertainment, no affiliation), for a single non-commercial course presentation. Original palettes and textures.",
-    photoNote: "Interface inspired by the PlayStation 5 home screen (marks of Sony Interactive Entertainment, no affiliation), for a single non-commercial course presentation. Concert and stadium photos under free licenses; game images © their owners; trophies: the author's own console data.",
+    photoNote: "Interface inspired by the PlayStation 5 home screen (marks of Sony Interactive Entertainment, no affiliation), for a single non-commercial course presentation. Game box art and album covers © their owners (the author's decision); concert, stadium and Pedri photos under free licenses; trophies: the author's own console data.",
     credits: "Credits and licenses",
     tabs: {
       games: "Games",
@@ -240,7 +240,7 @@ export const en: Messages = {
     tilesAria: "{tab}: choose with the arrow keys and Enter",
     position: "{n} of {total}",
     announce: "{title}, {n} of {total}",
-    keyboardHint: "Arrow keys to move · Enter to choose · Esc returns to the tabs",
+    keyboardHint: "Arrow keys or pointer to move · Enter or click to choose · Esc returns to the tabs",
     gamepadHint: "Controller detected: D-pad or stick to move, bottom button to choose, right button to go back",
     kicker: {
       ownGame: "My video game",
@@ -250,10 +250,12 @@ export const en: Messages = {
       favoritePlayer: "Favorite player",
       match: "Match",
       stadium: "Stadium",
+      upcoming: "I'll play it soon",
       supporter: "Supporter since",
     },
     actions: {
       favorite: "Favorite",
+      upcoming: "Coming soon",
       play: "Play",
       viewProject: "View project",
       more: "More options for {title}",

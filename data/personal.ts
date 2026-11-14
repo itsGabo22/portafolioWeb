@@ -17,6 +17,7 @@ export type MoodId =
   | "bloodborne"
   | "residentevil"
   | "deathstranding"
+  | "gtavi"
   | "nexo"
   | "barca";
 
@@ -38,6 +39,8 @@ export interface Trophies {
 export type PrimaryAction =
   /** Non-interactive "Favorito" label: no fake "Play" for games that live on a console. */
   | { kind: "favorite" }
+  /** Non-interactive "Próximamente" label for a game Gabo will play soon. */
+  | { kind: "upcoming" }
   /** Spotify facade: the embed is only requested after an explicit click. */
   | { kind: "play"; embedUrl: string }
   /** Scroll to #projects and select this project in the Device Lab. */
@@ -58,7 +61,8 @@ export type KickerKey =
   | "favoritePlayer"
   | "match"
   | "stadium"
-  | "supporter";
+  | "supporter"
+  | "upcoming";
 
 export interface MenuItem {
   /** Lowercase-kebab slug; also the key in components/beyond/ps5-art.generated.ts. */
@@ -198,6 +202,7 @@ export const beyondMenu: Record<BeyondTabId, MenuItem[]> = {
       id: "resident-evil-requiem",
       title: same("Resident Evil Requiem"),
       mood: "residentevil",
+      position: "58% 30%",
       primaryAction: { kind: "favorite" },
       secondary: gamerboxLink,
       trophies: { progress: 44, earned: 31, total: 50, platinum: false, gold: 0, silver: 0, bronze: 31 },
@@ -206,6 +211,7 @@ export const beyondMenu: Record<BeyondTabId, MenuItem[]> = {
       id: "death-stranding-dc",
       title: same("Death Stranding Director's Cut"),
       mood: "deathstranding",
+      position: "50% 25%",
       primaryAction: { kind: "favorite" },
       secondary: gamerboxLink,
       trophies: { progress: 62, earned: 43, total: 63, platinum: false, gold: 0, silver: 1, bronze: 42 },
@@ -219,6 +225,24 @@ export const beyondMenu: Record<BeyondTabId, MenuItem[]> = {
       position: "50% 45%",
       primaryAction: { kind: "favorite" },
       secondary: gamerboxLink,
+    },
+    {
+      id: "gta-vi",
+      title: same("Grand Theft Auto VI"),
+      kicker: "upcoming",
+      mood: "gtavi",
+      position: "50% 35%",
+      primaryAction: { kind: "upcoming" },
+      // Date as published on Rockstar's official page (rockstargames.com/VI), checked 2026-11-14.
+      note: {
+        es: "Lanzamiento anunciado por Rockstar Games: 19 de noviembre de 2026.",
+        en: "Release announced by Rockstar Games: November 19, 2026.",
+      },
+      secondary: {
+        href: "https://www.rockstargames.com/VI",
+        label: { es: "Página oficial", en: "Official page" },
+        external: true,
+      },
     },
     {
       id: "nexo-protocolo-sombra",
@@ -259,6 +283,7 @@ export const beyondMenu: Record<BeyondTabId, MenuItem[]> = {
       title: same(club.name),
       kicker: "favoriteClub",
       mood: "barca",
+      position: "50% 40%",
       cover: "club",
       primaryAction: { kind: "favorite" },
     },
@@ -267,6 +292,7 @@ export const beyondMenu: Record<BeyondTabId, MenuItem[]> = {
       title: same("Pedri"),
       kicker: "favoritePlayer",
       mood: "barca",
+      position: "55% 25%",
       cover: "club",
       primaryAction: { kind: "favorite" },
     },
@@ -275,6 +301,7 @@ export const beyondMenu: Record<BeyondTabId, MenuItem[]> = {
       title: { es: "Clásico · 11 mayo 2025", en: "El Clásico · 11 May 2025" },
       kicker: "match",
       mood: "barca",
+      position: "50% 60%",
       cover: "club",
       primaryAction: { kind: "favorite" },
       note: {

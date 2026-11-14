@@ -211,6 +211,21 @@
   -webkit-text-stroke: 1.5px color-mix(in srgb, var(--mood-accent) 34%, transparent);
   animation: ps-copy-in 700ms var(--ease-out-expo) both;
 }
+.ps-bg-triptych {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  animation: ps-copy-in 600ms var(--ease-out-expo) both;
+}
+.ps-bg-triptych > span {
+  position: relative;
+  overflow: hidden;
+}
+.ps-bg-triptych img {
+  filter: brightness(0.8) saturate(1.05);
+}
 .ps-bg[data-art="true"] .bx-texture {
   opacity: 0;
 }
@@ -1022,7 +1037,8 @@ button.ps-pill:active {
     transform: none;
   }
   .ps-copy-in,
-  .ps-bg-word {
+  .ps-bg-word,
+  .ps-bg-triptych {
     animation: none;
   }
   .bx-particles {

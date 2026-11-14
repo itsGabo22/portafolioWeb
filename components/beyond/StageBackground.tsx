@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 import { beyondMenu, type MenuItem } from "@/data/personal";
-import { artFor } from "./art";
+import { artFor, MOSAIC_PHOTOS } from "./art";
+import { BEYOND_PHOTOS } from "./photos";
 import MoodTexture from "./MoodTexture";
 import { MOODS } from "./moods";
 
@@ -31,7 +32,9 @@ export default function StageBackground({ items, index, title }: { items: MenuIt
   ]);
   // Previous item may belong to another tab: look it up across the whole menu.
   const layers = ALL_ITEMS.filter((item) => wanted.has(item.id) && artFor(item).stage);
-  const hasArt = Boolean(artFor(current).stage);
+  // the playlist has no stage art of its own: a triptych of the three artists' credited photos
+  const triptych = !artFor(current).stage && current.cover === "mosaic" && BEYOND_PHOTOS;
+  const hasArt = Boolean(artFor(current).stage) || triptych;
 
   return (
     <div className="ps-bg" aria-hidden="true" data-art={hasArt}>
@@ -61,6 +64,15 @@ export default function StageBackground({ items, index, title }: { items: MenuIt
           </div>
         );
       })}
+      {triptych && (
+        <div key={current.id} className="ps-bg-triptych">
+          {MOSAIC_PHOTOS.map((photo) => (
+            <span key={photo.src}>
+              <Image src={photo.src} alt="" fill sizes="(min-width: 1280px) 406px, 34vw" className="object-cover" style={{ objectPosition: photo.position }} />
+            </span>
+          ))}
+        </div>
+      )}
       <div className="ps-scrim" />
     </div>
   );
