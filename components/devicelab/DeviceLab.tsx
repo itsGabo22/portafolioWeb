@@ -6,6 +6,8 @@ import { ArrowUpRight } from "lucide-react";
 import type { MediaManifest, Project } from "@/data/projects";
 import { useApp } from "@/context/AppContext";
 import { useLabMode } from "@/lib/capabilities";
+import { DEVICE_LAB_SELECT } from "@/lib/deviceLabSelect";
+import { scrollToSection } from "@/lib/scrollToSection";
 import { fmt, useT } from "@/messages";
 import { StatusBadge } from "../projects/ProjectBits";
 import DeviceMockups2D from "./DeviceMockups2D";
@@ -149,6 +151,25 @@ export default function DeviceLab({
     const trigger = triggerRef.current;
     window.requestAnimationFrame(() => trigger?.focus());
   }, []);
+
+  // External selection (e.g. the "Ver proyecto" action of the Beyond menu).
+  useEffect(() => {
+    const onSelect = (event: Event) => {
+      const id = (event as CustomEvent<string>).detail;
+      const index = items.findIndex((item) => item.project.id === id);
+      const root = rootRef.current;
+      if (index < 0 || !root) return;
+      if (mode === "3d") {
+        scrollToDevice(index);
+        return;
+      }
+      setActive(index);
+      scrollToSection(root);
+      root.querySelector<HTMLElement>(`[data-device-id="${id}"]`)?.focus({ preventScroll: true });
+    };
+    window.addEventListener(DEVICE_LAB_SELECT, onSelect);
+    return () => window.removeEventListener(DEVICE_LAB_SELECT, onSelect);
+  }, [items, mode, scrollToDevice]);
 
   const chipRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const activeItem = items[active] ?? items[0];

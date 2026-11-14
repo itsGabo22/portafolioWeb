@@ -138,6 +138,7 @@ export default function DeviceMockups2D({
         <li key={item.project.id} className="flex">
           <button
             type="button"
+            data-device-id={item.project.id}
             onClick={(event) => onOpen(index, event.currentTarget)}
             className="cursor-can-hover group flex w-full flex-col gap-3 rounded-card border border-line bg-surface-1/80 p-3 text-left shadow-elev-1 backdrop-blur-xl transition-[transform,box-shadow,border-color] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-accent-fill/50 hover:shadow-glow sm:p-4"
           >
