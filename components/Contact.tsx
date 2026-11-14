@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useRef, useState } from "react";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import {
   Send,
   Copy,
@@ -14,6 +14,8 @@ import {
   Clock,
 } from "lucide-react";
 import { useT } from "@/messages";
+import { useReducedMotion } from "@/lib/capabilities";
+import SectionEyebrow from "./SectionEyebrow";
 
 type FormStatus = "idle" | "submitting" | "success";
 type FieldErrors = Partial<Record<"name" | "email" | "message", string>>;
@@ -26,8 +28,38 @@ const DIRECT_CHANNELS = [
   { key: "linkedin", href: "https://www.linkedin.com/in/itsgabo22" },
 ] as const;
 
+/** Pulls its child a few pixels toward the cursor (mouse only, off under reduced motion). */
+function Magnetic({ children, strength = 0.28 }: { children: React.ReactNode; strength?: number }) {
+  const reduced = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const x = useSpring(useMotionValue(0), { stiffness: 260, damping: 18, mass: 0.4 });
+  const y = useSpring(useMotionValue(0), { stiffness: 260, damping: 18, mass: 0.4 });
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (reduced || e.pointerType !== "mouse" || !ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    x.set((e.clientX - (r.left + r.width / 2)) * strength);
+    y.set((e.clientY - (r.top + r.height / 2)) * strength);
+  };
+  const reset = () => {
+    x.set(0);
+    y.set(0);
+  };
+  return (
+    <motion.div
+      ref={ref}
+      onPointerMove={onMove}
+      onPointerLeave={reset}
+      style={reduced ? undefined : { x, y }}
+      className="inline-flex"
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 export default function Contact() {
   const t = useT();
+  const reduced = useReducedMotion();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -111,11 +143,12 @@ export default function Contact() {
         {/* Left/Center Studio Dispatch Desk (7 cols) + Right Spatial Stage for Levitating 3D Keycaps (5 cols) */}
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">
           <div data-reveal
-            className="lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3"
+            className="lg:col-span-12 xl:col-span-10 xl:col-start-2"
           >
             {/* Studio Dispatch Header */}
-            <div className="border-b border-zinc-300/60 dark:border-zinc-800 pb-8">
-              <div className="mb-4 flex flex-wrap items-center gap-3">
+            <div className="border-b border-white/10 pb-10">
+              <SectionEyebrow id="contact" align="start" />
+              <div className="mb-6 flex flex-wrap items-center gap-3">
                 <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                   <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span>{t.contact.available}</span>
@@ -130,36 +163,59 @@ export default function Contact() {
                 </span>
               </div>
 
-              <h2 className="font-display text-5xl font-black tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-6xl md:text-7xl leading-[0.92] uppercase">
-                {t.contact.titleA}{" "}
-                <span className="font-serif italic font-normal text-primary-300">
-                  {t.contact.titleB}
-                </span>
+              <h2 className="font-display text-[clamp(2.5rem,0.6rem+8.2vw,7rem)] font-black uppercase leading-[0.86] tracking-tighter text-zinc-50">
+                {[t.contact.titleA, t.contact.titleB].map((line, i) => (
+                  <span key={i} className="block overflow-hidden pb-[0.06em]">
+                    <motion.span
+                      className={`block ${i === 1 ? "font-serif font-normal italic normal-case tracking-tight text-primary-300" : ""}`}
+                      initial={reduced ? false : { y: "105%" }}
+                      whileInView={{ y: "0%" }}
+                      viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+                      transition={{ duration: 0.9, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      {line}
+                    </motion.span>
+                  </span>
+                ))}
               </h2>
 
               {/* Magnetic Direct Email Strip with Frosted Glass */}
-              <div className="mt-6 flex flex-wrap items-center gap-3">
+              <div className="mt-8 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={handleCopyEmail}
                   aria-label={copied ? t.contact.copied : t.contact.copyAria}
-                  className="cursor-can-hover group inline-flex items-center gap-3 rounded-2xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-4 py-2.5 text-left ring-1 ring-zinc-900/[0.06] shadow-[0_8px_30px_rgba(15,23,42,0.06),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl transition-all hover:border-emerald-500"
+                  className={`cursor-can-hover group relative inline-flex min-h-11 items-center gap-3 overflow-hidden rounded-2xl border px-4 py-2.5 text-left backdrop-blur-2xl transition-colors ${
+                    copied ? "border-primary-300/60 bg-primary-300/15" : "border-white/10 bg-white/[0.05] hover:border-primary-300/50"
+                  }`}
                 >
-                  <span className="font-mono text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                  {/* sweep that runs across the pill when the address is copied */}
+                  {copied && !reduced && (
+                    <motion.span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-primary-200/30 to-transparent"
+                      initial={{ x: "-100%" }}
+                      animate={{ x: "260%" }}
+                      transition={{ duration: 0.7, ease: "easeOut" }}
+                    />
+                  )}
+                  <span className="relative font-mono text-xs font-semibold text-zinc-100 sm:text-sm">
                     {CONTACT_EMAIL}
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-lg bg-zinc-900 dark:bg-zinc-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white dark:text-zinc-950">
-                    {copied ? (
-                      <>
-                        <Check className="h-3 w-3 text-emerald-400 dark:text-emerald-600" />
-                        <span>{t.contact.copied}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-3 w-3" />
-                        <span>{t.contact.copy}</span>
-                      </>
-                    )}
+                  <span className="relative inline-flex min-w-[5.5rem] items-center justify-center gap-1 overflow-hidden rounded-lg bg-primary-200 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-950">
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.span
+                        key={copied ? "copied" : "copy"}
+                        className="inline-flex items-center gap-1"
+                        initial={reduced ? false : { y: 12, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={reduced ? { opacity: 0 } : { y: -12, opacity: 0 }}
+                        transition={{ duration: 0.18 }}
+                      >
+                        {copied ? <Check className="h-3 w-3" aria-hidden="true" /> : <Copy className="h-3 w-3" aria-hidden="true" />}
+                        <span>{copied ? t.contact.copied : t.contact.copy}</span>
+                      </motion.span>
+                    </AnimatePresence>
                   </span>
                 </button>
 
@@ -169,7 +225,7 @@ export default function Contact() {
                     href={ch.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="cursor-can-hover inline-flex items-center gap-1.5 rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/55 px-3.5 py-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800 hover:text-zinc-950 dark:hover:text-white"
+                    className="cursor-can-hover inline-flex min-h-11 items-center gap-1.5 rounded-2xl border border-white/10 bg-white/[0.05] px-3.5 py-2.5 text-xs font-semibold text-zinc-300 backdrop-blur-2xl transition-colors hover:bg-white/10 hover:text-zinc-50"
                   >
                     <span>{t.contact.channels[ch.key]}</span>
                     <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -183,7 +239,7 @@ export default function Contact() {
             <form
               onSubmit={handleSubmit}
               noValidate
-              className="mt-8 space-y-6 rounded-3xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 p-6 sm:p-8 ring-1 ring-zinc-900/[0.06] shadow-[0_16px_48px_-12px_rgba(15,23,42,0.1),inset_0_1px_0_0_rgba(255,255,255,0.92)] dark:shadow-[0_16px_48px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl backdrop-saturate-150"
+              className="mt-10 space-y-6 rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl sm:p-8"
             >
               {/* Honeypot: hidden from users and assistive tech, bots fill it */}
               <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
@@ -203,7 +259,7 @@ export default function Contact() {
                 <div className="group">
                   <label
                     htmlFor="contact-name"
-                    className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
+                    className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-primary-200"
                   >
                     {t.contact.form.name}
                   </label>
@@ -220,7 +276,7 @@ export default function Contact() {
                       if (status === "success") setStatus("idle");
                     }}
                     placeholder={t.contact.form.namePh}
-                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 transition-colors focus:border-primary-300 focus:outline-none"
                   />
                 {fieldErrors.name && (
                   <p id="contact-name-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700 dark:text-red-300">
@@ -232,7 +288,7 @@ export default function Contact() {
                 <div className="group">
                   <label
                     htmlFor="contact-email"
-                    className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
+                    className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-primary-200"
                   >
                     {t.contact.form.email}
                   </label>
@@ -249,7 +305,7 @@ export default function Contact() {
                       if (status === "success") setStatus("idle");
                     }}
                     placeholder={t.contact.form.emailPh}
-                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 transition-colors focus:border-primary-300 focus:outline-none"
                   />
                 {fieldErrors.email && (
                   <p id="contact-email-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700 dark:text-red-300">
@@ -262,7 +318,7 @@ export default function Contact() {
               <div className="group">
                 <label
                   htmlFor="contact-message"
-                  className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
+                  className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-primary-200"
                 >
                   {t.contact.form.message}
                 </label>
@@ -279,7 +335,7 @@ export default function Contact() {
                     if (status === "success") setStatus("idle");
                   }}
                   placeholder={t.contact.form.messagePh}
-                  className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                  className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 transition-colors focus:border-primary-300 focus:outline-none"
                 />
                 {fieldErrors.message && (
                   <p id="contact-message-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700 dark:text-red-300">
@@ -327,10 +383,11 @@ export default function Contact() {
                   {CONTACT_EMAIL}
                 </a>
 
+                <Magnetic>
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="cursor-can-hover inline-flex items-center justify-center gap-2.5 rounded-2xl bg-primary-200 px-8 py-4 text-sm font-bold text-primary-950 transition-all hover:bg-primary-100 disabled:opacity-60"
+                  className="cursor-can-hover inline-flex items-center justify-center gap-2.5 group rounded-2xl bg-primary-200 px-9 py-4 text-sm font-bold text-primary-950 shadow-[0_12px_40px_-12px_var(--primary-300)] transition-colors hover:bg-primary-100 disabled:opacity-60"
                 >
                   {status === "submitting" ? (
                     <>
@@ -340,10 +397,11 @@ export default function Contact() {
                   ) : (
                     <>
                       <span>{t.contact.form.send}</span>
-                      <Send className="h-4 w-4" />
+                      <Send className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
                     </>
                   )}
                 </button>
+                </Magnetic>
               </div>
             </form>
           </div>
