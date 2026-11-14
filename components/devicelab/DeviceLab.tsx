@@ -2,8 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight } from "lucide-react";
 import type { MediaManifest, Project } from "@/data/projects";
 import { useApp } from "@/context/AppContext";
@@ -100,20 +98,30 @@ export default function DeviceLab({
   // Scroll-driven tour (3D only): the stage is sticky inside a tall track and
   // ScrollTrigger maps the track's progress to the camera position.
   useEffect(() => {
-    if (mode !== "3d" || !trackRef.current) return;
-    gsap.registerPlugin(ScrollTrigger);
-    const last = items.length - 1;
-    const trigger = ScrollTrigger.create({
-      trigger: trackRef.current,
-      start: "top top+=72",
-      end: "bottom bottom",
-      onUpdate: (self) => {
-        progressRef.current = self.progress;
-        const index = Math.round(self.progress * last);
-        setActive((prev) => (prev === index ? prev : index));
-      },
+    const track = trackRef.current;
+    if (mode !== "3d" || !track) return;
+    let cancelled = false;
+    let trigger: { kill: () => void } | null = null;
+    // GSAP + ScrollTrigger load with the 3D tour only (kept out of the first load).
+    Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([{ default: gsap }, { ScrollTrigger }]) => {
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
+      const last = items.length - 1;
+      trigger = ScrollTrigger.create({
+        trigger: track,
+        start: "top top+=72",
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          progressRef.current = self.progress;
+          const index = Math.round(self.progress * last);
+          setActive((prev) => (prev === index ? prev : index));
+        },
+      });
     });
-    return () => trigger.kill();
+    return () => {
+      cancelled = true;
+      trigger?.kill();
+    };
   }, [mode, items.length]);
 
   const scrollToDevice = useCallback(
