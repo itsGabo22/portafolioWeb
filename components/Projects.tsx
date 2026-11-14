@@ -3,7 +3,7 @@
 import React, { useRef, useState } from "react";
 import { useReducedMotion } from "@/lib/capabilities";
 import Image from "next/image";
-import { Lock } from "lucide-react";
+import { Gamepad2, Lock } from "lucide-react";
 import { projects, type Project, type MediaManifest } from "@/data/projects";
 import { useApp } from "@/context/AppContext";
 import { fmt, useT } from "@/messages";
@@ -81,11 +81,15 @@ function ProjectCard({
               className="sp-shot object-cover object-top"
             />
           ) : (
+            // No screenshot yet (e.g. Nexo): a designed placeholder, never a broken <img>.
             <div
               aria-hidden="true"
-              className="bg-dot-matrix flex h-full w-full items-center justify-center bg-zinc-900 px-6 text-center font-display text-lg font-semibold text-zinc-300"
+              className="project-placeholder relative flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden px-6 text-center"
             >
-              {project.title[lang].split(" — ")[0]}
+              <Gamepad2 className="h-9 w-9 text-primary-300" strokeWidth={1.5} />
+              <span className="font-display text-xl font-bold tracking-tight text-zinc-100 sm:text-2xl">
+                {project.title[lang].split(" — ")[0]}
+              </span>
             </div>
           )}
 
