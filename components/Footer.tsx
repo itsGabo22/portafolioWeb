@@ -28,6 +28,7 @@ const QUICK_LINKS = [
   { href: "#experience", label: { es: "Experiencia", en: "Experience" } },
   { href: "#contact", label: { es: "Contacto", en: "Contact" } },
   { href: "#skills", label: { es: "Skills", en: "Skills" } },
+  { href: "#beyond", label: { es: "Fuera del código", en: "Beyond code" } },
 ];
 
 const subscribeNoop = () => () => {};

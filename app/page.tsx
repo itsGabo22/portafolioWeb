@@ -6,6 +6,7 @@ import Testimonials from "@/components/Testimonials";
 import Experience from "@/components/Experience";
 import Contact from "@/components/Contact";
 import Skills from "@/components/Skills";
+import Beyond from "@/components/Beyond";
 import Footer from "@/components/Footer";
 import { DEVICE_LAB_IDS } from "@/data/projects";
 import { getMediaManifest } from "@/lib/media";
@@ -25,6 +26,7 @@ export default function Home() {
         <Experience/>
         <Contact/>
         <Skills/>
+        <Beyond/>
       </main>
       <Footer/>
     </>

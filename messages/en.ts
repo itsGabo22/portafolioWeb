@@ -246,8 +246,6 @@ export const en: Messages = {
       ticket: "Ticket · Matchday",
       favorite: "My favorite club",
       admit: "Admit one",
-      seat: "Stand",
-      seatValue: "Always",
     },
     loading: "Loading section",
   },

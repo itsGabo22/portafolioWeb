@@ -248,8 +248,6 @@ export const es = {
       ticket: "Entrada · Día de partido",
       favorite: "Mi club favorito",
       admit: "Admite uno",
-      seat: "Grada",
-      seatValue: "Siempre",
     },
     loading: "Cargando sección",
   },

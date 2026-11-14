@@ -72,19 +72,19 @@ Reglas: un único sistema de revelado (`[data-reveal]`, se activa con `.reveal-a
 
 Cada ítem define `--mood-bg/-surface/-fg/-muted/-accent/-accent-2/-line` (registradas con `@property`, así que el panel interpola colores). Texturas 100 % procedurales (CSS/SVG). Son **interpretaciones originales** del ambiente general, sin arte, logos, escudos ni tipografías oficiales.
 
-| Ítem | Fondo | Texto | Acento | Textura / composición | Easing |
-|---|---|---|---|---|---|
-| Base (sin selección) | `#0b1210` | `#ecfdf5` | `#34d399` | rejilla de puntos | expo |
-| Joji | `#14112b` | `#f3eefe` | `#ff4fd8` | grano de película, funda de vinilo, fundidos lentos | in-out lento |
-| Radiohead | `#0d0d0d` | `#f2f2f2` | `#ff4a1c` | scanlines, glitch sutil al hover, funda geométrica | steps cortos |
-| Mac DeMarco | `#fff4d6` | `#2b2111` | `#a14a08` | marco Polaroid inclinado | spring |
-| Red Dead Redemption 2 | `#2a1d12` | `#f4e7d0` | `#e0a458` | papel (ruido SVG), cartel serif, polvo | in-out |
-| Skyrim | `#0f1a24` | `#eaf3fa` | `#9cc9ea` | trazos angulares originales, nieve | expo |
-| Elden Ring | `#0b0a08` | `#f5ecd6` | `#d8b45a` | haces verticales dorados, brasas | in-out lento |
-| Bloodborne | `#1a0709` | `#f1e6e6` | `#e0636c` | viñeta, niebla, serif gótica de sistema | in-out lento |
-| FC Barcelona | `#0a1630` | `#ffffff` | `#ffd23f` | franjas `#004D98` / `#A50044` (solo color), ticket de partido | spring |
+| Ítem | Fondo | Superficie | Texto | Acento | Textura / composición | Easing |
+|---|---|---|---|---|---|---|
+| Base (sin selección) | `#0b1210` | `#13201c` | `#ecfdf5` | `#34d399` | rejilla de puntos | expo |
+| Joji | `#14112b` | `#1f1a45` | `#f3eefe` | `#ff5ad9` | grano de película, funda de vinilo (el disco sale al hover), fundidos lentos | in-out lento |
+| Radiohead | `#0d0d0d` | `#1a1a1a` | `#f2f2f2` | `#ff5a2e` | scanlines, funda geométrica, glitch corto al hover | `steps(6)` |
+| Mac DeMarco | `#fff4d6` | `#ffeab3` | `#2b2111` | `#9a4507` | sol cálido, Polaroid inclinada | spring |
+| Red Dead Redemption 2 | `#2a1d12` | `#3a2918` | `#f4e7d0` | `#e8ad62` | papel (ruido SVG), cartel serif en mayúsculas, polvo | in-out |
+| Skyrim | `#0f1a24` | `#182837` | `#eaf3fa` | `#9ccbee` | trazos angulares originales, nieve | expo |
+| Elden Ring | `#0b0a08` | `#18150e` | `#f5ecd6` | `#d9b65c` | haces verticales dorados, brasas | in-out lento |
+| Bloodborne | `#1a0709` | `#2a0d11` | `#f1e6e6` | `#ea7880` | viñeta, niebla, serif itálica de sistema | in-out lento |
+| FC Barcelona | `#0a1630` | `#13255a` | `#ffffff` | `#ffd23f` | franjas `#004D98` / `#A50044` (solo color), ticket de partido | spring |
 
-Contraste texto/fondo de todos los moods ≥ 13:1; acento sobre fondo ≥ 5:1 (verificado con axe en la revisión).
+Contraste (calculado con la fórmula WCAG): texto/fondo y texto/superficie ≥ 11:1, texto secundario ≥ 7:1 y acento ≥ 5.4:1 en todos los moods (verificado con axe en la revisión).
 
 ## 9. Accesibilidad
 
