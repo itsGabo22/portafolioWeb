@@ -407,3 +407,35 @@ html {
     transform: none;
   }
 }
+
+/* Project cards: cursor tilt + spotlight glare (vars set from JS on fine pointers) */
+.project-card {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 0%;
+  --glare: 0;
+  transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition:
+    transform var(--dur-slow) var(--ease-out-expo),
+    box-shadow var(--dur-base) ease,
+    border-color var(--dur-base) ease;
+  will-change: transform;
+}
+.project-card:hover {
+  transition-duration: 120ms, var(--dur-base), var(--dur-base);
+}
+.project-card-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  opacity: var(--glare);
+  transition: opacity var(--dur-base) ease;
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgb(255 255 255 / 0.16), transparent 60%);
+  mix-blend-mode: soft-light;
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-card { transform: none; }
+  .project-card-glare { display: none; }
+}

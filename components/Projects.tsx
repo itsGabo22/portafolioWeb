@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { useReducedMotion } from "@/lib/capabilities";
 import Image from "next/image";
 import { Lock } from "lucide-react";
 import { projects, type Project, type MediaManifest } from "@/data/projects";
@@ -11,21 +12,65 @@ import { ProjectActions, StatusBadge } from "./projects/ProjectBits";
 import DeviceLab from "./devicelab/DeviceLab";
 import SectionEyebrow from "./SectionEyebrow";
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
+function ProjectCard({
+  project,
+  index,
+  featured = false,
+}: {
+  project: Project;
+  index: number;
+  featured?: boolean;
+}) {
   const { lang } = useApp();
   const t = useT();
   const [imgError, setImgError] = useState(false);
   const isCommercial = project.category === "commercial";
+  const reduced = useReducedMotion();
+  const cardRef = useRef<HTMLElement>(null);
+  const raf = useRef(0);
+
+  // Cursor-tracking tilt + spotlight glare (fine pointers only, off under reduced motion).
+  const onPointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (reduced || e.pointerType !== "mouse") return;
+    const el = cardRef.current;
+    if (!el) return;
+    const { clientX, clientY } = e;
+    cancelAnimationFrame(raf.current);
+    raf.current = requestAnimationFrame(() => {
+      const r = el.getBoundingClientRect();
+      const x = (clientX - r.left) / r.width;
+      const y = (clientY - r.top) / r.height;
+      el.style.setProperty("--rx", `${((0.5 - y) * 6).toFixed(2)}deg`);
+      el.style.setProperty("--ry", `${((x - 0.5) * 8).toFixed(2)}deg`);
+      el.style.setProperty("--mx", `${(x * 100).toFixed(1)}%`);
+      el.style.setProperty("--my", `${(y * 100).toFixed(1)}%`);
+      el.style.setProperty("--glare", "1");
+    });
+  };
+  const onPointerLeave = () => {
+    cancelAnimationFrame(raf.current);
+    const el = cardRef.current;
+    if (!el) return;
+    el.style.setProperty("--rx", "0deg");
+    el.style.setProperty("--ry", "0deg");
+    el.style.setProperty("--glare", "0");
+  };
 
   return (
     <article
+      ref={cardRef}
       id={`project-${project.id}`}
       data-reveal
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
       style={{ "--reveal-i": index % 3 } as React.CSSProperties}
-      className="group flex scroll-mt-24 flex-col justify-between overflow-hidden rounded-card border border-line bg-surface-1/85 shadow-elev-1 backdrop-blur-xl transition-[transform,box-shadow,border-color] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-line-strong hover:shadow-elev-2"
+      className={`project-card group relative flex scroll-mt-24 flex-col justify-between overflow-hidden rounded-card border border-line bg-surface-1/85 shadow-elev-1 backdrop-blur-xl hover:border-primary-line hover:shadow-elev-2 ${
+        featured ? "lg:col-span-2" : ""
+      }`}
     >
+      <span aria-hidden="true" className="project-card-glare" />
       <div>
-        <div className="relative aspect-[3/2] w-full overflow-hidden bg-zinc-950">
+        <div className={`relative w-full overflow-hidden bg-zinc-950 ${featured ? "aspect-[3/2] lg:aspect-[2/1]" : "aspect-[3/2]"}`}>
           {project.image && !imgError ? (
             <Image
               src={project.image}
@@ -94,6 +139,7 @@ function ProjectGroup({
   subtitle,
   items,
   columnsClass,
+  featuredFirst = false,
   children,
 }: {
   id: string;
@@ -101,20 +147,34 @@ function ProjectGroup({
   subtitle: string;
   items: Project[];
   columnsClass: string;
+  featuredFirst?: boolean;
   children?: React.ReactNode;
 }) {
   return (
     <div className="mt-20 first:mt-0" aria-labelledby={id} role="group">
-      <div className="mb-6 border-b border-line pb-3" data-reveal>
-        <h3 id={id} className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-          {title}
-        </h3>
-        <p className="mt-1 text-sm text-ink-muted">{subtitle}</p>
+      <div className="mb-8 flex items-end justify-between gap-6 border-b border-line pb-4" data-reveal>
+        <div>
+          <h3 id={id} className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+            {title}
+          </h3>
+          <p className="mt-1 text-sm text-ink-muted">{subtitle}</p>
+        </div>
+        <span
+          aria-hidden="true"
+          className="font-display text-5xl font-extrabold leading-none tracking-tighter text-primary-ink/25 tabular-nums sm:text-7xl"
+        >
+          {String(items.length).padStart(2, "0")}
+        </span>
       </div>
       {children}
       <div className={`grid grid-cols-1 gap-6 ${columnsClass}`}>
         {items.map((project, index) => (
-          <ProjectCard key={project.id} project={project} index={index} />
+          <ProjectCard
+            key={project.id}
+            project={project}
+            index={index}
+            featured={featuredFirst && index === 0}
+          />
         ))}
       </div>
     </div>
@@ -163,6 +223,7 @@ export default function Projects({ media = {} }: { media?: MediaManifest }) {
           subtitle={t.projects.groups.commercial.subtitle}
           items={commercialProjects}
           columnsClass="md:grid-cols-2 lg:grid-cols-3"
+          featuredFirst
         />
       </div>
     </section>
