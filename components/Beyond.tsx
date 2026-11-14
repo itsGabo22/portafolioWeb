@@ -49,6 +49,9 @@ export default function Beyond() {
 
   const sectionRef = useRef<HTMLElement>(null);
   const [near, setNear] = useState(false);
+  // A #beyond-* deep link mounts the menu right away; once mounted it stays mounted
+  // (a later #contact link must not unmount it or stop its player).
+  if (hashTab && !near) setNear(true);
   const [paused, setPaused] = useState(true);
 
   // Deep links (#beyond-*) scroll the section into view, on load and on hashchange.
@@ -104,7 +107,7 @@ export default function Beyond() {
           <p className="mt-4 text-base text-ink-muted">{t.beyond.subtitle}</p>
         </div>
 
-        {near || hashTab ? <PsMenu tab={tab} onTab={onTab} paused={paused} /> : <MenuLoader />}
+        {near ? <PsMenu tab={tab} onTab={onTab} paused={paused} /> : <MenuLoader />}
 
         <p className="mt-3 max-w-3xl text-xs text-ink-muted">
           {BEYOND_PHOTOS ? t.beyond.photoNote : t.beyond.moodNote}{" "}
