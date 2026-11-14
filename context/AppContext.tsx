@@ -123,7 +123,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Sincronizar <html lang> y el título del documento con el idioma activo
   useEffect(() => {
     document.documentElement.lang = lang;
-    document.title = lang === "en" ? EN_TITLE : ES_TITLE;
+    const wanted = lang === "en" ? EN_TITLE : ES_TITLE;
+    const apply = () => {
+      if (document.title !== wanted) document.title = wanted;
+    };
+    apply();
+    // Next.js applies the (Spanish) metadata title after hydration; keep ours.
+    const observer = new MutationObserver(apply);
+    observer.observe(document.head, { subtree: true, childList: true, characterData: true });
+    return () => observer.disconnect();
   }, [lang]);
 
   const setTheme = useCallback((newTheme: Theme) => {
