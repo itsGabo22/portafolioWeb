@@ -173,7 +173,7 @@ export default function Contact() {
                   >
                     <span>{t.contact.channels[ch.key]}</span>
                     <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span className="sr-only">{t.common.newTab}</span>
+                    <span className="sr-only"> {t.common.newTab}</span>
                   </a>
                 ))}
               </div>

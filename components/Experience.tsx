@@ -425,7 +425,7 @@ function TimelineColumn({
             >
               {/* Required Absolute Timeline Indicator Dot: absolute -left-[9px] */}
               <span
-                className={`absolute -left-[9px] top-7 h-4 w-4 rounded-full border-2 transition-all duration-300 ${
+                className={`absolute -left-[9px] top-7 z-10 h-4 w-4 rounded-full border-2 transition-all duration-300 ${
                   isEraHighlighted
                     ? "scale-125 border-emerald-500 bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.7)]"
                     : "border-zinc-900 dark:border-zinc-100 bg-white dark:bg-zinc-950 group-hover:scale-125 group-hover:border-emerald-500"
@@ -477,7 +477,7 @@ function TimelineColumn({
                         >
                           <span>{t.experience.web}</span>
                           <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-                          <span className="sr-only">{t.common.newTab}</span>
+                          <span className="sr-only"> {t.common.newTab}</span>
                         </a>
                       )}
                     </div>
@@ -549,11 +549,7 @@ export default function Experience() {
         <div data-reveal
           className="mb-10 text-center"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-3.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>{t.experience.eyebrow}</span>
-          </span>
-          <h2 className="mt-4 font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
+          <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
             {t.experience.title}
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
@@ -613,7 +609,7 @@ export default function Experience() {
                   >
                     {era.stageLabel[lang]} · {era.year}
                   </span>
-                  <span className="mt-1 line-clamp-1 font-display text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                  <span className="mt-1 line-clamp-2 font-display text-xs font-bold text-zinc-900 dark:text-zinc-100">
                     {era.title[lang]}
                   </span>
                 </button>

@@ -146,7 +146,6 @@ export const en: Messages = {
     progress: "{current} of {total}",
   },
   testimonials: {
-    eyebrow: "Commercial & academic endorsements",
     title: "Testimonials",
     metrics: {
       live: "Live commercial platforms",
@@ -157,7 +156,6 @@ export const en: Messages = {
     visit: "Visit {name}'s website",
   },
   experience: {
-    eyebrow: "Professional & academic evolution · 2023 – 2026",
     title: "Experience",
     subtitle: "A 4-stage evolution: from algorithmic foundations and Software Engineering studies to live production e-commerce and VICARDEV leadership.",
     work: "Work Experience",
@@ -175,7 +173,7 @@ export const en: Messages = {
     titleB: "together",
     copy: "Copy",
     copied: "Copied",
-    copyAria: "Copy the email vicardev2026@gmail.com",
+    copyAria: "vicardev2026@gmail.com, copy email",
     channels: {
       agency: "VICARDEV Agency",
       github: "GitHub",

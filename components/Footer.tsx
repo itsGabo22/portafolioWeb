@@ -35,7 +35,7 @@ export default function Footer() {
   return (
     <footer id="footer" className="relative z-20 border-t border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-950/65 backdrop-blur-2xl backdrop-saturate-150 text-zinc-600 dark:text-zinc-400 transition-colors duration-200">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+        <div className="flex flex-col items-start justify-between gap-8 xl:flex-row xl:items-center">
           {/* Brand & Mandatory Credit */}
           <div className="space-y-2">
             <a
@@ -53,7 +53,7 @@ export default function Footer() {
           {/* Section Links */}
           <nav
             aria-label={t.footer.linksAria}
-            className="flex flex-wrap items-center gap-4 text-xs font-medium"
+            className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-medium xl:max-w-xl"
           >
             {QUICK_LINKS.map((key) => (
               <a
@@ -102,7 +102,7 @@ export default function Footer() {
               className="cursor-can-hover inline-flex h-11 items-center gap-1.5 rounded-xl border border-white/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/70 px-3 text-xs font-medium text-zinc-800 dark:text-zinc-200 backdrop-blur-xl transition-colors hover:bg-white/90 dark:hover:bg-zinc-800"
             >
               <ArrowUp className="h-3.5 w-3.5" />
-              <span>{t.footer.backToTop}</span>
+              <span className="whitespace-nowrap">{t.footer.backToTop}</span>
             </button>
           </div>
         </div>

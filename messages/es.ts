@@ -148,7 +148,6 @@ export const es = {
     progress: "{current} de {total}",
   },
   testimonials: {
-    eyebrow: "Respaldo comercial y académico",
     title: "Testimonios",
     metrics: {
       live: "Plataformas comerciales activas",
@@ -159,7 +158,6 @@ export const es = {
     visit: "Visitar el sitio de {name}",
   },
   experience: {
-    eyebrow: "Evolución profesional y académica · 2023 – 2026",
     title: "Experiencia",
     subtitle: "Evolución en 4 etapas: desde fundamentos lógicos y formación en Ingeniería de Software hasta e-commerce en producción y liderazgo en VICARDEV.",
     work: "Experiencia Laboral",
@@ -177,7 +175,7 @@ export const es = {
     titleB: "juntos",
     copy: "Copiar",
     copied: "Copiado",
-    copyAria: "Copiar el correo vicardev2026@gmail.com",
+    copyAria: "vicardev2026@gmail.com, copiar correo",
     channels: {
       agency: "Agencia VICARDEV",
       github: "GitHub",

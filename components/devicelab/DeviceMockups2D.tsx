@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { CirclePlay, Hammer } from "lucide-react";
 import { useApp } from "@/context/AppContext";
-import { fmt, useT } from "@/messages";
+import { useT } from "@/messages";
 import { StatusBadge } from "../projects/ProjectBits";
 import type { DeviceKind, LabItem } from "./shared";
 
@@ -139,10 +139,10 @@ export default function DeviceMockups2D({
           <button
             type="button"
             onClick={(event) => onOpen(index, event.currentTarget)}
-            aria-label={fmt(t.deviceLab.openDetails, { title: item.project.title[lang] })}
             className="cursor-can-hover group flex w-full flex-col gap-3 rounded-card border border-line bg-surface-1/80 p-3 text-left shadow-elev-1 backdrop-blur-xl transition-[transform,box-shadow,border-color] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-accent-fill/50 hover:shadow-glow sm:p-4"
           >
             <div
+              aria-hidden="true"
               className="device-float flex aspect-square w-full items-center justify-center rounded-[calc(var(--radius-card)-0.5rem)] bg-gradient-to-b from-zinc-100 to-zinc-200/70 p-2 dark:from-zinc-900 dark:to-zinc-950"
               style={{ animationDelay: `${index * -1.1}s` }}
             >

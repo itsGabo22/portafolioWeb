@@ -63,7 +63,7 @@ export function ProjectActions({ project }: { project: Project }) {
         <a href={project.github} target="_blank" rel="noopener noreferrer" className={secondaryButton}>
           <GitHubIcon className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{t.common.github}</span>
-          <span className="sr-only">{t.common.newTab}</span>
+          <span className="sr-only"> {t.common.newTab}</span>
         </a>
       )}
 
@@ -79,7 +79,7 @@ export function ProjectActions({ project }: { project: Project }) {
             className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5"
             aria-hidden="true"
           />
-          <span className="sr-only">{t.common.newTab}</span>
+          <span className="sr-only"> {t.common.newTab}</span>
         </a>
       )}
     </div>

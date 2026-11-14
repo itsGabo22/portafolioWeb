@@ -32,6 +32,7 @@
   --accent-fill: #10b981;        /* emerald-500 fills, rings, glows */
   --accent-soft: rgb(16 185 129 / 0.1);
   --accent-2: #4f46e5;           /* indigo-600 secondary accent 6.3:1 */
+  --focus-ring: #047857;         /* emerald-700, 5.5:1 vs white (WCAG 1.4.11) */
   --warn: #b45309;               /* amber-700, "in progress" 5.0:1 */
   --warn-soft: rgb(245 158 11 / 0.12);
   --danger: #b91c1c;
@@ -95,6 +96,7 @@
   --accent-fill: #10b981;
   --accent-soft: rgb(16 185 129 / 0.14);
   --accent-2: #818cf8;           /* indigo-400 6.7:1 */
+  --focus-ring: #34d399;
   --warn: #fbbf24;
   --warn-soft: rgb(251 191 36 / 0.12);
   --danger: #f87171;
@@ -207,7 +209,7 @@ main [data-interactive] {
 
 /* One focus ring for the whole site */
 :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--accent-fill);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
   border-radius: var(--radius-chip);
 }

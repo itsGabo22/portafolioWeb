@@ -120,7 +120,7 @@ export default function MusicTab({ onMood }: { onMood: (mood: MoodId) => void })
                   <Music2 className="h-4 w-4" aria-hidden="true" />
                   <span>{t.beyond.music.follow}</span>
                   <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span className="sr-only">{t.common.newTab}</span>
+                  <span className="sr-only"> {t.common.newTab}</span>
                 </a>
               </div>
               <p className={`${styles.muted} text-xs`}>{t.beyond.music.playHint}</p>

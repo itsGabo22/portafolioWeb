@@ -57,14 +57,13 @@ export default function Testimonials({ avatars = {} }: { avatars?: Record<string
           data-reveal
         >
           <div>
-            <p className="text-sm font-semibold text-accent">{t.testimonials.eyebrow}</p>
-            <h2 className="mt-2 font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
+            <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
               {t.testimonials.title}
             </h2>
           </div>
           <dl className="grid grid-cols-3 gap-6 sm:gap-10">
             {METRICS.map((metric) => (
-              <div key={metric.key} className="flex flex-col-reverse border-l-2 border-accent-fill/50 pl-3.5">
+              <div key={metric.key} className="flex flex-col-reverse justify-end border-l border-line-strong pl-3.5">
                 <dt className="mt-0.5 text-xs leading-snug text-ink-muted">{t.testimonials.metrics[metric.key]}</dt>
                 <dd className="font-display text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
                   {metric.value}

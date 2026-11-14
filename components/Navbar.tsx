@@ -60,6 +60,18 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const menuButtonRef = React.useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setIsOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen]);
+
   const handleLinkClick = () => {
     setIsOpen(false);
   };
@@ -76,10 +88,23 @@ export default function Navbar() {
     e.preventDefault();
     window.history.pushState(null, "", href);
     // Wait for the drawer exit animation (0.22s) so layout is stable.
-    window.setTimeout(
-      () => target.scrollIntoView({ behavior: "smooth", block: "start" }),
-      260
-    );
+    window.setTimeout(() => {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Lazily mounted content above can change height mid-scroll: correct once it settles.
+      const correct = () => {
+        const top = target.getBoundingClientRect().top;
+        if (Math.abs(top - 72) > 8) target.scrollIntoView({ behavior: "auto", block: "start" });
+      };
+      const fallback = window.setTimeout(correct, 1400);
+      window.addEventListener(
+        "scrollend",
+        () => {
+          window.clearTimeout(fallback);
+          window.setTimeout(correct, 120);
+        },
+        { once: true }
+      );
+    }, 260);
   };
 
   return (
@@ -140,7 +165,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleLang}
-            aria-label={t.nav.switchLang}
+            aria-label={`ES / EN: ${t.nav.switchLang}`}
             className="cursor-can-hover inline-flex h-9 items-center gap-1.5 rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800/70"
           >
             <span
@@ -207,7 +232,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleLang}
-            aria-label={t.nav.switchLang}
+            aria-label={`${lang.toUpperCase()}: ${t.nav.switchLang}`}
             className="inline-flex h-9 items-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 px-2.5 text-xs font-semibold text-zinc-800 dark:text-zinc-200 backdrop-blur-xl md:hidden"
           >
             {lang.toUpperCase()}
@@ -241,6 +266,7 @@ export default function Navbar() {
 
           <button
             type="button"
+            ref={menuButtonRef}
             onClick={() => setIsOpen((prev) => !prev)}
             aria-expanded={isOpen}
             aria-controls="mobile-navigation-drawer"
