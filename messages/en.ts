@@ -154,6 +154,13 @@ export const en: Messages = {
     },
     listAria: "Choose a testimonial",
     visit: "Visit {name}'s website",
+    carouselRole: "carousel",
+    carouselAria: "Client and faculty testimonials",
+    position: "{i} / {n}",
+    prev: "Previous testimonial",
+    next: "Next testimonial",
+    pause: "Pause",
+    play: "Resume",
   },
   experience: {
     title: "Experience",
@@ -164,6 +171,7 @@ export const en: Messages = {
     academicSubtitle: "Software Engineering · UCC Pasto",
     web: "Website",
     stagesAria: "Evolution stages",
+    tracksAria: "Experience type",
   },
   contact: {
     available: "Available for new projects",

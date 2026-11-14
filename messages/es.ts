@@ -156,6 +156,13 @@ export const es = {
     },
     listAria: "Elegir testimonio",
     visit: "Visitar el sitio de {name}",
+    carouselRole: "carrusel",
+    carouselAria: "Testimonios de clientes y docentes",
+    position: "{i} / {n}",
+    prev: "Testimonio anterior",
+    next: "Testimonio siguiente",
+    pause: "Pausar",
+    play: "Reanudar",
   },
   experience: {
     title: "Experiencia",
@@ -166,6 +173,7 @@ export const es = {
     academicSubtitle: "Ingeniería de Software · UCC Pasto",
     web: "Sitio web",
     stagesAria: "Etapas de la evolución",
+    tracksAria: "Tipo de experiencia",
   },
   contact: {
     available: "Disponible para nuevos proyectos",

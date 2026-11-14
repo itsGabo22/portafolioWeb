@@ -2,9 +2,9 @@
 
 import React, { useRef, useState } from "react";
 import {
+  AnimatePresence,
   motion,
   useScroll,
-  useTransform,
   useSpring,
   useMotionValueEvent,
 } from "framer-motion";
@@ -18,6 +18,7 @@ import {
 import { useApp } from "@/context/AppContext";
 import { useT } from "@/messages";
 import TechBadge from "./TechBadge";
+import { useReducedMotion } from "@/lib/capabilities";
 import SectionEyebrow from "./SectionEyebrow";
 
 interface TimelineItem {
@@ -356,158 +357,156 @@ function EraSchematicBackdrop({ activeEra }: { activeEra: number }) {
   );
 }
 
-function TimelineColumn({
+type Track = "work" | "academic";
+const TRACKS: readonly Track[] = ["work", "academic"];
+
+/** First four-digit year in a period label ("Ene 2026 - Presente" -> "2026"). */
+const startYear = (period: string) => period.match(/\d{4}/)?.[0] ?? "";
+
+function TimelineTrack({
   items,
-  trackLabel,
-  trackSubtitle,
   activeEra,
   onHoverEra,
 }: {
   items: TimelineItem[];
-  trackLabel: string;
-  trackSubtitle: string;
   activeEra: number;
   onHoverEra: (eraIndex: number) => void;
 }) {
   const { lang } = useApp();
   const t = useT();
-  const columnRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const listRef = useRef<HTMLOListElement>(null);
 
+  // The rail draws itself as the list scrolls through the viewport.
   const { scrollYProgress } = useScroll({
-    target: columnRef,
-    offset: ["start 80%", "end 35%"],
+    target: listRef,
+    offset: ["start 78%", "end 55%"],
   });
-
-  const smoothSpine = useSpring(scrollYProgress, {
+  const progress = useSpring(scrollYProgress, {
     stiffness: 120,
     damping: 26,
     mass: 0.4,
   });
 
-  const orbTop = useTransform(smoothSpine, [0, 1], ["0%", "100%"]);
-
   return (
-    <div ref={columnRef} className="flex flex-col">
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 border-b border-zinc-300/60 dark:border-zinc-800/80 pb-4">
-        <h3 className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-          {trackLabel}
-        </h3>
-        <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
-          {trackSubtitle}
-        </span>
-      </div>
+    <ol ref={listRef} className="relative space-y-10 sm:space-y-14">
+      {/* Rail: faint track + primary line that draws on scroll */}
+      <span
+        aria-hidden="true"
+        className="absolute bottom-3 left-[4.75rem] top-3 w-px bg-white/10 sm:left-[9.25rem]"
+      />
+      <motion.span
+        aria-hidden="true"
+        style={{ scaleY: reduced ? 1 : progress }}
+        className="absolute bottom-3 left-[4.75rem] top-3 w-[2px] -translate-x-[0.5px] origin-top rounded-full bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 shadow-[0_0_14px_var(--primary-400)] sm:left-[9.25rem]"
+      />
 
-      {/* Required Vertical Timeline Line: border-l-2 border-emerald-500/40 dark:border-emerald-400/40 */}
-      <div className="relative ml-3 space-y-8 border-l-2 border-emerald-500/40 dark:border-emerald-400/40 pl-6 sm:pl-8">
-        {/* Scroll-Driven Progressive Laser Spine Overlay */}
-        <motion.div
-          aria-hidden="true"
-          style={{ scaleY: smoothSpine }}
-          className="pointer-events-none absolute -left-[2px] top-0 bottom-0 w-[2px] origin-top bg-gradient-to-b from-emerald-500 via-cyan-400 to-indigo-500 shadow-[0_0_12px_rgba(16,185,129,0.75)]"
-        />
+      {items.map((item, index) => {
+        const isEraHighlighted = activeEra === item.eraIndex;
+        const eraInfo = ENGINEERING_ERAS[item.eraIndex] ?? ENGINEERING_ERAS[0];
+        const year = startYear(item.period[lang]);
 
-        {/* Glowing Leading Laser Orb */}
-        <motion.span
-          aria-hidden="true"
-          style={{ top: orbTop }}
-          className="pointer-events-none absolute -left-[6px] h-2.5 w-2.5 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_14px_3px_rgba(16,185,129,0.9)]"
-        />
-
-        {items.map((item, index) => {
-          const isEraHighlighted = activeEra === item.eraIndex;
-          const eraInfo = ENGINEERING_ERAS[item.eraIndex] ?? ENGINEERING_ERAS[0];
-
-          return (
-            <div
-              key={item.id} data-reveal
-              onMouseEnter={() => onHoverEra(item.eraIndex)}
-              style={{ "--reveal-i": index } as React.CSSProperties}
-              className="group relative"
-            >
-              {/* Required Absolute Timeline Indicator Dot: absolute -left-[9px] */}
+        return (
+          <li
+            key={item.id}
+            data-reveal
+            onMouseEnter={() => onHoverEra(item.eraIndex)}
+            onFocus={() => onHoverEra(item.eraIndex)}
+            style={{ "--reveal-i": index } as React.CSSProperties}
+            className="group relative grid grid-cols-[3.75rem_1fr] gap-x-8 sm:grid-cols-[8rem_1fr] sm:gap-x-10"
+          >
+            {/* Large year marker (the exact period is repeated in the card) */}
+            <div aria-hidden="true" className="pt-5 text-right">
               <span
-                className={`absolute -left-[9px] top-7 z-10 h-4 w-4 rounded-full border-2 transition-all duration-300 ${
-                  isEraHighlighted
-                    ? "scale-125 border-emerald-500 bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.7)]"
-                    : "border-zinc-900 dark:border-zinc-100 bg-white dark:bg-zinc-950 group-hover:scale-125 group-hover:border-emerald-500"
+                className={`block font-display text-2xl font-extrabold leading-none tracking-tighter tabular-nums transition-colors duration-500 sm:text-6xl ${
+                  isEraHighlighted ? "text-primary-200" : "text-transparent"
                 }`}
-              />
-
-                <div
-                  className={`rounded-2xl border p-6 ring-1 ring-zinc-900/[0.06] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 ${
-                    isEraHighlighted
-                      ? "border-emerald-500/60 dark:border-emerald-400/50 bg-white/65 dark:bg-zinc-900/75 shadow-[0_16px_44px_-12px_rgba(16,185,129,0.14),inset_0_1px_0_0_rgba(255,255,255,0.95)]"
-                      : "border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 shadow-[0_12px_40px_-12px_rgba(15,23,42,0.08),inset_0_1px_0_0_rgba(255,255,255,0.9)] hover:bg-white/65 dark:hover:bg-zinc-900/75"
-                  }`}
-                >
-                  {/* Top Period & Stage Pill */}
-                  <div className="mb-3 flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/80 dark:border-zinc-700/80 bg-white/70 dark:bg-zinc-800/80 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
-                      {eraInfo.stageLabel[lang]} · {eraInfo.year}
-                    </span>
-
-                    <div className="flex items-center gap-2 font-mono text-xs text-zinc-600 dark:text-zinc-400 shrink-0">
-                      <span className="relative flex h-2 w-2 shrink-0">
-                        {item.active && (
-                          <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500/60" />
-                        )}
-                        <span
-                          className={`relative h-2 w-2 rounded-full ${
-                            item.active
-                              ? "bg-emerald-500"
-                              : "border border-zinc-400 dark:border-zinc-600"
-                          }`}
-                        />
-                      </span>
-                      <span>{item.period[lang]}</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-display text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                      {item.title[lang]}
-                    </h4>
-                    <div className="mt-1 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                      <span>{item.organization[lang]}</span>
-                      {item.url && (
-                        <a
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="cursor-can-hover inline-flex items-center gap-0.5 text-xs font-semibold text-primary-ink underline underline-offset-4"
-                        >
-                          <span>{t.experience.web}</span>
-                          <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-                          <span className="sr-only"> {t.common.newTab}</span>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-
-                  <p className="mt-4 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-                    {item.description[lang]}
-                  </p>
-
-                  {/* Real Vector SVG Tech Badges */}
-                  <div className="mt-5 flex flex-wrap gap-1.5 border-t border-zinc-300/60 dark:border-zinc-800/60 pt-4">
-                    {item.highlights.map((tech) => (
-                      <TechBadge key={tech} name={tech} size="xs" />
-                    ))}
-                  </div>
-                </div>
+                style={{ WebkitTextStroke: "1px var(--primary-300)" }}
+              >
+                {year}
+              </span>
             </div>
-          );
-        })}
-      </div>
-    </div>
+
+            {/* Node on the rail */}
+            <span
+              aria-hidden="true"
+              className={`absolute left-[4.75rem] top-7 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 transition-all duration-300 sm:left-[9.25rem] ${
+                isEraHighlighted
+                  ? "scale-125 border-primary-200 bg-primary-300 shadow-[0_0_16px_var(--primary-300)]"
+                  : "border-primary-300 bg-primary-950 group-hover:scale-125"
+              }`}
+            />
+
+            <div
+              className={`rounded-2xl border p-5 backdrop-blur-xl transition-[border-color,background-color,transform] duration-300 sm:p-6 ${
+                isEraHighlighted
+                  ? "border-primary-300/45 bg-white/[0.07]"
+                  : "border-white/10 bg-white/[0.035] hover:-translate-y-0.5 hover:border-white/20"
+              }`}
+            >
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <span className="inline-flex items-center rounded-full border border-primary-300/30 bg-primary-300/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary-200">
+                  {eraInfo.stageLabel[lang]} · {eraInfo.year}
+                </span>
+                <span className="flex items-center gap-2 font-mono text-xs text-zinc-300">
+                  <span className="relative flex h-2 w-2 shrink-0">
+                    {item.active && !reduced && (
+                      <span className="absolute inset-0 animate-ping rounded-full bg-primary-300/60" />
+                    )}
+                    <span
+                      className={`relative h-2 w-2 rounded-full ${
+                        item.active ? "bg-primary-300" : "border border-zinc-500"
+                      }`}
+                    />
+                  </span>
+                  <span>{item.period[lang]}</span>
+                </span>
+              </div>
+
+              <h4 className="font-display text-xl font-bold tracking-tight text-zinc-50">
+                {item.title[lang]}
+              </h4>
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-300">
+                <span>{item.organization[lang]}</span>
+                {item.url && (
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cursor-can-hover inline-flex min-h-6 items-center gap-0.5 text-xs font-semibold text-primary-ink underline underline-offset-4"
+                  >
+                    <span>{t.experience.web}</span>
+                    <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                    <span className="sr-only"> {t.common.newTab}</span>
+                  </a>
+                )}
+              </div>
+
+              <p className="mt-4 text-sm leading-relaxed text-zinc-300">
+                {item.description[lang]}
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-1.5 border-t border-white/10 pt-4">
+                {item.highlights.map((tech) => (
+                  <TechBadge key={tech} name={tech} size="xs" />
+                ))}
+              </div>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
 export default function Experience() {
   const { lang } = useApp();
   const t = useT();
+  const reduced = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+  const tabRefs = useRef<Record<Track, HTMLButtonElement | null>>({ work: null, academic: null });
   const [activeEra, setActiveEra] = useState<number>(0);
+  const [track, setTrack] = useState<Track>("work");
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -522,6 +521,24 @@ export default function Experience() {
   });
 
   const currentEraObj = ENGINEERING_ERAS[activeEra] ?? ENGINEERING_ERAS[0];
+  const trackItems = track === "work" ? WORK_EXPERIENCE : ACADEMIC_EXPERIENCE;
+  const trackLabel = (k: Track) => (k === "work" ? t.experience.work : t.experience.academic);
+  const trackCount = (k: Track) =>
+    (k === "work" ? WORK_EXPERIENCE : ACADEMIC_EXPERIENCE).length;
+
+  // ARIA tabs keyboard pattern: arrows / Home / End move and select.
+  const onTabKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const i = TRACKS.indexOf(track);
+    let next: Track | null = null;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = TRACKS[(i + 1) % TRACKS.length];
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = TRACKS[(i - 1 + TRACKS.length) % TRACKS.length];
+    if (e.key === "Home") next = TRACKS[0];
+    if (e.key === "End") next = TRACKS[TRACKS.length - 1];
+    if (!next) return;
+    e.preventDefault();
+    setTrack(next);
+    tabRefs.current[next]?.focus();
+  };
 
   const renderEraIcon = (idx: number) => {
     switch (idx) {
@@ -540,53 +557,47 @@ export default function Experience() {
     <section
       id="experience"
       ref={sectionRef}
-      className="dark band-primary band-gradient relative py-24 sm:py-32 overflow-hidden"
+      className="dark band-primary band-gradient relative overflow-hidden py-24 sm:py-32"
     >
-      {/* Scroll-Driven 4-Stage Engineering Evolution Backdrop */}
       <EraSchematicBackdrop activeEra={activeEra} />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Centered Monumental Section Header */}
-        <div data-reveal
-          className="mb-10 text-center"
-        >
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div data-reveal className="mb-12 text-center">
           <SectionEyebrow id="experience" />
-          <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
+          <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-zinc-50">
             {t.experience.title}
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
+          <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-300">
             {t.experience.subtitle}
           </p>
         </div>
 
-        {/* Interactive Scroll-Scrubbed Stage Selector Bar with Frosted Glass */}
-        <div className="mb-14 rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 p-4 sm:p-5 ring-1 ring-zinc-900/[0.06] shadow-[0_12px_40px_-12px_rgba(15,23,42,0.08),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl backdrop-saturate-150">
-          <div className="flex flex-col justify-between gap-4 border-b border-zinc-300/60 dark:border-zinc-800/80 pb-4 lg:flex-row lg:items-center">
+        {/* Scroll-scrubbed 4-stage evolution bar */}
+        <div className="mb-14 rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-xl sm:p-5">
+          <div className="flex flex-col justify-between gap-4 border-b border-white/10 pb-4 lg:flex-row lg:items-center">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 shadow-xs">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-200 text-primary-950">
                 {renderEraIcon(currentEraObj.index)}
               </span>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                  <span className="text-xs font-semibold text-primary-ink">
                     {currentEraObj.stageLabel[lang]}
                   </span>
-                  <span className="rounded-md bg-white/80 dark:bg-zinc-800 px-2 py-0.5 font-mono text-[11px] text-zinc-700 dark:text-zinc-300">
+                  <span className="rounded-md bg-white/10 px-2 py-0.5 font-mono text-[11px] text-zinc-200">
                     {currentEraObj.year}
                   </span>
                 </div>
-                <p className="font-display text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-50">
+                <p className="font-display text-base font-bold text-zinc-50 sm:text-lg">
                   {currentEraObj.title[lang]}
                 </p>
               </div>
             </div>
-
-            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-md">
+            <p className="max-w-md text-xs text-zinc-300 sm:text-sm">
               {currentEraObj.subtitle[lang]}
             </p>
           </div>
 
-          {/* 4-Stage Interactive Selector Strip */}
           <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4" role="group" aria-label={t.experience.stagesAria}>
             {ENGINEERING_ERAS.map((era) => {
               const isSelected = activeEra === era.index;
@@ -596,47 +607,101 @@ export default function Experience() {
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => setActiveEra(era.index)}
-                  className={`cursor-can-hover flex flex-col items-start rounded-xl border p-3 text-left transition-all ${
+                  className={`cursor-can-hover relative flex min-h-11 flex-col items-start overflow-hidden rounded-xl border p-3 text-left transition-colors ${
                     isSelected
-                      ? "border-emerald-500/60 bg-emerald-500/10 dark:bg-emerald-500/15 shadow-xs"
-                      : "border-white/70 dark:border-zinc-800/70 bg-white/45 dark:bg-zinc-950/40 hover:bg-white/70 dark:hover:bg-zinc-900"
+                      ? "border-primary-300/50 bg-primary-300/10"
+                      : "border-white/10 bg-white/[0.03] hover:bg-white/[0.07]"
                   }`}
                 >
-                  <span
-                    className={`text-[11px] font-medium ${
-                      isSelected
-                        ? "font-semibold text-emerald-700 dark:text-emerald-300"
-                        : "text-zinc-500 dark:text-zinc-400"
-                    }`}
-                  >
+                  <span className={`text-[11px] font-medium ${isSelected ? "font-semibold text-primary-200" : "text-zinc-400"}`}>
                     {era.stageLabel[lang]} · {era.year}
                   </span>
-                  <span className="mt-1 line-clamp-2 font-display text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                  <span className="mt-1 line-clamp-2 font-display text-xs font-bold text-zinc-100">
                     {era.title[lang]}
                   </span>
+                  {isSelected && (
+                    <motion.span
+                      layoutId="experience-era-bar"
+                      aria-hidden="true"
+                      className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-primary-300"
+                      transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Dual Track Columns with Progressive Laser Spines */}
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-10">
-          <TimelineColumn
-            items={WORK_EXPERIENCE}
-            trackLabel={t.experience.work}
-            trackSubtitle={t.experience.workSubtitle}
-            activeEra={activeEra}
-            onHoverEra={setActiveEra}
-          />
+        {/* Laboral / Académica switch */}
+        <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div
+            role="tablist"
+            aria-label={t.experience.tracksAria}
+            onKeyDown={onTabKey}
+            className="inline-flex rounded-full border border-white/10 bg-white/[0.05] p-1"
+          >
+            {TRACKS.map((k) => {
+              const selected = track === k;
+              return (
+                <button
+                  key={k}
+                  ref={(el) => {
+                    tabRefs.current[k] = el;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={`experience-tab-${k}`}
+                  aria-selected={selected}
+                  aria-controls="experience-panel"
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setTrack(k)}
+                  className={`cursor-can-hover relative inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold transition-colors sm:px-5 ${
+                    selected ? "text-primary-950" : "text-zinc-300 hover:text-zinc-50"
+                  }`}
+                >
+                  {selected && (
+                    <motion.span
+                      layoutId="experience-track-pill"
+                      aria-hidden="true"
+                      className="absolute inset-0 rounded-full bg-primary-200"
+                      transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 34 }}
+                    />
+                  )}
+                  <span className="relative">{trackLabel(k)}</span>
+                  <span
+                    aria-hidden="true"
+                    className={`relative rounded-full px-1.5 font-mono text-[11px] ${selected ? "bg-primary-950/10" : "bg-white/10"}`}
+                  >
+                    {trackCount(k)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <span className="text-xs font-medium text-primary-ink">
+            {track === "work" ? t.experience.workSubtitle : t.experience.academicSubtitle}
+          </span>
+        </div>
 
-          <TimelineColumn
-            items={ACADEMIC_EXPERIENCE}
-            trackLabel={t.experience.academic}
-            trackSubtitle={t.experience.academicSubtitle}
-            activeEra={activeEra}
-            onHoverEra={setActiveEra}
-          />
+        <div
+          role="tabpanel"
+          id="experience-panel"
+          aria-labelledby={`experience-tab-${track}`}
+          tabIndex={0}
+          className="rounded-2xl focus-visible:outline-offset-8"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={track}
+              initial={reduced ? { opacity: 1 } : { opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduced ? { opacity: 1 } : { opacity: 0, y: -12 }}
+              transition={{ duration: reduced ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <TimelineTrack items={trackItems} activeEra={activeEra} onHoverEra={setActiveEra} />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </section>
