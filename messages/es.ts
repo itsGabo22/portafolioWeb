@@ -231,7 +231,8 @@ export const es = {
     subtitle: "Mi playlist, mis artistas y juegos favoritos, y mi club.",
     tabsAria: "Intereses personales",
     moodNote: "Paletas y texturas: interpretaciones originales del ambiente de cada obra, no arte oficial.",
-    photoNote: "Fotos de conciertos y del estadio con licencia libre; capturas de juegos © de sus editoras, uso de fan sin fines comerciales. Créditos en /CREDITS.md.",
+    photoNote: "Fotos de conciertos y del estadio con licencia libre; capturas y arte oficial de juegos © de sus editoras, uso de fan sin fines comerciales.",
+    credits: "Créditos y licencias",
     tabs: {
       music: "Banda sonora",
       games: "Modo jugador",

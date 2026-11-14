@@ -118,7 +118,16 @@ export default function BeyondPanel({
         ))}
 
         <p className={`${styles.muted} mt-8 text-xs`}>
-          {BEYOND_PHOTOS ? t.beyond.photoNote : t.beyond.moodNote}
+          {BEYOND_PHOTOS ? t.beyond.photoNote : t.beyond.moodNote}{" "}
+          <a
+            href="/CREDITS.md"
+            target="_blank"
+            rel="noopener"
+            className={`${styles.focusRing} ${styles.accent} cursor-can-hover inline-flex min-h-6 items-center font-semibold underline underline-offset-4`}
+          >
+            {t.beyond.credits}
+            <span className="sr-only"> {t.common.newTab}</span>
+          </a>
         </p>
       </div>
     </div>

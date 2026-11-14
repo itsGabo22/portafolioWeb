@@ -229,7 +229,8 @@ export const en: Messages = {
     subtitle: "My playlist, my favorite artists and games, and my club.",
     tabsAria: "Personal interests",
     moodNote: "Palettes and textures: original interpretations of each work's atmosphere, not official art.",
-    photoNote: "Concert and stadium photos under free licenses; game screenshots © their publishers, non-commercial fan use. Credits in /CREDITS.md.",
+    photoNote: "Concert and stadium photos under free licenses; game screenshots and key art © their publishers, non-commercial fan use.",
+    credits: "Credits and licenses",
     tabs: {
       music: "Soundtrack",
       games: "Player mode",
