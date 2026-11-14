@@ -74,10 +74,11 @@ Recomendado: video sin audio, ≤ 15 s en bucle, ≤ 4 MB, 1280 px de ancho. Los
 
 ## Despliegue en Netlify
 
-Netlify ejecuta Next.js 16 sin configuración mediante su adaptador OpenNext (los Route Handlers como `/api/contact` funcionan como Netlify Functions). No hace falta `netlify.toml`, `output: "export"` ni instalar `@netlify/plugin-nextjs`.
+Netlify ejecuta Next.js 16 mediante su adaptador OpenNext (los Route Handlers como `/api/contact` funcionan como Netlify Functions). No se usa `output: "export"` ni se instala/fija `@netlify/plugin-nextjs`; el `netlify.toml` solo declara el comando y la carpeta de publicación.
 
 1. En Netlify: **Add new site → Import an existing project** y conecta este repositorio de GitHub.
-2. Build command: `npm run build` (Netlify detecta Next.js y gestiona el directorio de publicación).
-3. Versión de Node: la toma de `.nvmrc` (22; Next 16 requiere ≥ 20.9).
-4. En **Site configuration → Environment variables** agrega `RESEND_API_KEY`, `CONTACT_TO_EMAIL` y `CONTACT_FROM_EMAIL` con un *scope* que incluya **Functions / Runtime**.
-5. **Deploy previews:** abre un *draft pull request* contra `main`; Netlify publica una vista previa por cada push a esa rama. Hacer merge a `main` publica producción en `https://gabodevportafolio.netlify.app`.
+2. **Project configuration → Build & deploy → Build settings → Runtime: `Next.js`.** Sin esto el adaptador no se ejecuta y `/` responde 404 (le pasó a este sitio porque se creó para la versión estática).
+3. Build: lo fija `netlify.toml` (`npm run build`, publicación `.next`). Node lo toma de `.nvmrc` (22; Next 16 requiere ≥ 20.9).
+4. **Variables de entorno** (Site configuration → Environment variables): `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`, con *scope* **Functions / Runtime** y en los contextos **Production** y **Deploy Previews**. Sin ellas `/api/contact` responde `503` (el formulario lo muestra como "no disponible"), es lo esperado.
+5. **Deploy Preview (flujo de revisión):** Netlify solo despliega `main` y los *pull requests*; una rama sin PR no tiene URL. Abre un **draft PR** contra `main` (`gh pr create --draft --base main --head <rama>`): cada push genera `https://deploy-preview-<n>--gabodevportafolio.netlify.app` y el enlace aparece en los checks y en un comentario del PR. Por defecto Netlify protege los previews con login del equipo (401 para visitantes); para compartirlo, usa *Share* en la barra de Netlify del preview o desactiva la protección en **Access & security → Visitor access**.
+6. Hacer merge a `main` publica producción en `https://gabodevportafolio.netlify.app`.

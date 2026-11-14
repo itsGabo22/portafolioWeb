@@ -119,7 +119,7 @@ Reglas: un único sistema de revelado (`[data-reveal]`, se activa con `.reveal-a
 
 ## 8. Moods de *Fuera del código*
 
-Cada ítem define `--mood-bg/-surface/-fg/-muted/-accent/-accent-2/-line` (registradas con `@property`, así que el panel interpola colores). Texturas 100 % procedurales (CSS/SVG). Son **interpretaciones originales** del ambiente general, sin arte, logos, escudos ni tipografías oficiales.
+Cada ítem define `--mood-bg/-surface/-fg/-muted/-accent/-accent-2/-line` (registradas con `@property`, así que el panel interpola colores). Texturas 100 % procedurales (CSS/SVG). Son **interpretaciones originales** del ambiente general, sin arte, logos, escudos ni tipografías oficiales. **Temporal (semana de exhibición):** con `BEYOND_PHOTOS = true` (`components/beyond/photos.ts`) cada mood muestra además una fotografía real con parallax bajo una veladura direccional del color del mood (densa bajo el texto, abierta sobre el arte) que mantiene AA; la pestaña de juegos adopta un inicio estilo consola. Procedencia y licencias en `public/CREDITS.md`; con `false` se vuelve a las texturas procedurales.
 
 | Ítem | Fondo | Superficie | Texto | Acento | Textura / composición | Easing |
 |---|---|---|---|---|---|---|
