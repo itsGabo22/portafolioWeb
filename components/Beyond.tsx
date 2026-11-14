@@ -2,9 +2,11 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { BEYOND_TAB_IDS, type BeyondTabId } from "@/data/personal";
+import { BEYOND_TAB_IDS, type BeyondTabId } from "@/data/beyondTabs";
 import { useT } from "@/messages";
 import { BEYOND_PHOTOS } from "./beyond/photos";
+// loader + frame styles available before the lazily loaded menu chunk
+import "./beyond/beyond.css";
 
 function MenuLoader() {
   const t = useT();
@@ -40,7 +42,10 @@ export default function Beyond() {
   const t = useT();
   const hash = useSyncExternalStore(subscribeHash, readHash, () => "");
   const hashTab = tabFromHash(hash);
-  const tab: BeyondTabId = hashTab ?? "games";
+  // Other in-page links (#contact...) replace the hash: keep the last menu tab (and its player).
+  const [lastTab, setLastTab] = useState<BeyondTabId>("games");
+  if (hashTab && hashTab !== lastTab) setLastTab(hashTab);
+  const tab: BeyondTabId = hashTab ?? lastTab;
 
   const sectionRef = useRef<HTMLElement>(null);
   const [near, setNear] = useState(false);
@@ -51,7 +56,10 @@ export default function Beyond() {
     const reveal = () => {
       if (!tabFromHash(window.location.hash)) return;
       window.requestAnimationFrame(() =>
-        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+        sectionRef.current?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+          block: "start",
+        })
       );
     };
     reveal();

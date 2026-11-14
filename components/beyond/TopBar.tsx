@@ -191,7 +191,13 @@ export default function TopBar({
   };
 
   return (
-    <div ref={barRef} className="ps-top">
+    <div
+      ref={barRef}
+      className="ps-top"
+      onBlur={(event) => {
+        if (open && !barRef.current?.contains(event.relatedTarget as Node | null)) setOpen(null);
+      }}
+    >
       <div role="tablist" aria-label={t.beyond.tabsAria} onKeyDown={onTabKeyDown} className="ps-tabs">
         {BEYOND_TAB_IDS.map((id, index) => (
           <button

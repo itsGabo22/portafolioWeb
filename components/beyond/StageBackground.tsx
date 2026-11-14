@@ -55,7 +55,6 @@ export default function StageBackground({ items, index, title }: { items: MenuIt
               alt=""
               fill
               sizes={STAGE_SIZES}
-              quality={72}
               className="object-cover"
               style={{ objectPosition: art.position }}
             />

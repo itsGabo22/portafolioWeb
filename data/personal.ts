@@ -20,8 +20,8 @@ export type MoodId =
   | "nexo"
   | "barca";
 
-export type BeyondTabId = "games" | "media" | "likes";
-export const BEYOND_TAB_IDS: readonly BeyondTabId[] = ["games", "media", "likes"];
+import type { BeyondTabId } from "./beyondTabs";
+export { BEYOND_TAB_IDS, type BeyondTabId } from "./beyondTabs";
 
 /** On-console trophy figures, transcribed by Gabo from his own console (not recomputed). */
 export interface Trophies {

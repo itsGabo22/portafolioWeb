@@ -25,7 +25,8 @@ export function startGamepad(onCommand: (command: PadCommand) => void): () => vo
 
   const loop = (now: number) => {
     raf = window.requestAnimationFrame(loop);
-    const pad = navigator.getGamepads().find((p) => p && p.connected);
+    // Button indices below follow the Standard Gamepad layout only.
+    const pad = navigator.getGamepads().find((p) => p && p.connected && p.mapping === "standard");
     if (!pad) return;
     const active = new Set<PadCommand>();
     pad.buttons.forEach((button, index) => {

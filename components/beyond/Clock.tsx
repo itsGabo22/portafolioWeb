@@ -34,8 +34,9 @@ export default function Clock({ label }: { label: string }) {
         }).format(new Date(minute * 60_000));
 
   return (
-    <time className="ps-clock" aria-label={text ? `${label}: ${text}` : label}>
-      {text}
-    </time>
+    <span className="ps-clock">
+      <span className="sr-only">{label}: </span>
+      {minute !== null && <time dateTime={new Date(minute * 60_000).toISOString()}>{text}</time>}
+    </span>
   );
 }

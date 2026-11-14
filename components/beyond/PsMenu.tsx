@@ -54,6 +54,7 @@ export default function PsMenu({
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const optionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rowRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const actionsRef = useRef<HTMLDivElement>(null);
   const tickRef = useRef<(() => void) | null>(null);
 
@@ -77,6 +78,16 @@ export default function PsMenu({
   }, [sound]);
 
   // ── selection ──
+  /** Focus without a jump, then bring it into view only if it is off-screen (WCAG 2.4.11). */
+  const focusEl = useCallback(
+    (el: HTMLElement | null | undefined) => {
+      if (!el) return;
+      el.focus({ preventScroll: true });
+      el.scrollIntoView({ block: "nearest", inline: "nearest", behavior: reduced ? "auto" : "smooth" });
+    },
+    [reduced]
+  );
+
   const revealOption = useCallback(
     (i: number) => {
       const row = rowRef.current;
@@ -99,10 +110,10 @@ export default function PsMenu({
         setMoreOpen(false);
       }
       const pos = (i + list.length) % list.length;
-      if (focus) optionRefs.current[pos]?.focus({ preventScroll: true });
+      if (focus) focusEl(optionRefs.current[pos]);
       revealOption(pos);
     },
-    [revealOption, selected]
+    [focusEl, revealOption, selected]
   );
 
   const switchTab = useCallback(
@@ -113,13 +124,13 @@ export default function PsMenu({
         setMoreOpen(false);
         onTab(next);
       }
-      if (focusTab) tabRefs.current[BEYOND_TAB_IDS.indexOf(next)]?.focus({ preventScroll: true });
+      if (focusTab) focusEl(tabRefs.current[BEYOND_TAB_IDS.indexOf(next)]);
     },
-    [onTab, tab]
+    [focusEl, onTab, tab]
   );
 
-  const focusTiles = () => optionRefs.current[index]?.focus({ preventScroll: true });
-  const focusTabs = () => tabRefs.current[BEYOND_TAB_IDS.indexOf(tab)]?.focus({ preventScroll: true });
+  const focusTiles = () => focusEl(optionRefs.current[index]);
+  const focusTabs = () => focusEl(tabRefs.current[BEYOND_TAB_IDS.indexOf(tab)]);
 
   const runPrimary = useCallback(
     (target: MenuItem) => {
@@ -137,7 +148,7 @@ export default function PsMenu({
     setEmbedFor(null);
     // options of the new tab render on the next frame
     window.requestAnimationFrame(() => {
-      optionRefs.current[i]?.focus({ preventScroll: true });
+      focusEl(optionRefs.current[i]);
       revealOption(i);
     });
   };
@@ -176,6 +187,7 @@ export default function PsMenu({
         break;
       case "ArrowUp":
       case "Escape":
+        setMoreOpen(false);
         focusTabs();
         break;
       case "ArrowDown":
@@ -210,10 +222,16 @@ export default function PsMenu({
 
   // ── gamepad: zero cost until the menu is in view AND a pad is connected ──
   const focusTilesSoon = () =>
-    window.requestAnimationFrame(() => {
-      rowRef.current?.querySelector<HTMLElement>('[aria-selected="true"]')?.focus({ preventScroll: true });
-    });
+    window.requestAnimationFrame(() => focusEl(rowRef.current?.querySelector<HTMLElement>('[aria-selected="true"]')));
   const onPad = (command: PadCommand) => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    // Never act while the visitor types elsewhere, nor when the menu is barely on screen.
+    const active = document.activeElement as HTMLElement | null;
+    if (active && !frame.contains(active) && active.matches("input, textarea, select, [contenteditable]")) return;
+    const r = frame.getBoundingClientRect();
+    const visible = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+    if (visible < Math.min(r.height, window.innerHeight) * 0.5) return;
     const inTabs = tabRefs.current.includes(document.activeElement as HTMLButtonElement);
     const i = BEYOND_TAB_IDS.indexOf(tab);
     const n = BEYOND_TAB_IDS.length;
@@ -238,16 +256,19 @@ export default function PsMenu({
     if (paused || typeof navigator.getGamepads !== "function") return;
     let stop: (() => void) | null = null;
     let alive = true;
+    let wanted = false; // a pad is connected (cleared on disconnect, checked when the module resolves)
     const start = () => {
       if (stop || !alive) return;
+      wanted = true;
       setPad(true);
       import("./gamepad").then((m) => {
-        if (alive && !stop) stop = m.startGamepad((c) => padRef.current(c));
+        if (alive && wanted && !stop) stop = m.startGamepad((c) => padRef.current(c));
       });
     };
     const onConnect = () => start();
     const onDisconnect = () => {
       if (navigator.getGamepads().some((p) => p?.connected)) return;
+      wanted = false;
       stop?.();
       stop = null;
       setPad(false);
@@ -258,6 +279,7 @@ export default function PsMenu({
     return () => {
       alive = false;
       stop?.();
+      setPad(false);
       window.removeEventListener("gamepadconnected", onConnect);
       window.removeEventListener("gamepaddisconnected", onDisconnect);
     };
@@ -276,10 +298,12 @@ export default function PsMenu({
   return (
     <>
     <div
+      ref={frameRef}
       className={`ps-frame ${paused ? "bx-paused" : ""}`}
       style={moodStyle(item.mood)}
       data-mood={item.mood}
       data-photos={BEYOND_PHOTOS}
+      data-embed={embedOpen}
       role="region"
       aria-label={t.beyond.menuAria}
       onKeyDown={onFrameKeyDown}
@@ -335,7 +359,7 @@ export default function PsMenu({
           })}
         </div>
 
-        <div className="ps-copy">
+        <div className="ps-copy" data-note={Boolean(item.note)}>
           <div key={`${tab}-${item.id}`} className="ps-copy-in">
             {kicker && <p className="ps-kicker">{kicker}</p>}
             <h3
@@ -391,7 +415,18 @@ export default function PsMenu({
                     <a
                       href={item.secondary.href}
                       {...(item.secondary.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                      onClick={() => setMoreOpen(false)}
+                      onClick={() => {
+                        setMoreOpen(false);
+                        const secondary = item.secondary;
+                        if (!secondary || secondary.external || !secondary.href.startsWith("#")) return;
+                        // in-page target: move focus there too (the link itself unmounts)
+                        window.requestAnimationFrame(() => {
+                          const target = document.getElementById(secondary.href.slice(1));
+                          if (!target) return;
+                          if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+                          target.focus({ preventScroll: true });
+                        });
+                      }}
                       className="ps-result ps-focus cursor-can-hover"
                     >
                       <span>{item.secondary.label[lang]}</span>

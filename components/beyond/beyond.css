@@ -150,6 +150,7 @@
   --tile: max(44px, 5.6cqw);
   --tile-sel: max(72px, 9.3cqw);
   --pad-x: 3cqw;
+  --info-w: max(19cqw, 240px);
   position: relative;
   container-type: inline-size;
   aspect-ratio: 16 / 9;
@@ -169,6 +170,9 @@
     --mood-accent var(--dur-mood) var(--ease-in-out),
     --mood-accent-2 var(--dur-mood) var(--ease-in-out),
     --mood-line var(--dur-mood) var(--ease-in-out);
+}
+.ps-frame[data-embed="true"] {
+  --info-w: clamp(240px, 26cqw, 340px);
 }
 .ps-loader {
   display: flex;
@@ -247,12 +251,16 @@
       color-mix(in srgb, var(--mood-bg) 82%, transparent) 0%,
       color-mix(in srgb, var(--mood-bg) 62%, transparent) 18%,
       transparent 38%),
+    /* local pool behind the title block */
+    radial-gradient(ellipse 48% 42% at 24% 74%,
+      color-mix(in srgb, var(--mood-bg) 72%, transparent) 0%,
+      transparent 100%),
     /* title, actions, info panel */
     linear-gradient(0deg,
-      color-mix(in srgb, var(--mood-bg) 94%, transparent) 0%,
-      color-mix(in srgb, var(--mood-bg) 84%, transparent) 34%,
-      color-mix(in srgb, var(--mood-bg) 62%, transparent) 54%,
-      transparent 74%),
+      color-mix(in srgb, var(--mood-bg) 92%, transparent) 0%,
+      color-mix(in srgb, var(--mood-bg) 76%, transparent) 26%,
+      color-mix(in srgb, var(--mood-bg) 36%, transparent) 46%,
+      transparent 62%),
     /* soft left vignette */
     linear-gradient(90deg,
       color-mix(in srgb, var(--mood-bg) 60%, transparent) 0%,
@@ -265,8 +273,8 @@
   position: absolute;
   z-index: 3;
   top: 1.6cqw;
-  left: var(--pad-x);
-  right: var(--pad-x);
+  left: 4.6cqw;
+  right: 4.6cqw;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -274,7 +282,7 @@
 }
 .ps-tabs {
   display: flex;
-  gap: 2.4cqw;
+  gap: 4.2cqw;
 }
 .ps-tab {
   min-height: 44px;
@@ -295,7 +303,7 @@
 .ps-tools {
   display: flex;
   align-items: center;
-  gap: 0.6cqw;
+  gap: 1.8cqw;
 }
 .ps-icon-btn {
   display: inline-flex;
@@ -342,8 +350,9 @@
 }
 .ps-clock {
   display: inline-block;
-  min-width: 6.2ch; /* reserved: no layout shift when the time appears */
-  font-size: max(14px, 1.55cqw);
+  min-width: 11ch; /* reserved ("12:55 p. m."): no layout shift when the time appears */
+  margin-left: 1.2cqw;
+  font-size: max(14px, 1.85cqw);
   font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;
@@ -462,15 +471,15 @@
 .ps-row {
   position: absolute;
   z-index: 2;
-  top: max(6.2cqw, 58px); /* ≈ 11 % of the frame height, never under the tab bar */
-  left: calc(var(--pad-x) - 0.8cqw);
+  top: calc(max(6.2cqw, 58px) - max(10px, 1.6cqw)); /* tiles at ≈ 11 % of the frame height, never under the tab bar */
+  left: calc(var(--pad-x) - max(10px, 1.6cqw));
   right: 0;
   display: flex;
   align-items: flex-start;
   gap: max(6px, 0.45cqw);
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.8cqw 0.8cqw max(34px, 3.4cqw);
+  padding: max(10px, 1.6cqw) max(10px, 1.6cqw) max(34px, 3.4cqw);
   scrollbar-width: none;
 }
 .ps-row::-webkit-scrollbar {
@@ -513,7 +522,7 @@
   outline: 2px solid color-mix(in srgb, var(--mood-fg) 72%, transparent);
   outline-offset: 3px;
   box-shadow:
-    0 0 2.4cqw color-mix(in srgb, var(--mood-fg) 22%, transparent),
+    0 0 1.4cqw color-mix(in srgb, var(--mood-fg) 24%, transparent),
     0 1.2cqw 3cqw -1cqw rgb(0 0 0 / 0.7);
 }
 .ps-option:focus-visible .ps-tile {
@@ -522,15 +531,17 @@
 }
 .ps-tile-label {
   position: absolute;
-  top: calc(100% + 0.7cqw);
-  left: 0;
-  max-width: 36cqw;
+  /* as on the reference: right of the selected tile, just under the small ones */
+  top: calc(var(--tile) + 0.6cqw);
+  left: calc(100% + max(6px, 0.45cqw));
+  max-width: 40cqw;
   overflow: hidden;
-  padding: 0.15em 0.5em;
-  border-radius: 0.4em;
-  background: color-mix(in srgb, var(--mood-bg) 80%, transparent);
-  font-size: max(11px, 1.05cqw);
-  font-weight: 400;
+  padding: 0.1em 0.45em;
+  border-radius: 0.35em;
+  /* light backing keeps ≥ 4.5:1 over bright art (the reference has none) */
+  background: color-mix(in srgb, var(--mood-bg) 62%, transparent);
+  font-size: max(12px, 1.5cqw);
+  font-weight: 300;
   letter-spacing: 0.04em;
   text-overflow: ellipsis;
   text-transform: uppercase;
@@ -603,7 +614,7 @@
   left: 8.5cqw;
   bottom: 8.5cqw;
   /* never runs under the info panel on the right */
-  width: min(58cqw, calc(100cqw - 20.5cqw - max(19cqw, 240px)));
+  width: min(58cqw, calc(100cqw - 20.5cqw - var(--info-w)));
   display: flex;
   flex-direction: column;
 }
@@ -611,20 +622,33 @@
   animation: ps-copy-in 420ms var(--ease-out-expo) both;
 }
 .ps-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
   margin-bottom: 0.5cqw;
   font-size: max(12px, 1.05cqw);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--mood-accent);
+  color: var(--mood-fg); /* small text: full-contrast colour; the accent stays decorative */
+}
+.ps-kicker::before {
+  content: "";
+  width: 1.6em;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--mood-accent);
 }
 .ps-title {
-  font-size: clamp(28px, 5.2cqw, 84px);
+  font-size: clamp(28px, 6cqw, 96px);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.01em;
   text-wrap: balance;
   color: var(--mood-fg);
+}
+.ps-copy[data-note="true"] .ps-title {
+  font-size: clamp(26px, 4cqw, 64px);
 }
 .ps-title-caps {
   text-transform: uppercase;
@@ -642,7 +666,7 @@
   display: flex;
   align-items: center;
   gap: max(8px, 0.8cqw);
-  margin-top: 2.6cqw;
+  margin-top: 3.4cqw;
 }
 .ps-pill {
   display: inline-flex;
@@ -727,15 +751,14 @@ button.ps-pill:active {
   z-index: 2;
   right: 9cqw;
   bottom: 8.5cqw;
-  width: max(19cqw, 240px);
+  width: var(--info-w);
   padding: max(10px, 1cqw) max(12px, 1.3cqw);
-  border-radius: max(8px, 0.6cqw);
+  border-radius: 4px;
   border: 1px solid color-mix(in srgb, var(--mood-fg) 12%, transparent);
-  background: color-mix(in srgb, var(--mood-bg) 84%, transparent);
+  background: color-mix(in srgb, var(--mood-bg) 88%, transparent);
   backdrop-filter: blur(12px);
 }
 .ps-embed {
-  width: max(28cqw, 300px);
   padding: 0;
   border: 0;
   background: transparent;
@@ -849,6 +872,14 @@ button.ps-pill:active {
   to { opacity: 1; transform: none; }
 }
 
+/* ─── 768–1023 px: same composition, scaled; a 4:3 frame leaves room for long titles/notes ─── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .ps-frame,
+  .ps-loader {
+    aspect-ratio: 4 / 3;
+  }
+}
+
 /* ─── < 768 px: stacked layout ─── */
 @media (max-width: 767px) {
   .ps-frame {
@@ -862,7 +893,7 @@ button.ps-pill:active {
   }
   .ps-loader {
     aspect-ratio: auto;
-    min-height: 150vw;
+    min-height: 136vw; /* ≈ stacked frame height at 390 px */
   }
   .ps-frame {
     --art-h: min(74cqw, 420px); /* art ≈ top 45 % of the frame */
@@ -874,9 +905,9 @@ button.ps-pill:active {
   .ps-scrim {
     background:
       linear-gradient(180deg,
-        color-mix(in srgb, var(--mood-bg) 80%, transparent) 0%,
-        color-mix(in srgb, var(--mood-bg) 35%, transparent) 26%,
-        transparent 44%,
+        color-mix(in srgb, var(--mood-bg) 90%, transparent) 0%,
+        color-mix(in srgb, var(--mood-bg) 84%, transparent) 20%,
+        transparent 42%,
         color-mix(in srgb, var(--mood-bg) 55%, transparent) 72%,
         var(--mood-bg) 100%);
   }
@@ -931,10 +962,22 @@ button.ps-pill:active {
   .ps-option {
     scroll-snap-align: start;
   }
+  .ps-top {
+    left: auto;
+    right: auto;
+  }
+  .ps-tools {
+    gap: 0;
+  }
+  .ps-clock {
+    margin-left: 4px;
+  }
   .ps-tile-label {
     top: calc(100% + 6px);
+    left: 0;
     max-width: 70vw;
     font-size: 12px;
+    font-weight: 400;
   }
   .ps-copy {
     position: relative;
@@ -987,7 +1030,8 @@ button.ps-pill:active {
   .ps-bg-layer[data-on="true"] {
     transform: none;
   }
-  .ps-option:hover .ps-tile {
+  .ps-option:hover .ps-tile,
+  button.ps-pill:active {
     transform: none;
   }
   .ps-copy-in,
