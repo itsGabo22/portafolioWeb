@@ -11,7 +11,8 @@ export default function Preloader() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const preloadAssets = ["/assets/keyboard/keycaps.glb"];
+    // The keyboard only mounts up front on wide layouts; skip the GLB prefetch elsewhere.
+    const preloadAssets = window.innerWidth >= 1024 ? ["/assets/keyboard/keycaps.glb"] : [];
     preloadAssets.forEach((url) => {
       fetch(url, { cache: "force-cache" }).catch(() => {});
     });
