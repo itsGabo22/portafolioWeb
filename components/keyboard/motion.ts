@@ -32,6 +32,8 @@ const SECTION_ORDER: readonly KeyboardSection[] = [
 /** Deterministic section detection based on scroll position (works before the scene loads). */
 export function detectKeyboardSection(): KeyboardSection {
   if (typeof window === "undefined") return "hero";
+  // Pages without the home sections (e.g. the 404) keep the keyboard parked.
+  if (!document.getElementById("hero")) return "contact";
   if (window.scrollY < 160) return "hero";
   const probeY = window.innerHeight * 0.48;
   let active: KeyboardSection = "hero";
