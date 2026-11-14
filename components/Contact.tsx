@@ -110,11 +110,7 @@ export default function Contact() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Left/Center Studio Dispatch Desk (7 cols) + Right Spatial Stage for Levitating 3D Keycaps (5 cols) */}
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.45 }}
+          <div data-reveal
             className="lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3"
           >
             {/* Studio Dispatch Header */}
@@ -350,7 +346,7 @@ export default function Contact() {
                 </button>
               </div>
             </form>
-          </motion.div>
+          </div>
 
         </div>
       </div>

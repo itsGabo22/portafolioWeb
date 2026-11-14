@@ -137,11 +137,7 @@ export default function Skills() {
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Centered Monumental Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.45 }}
+        <div data-reveal
           className="text-center"
         >
           <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
@@ -151,7 +147,7 @@ export default function Skills() {
           <p className="mx-auto mt-2 text-base text-zinc-600 dark:text-zinc-400">
             {t.skills.hint}
           </p>
-        </motion.div>
+        </div>
 
         {/* Open Stage for the Center-Stage 3D Mechanical Keyboard */}
         <div

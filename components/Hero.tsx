@@ -145,7 +145,7 @@ export default function Hero() {
               <a
                 href="/cv.pdf"
                 download
-                className="cursor-can-hover inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-zinc-900 dark:bg-zinc-50 px-7 py-3.5 text-sm font-semibold text-white dark:text-zinc-950 shadow-sm transition-colors hover:bg-zinc-800 dark:hover:bg-zinc-200"
+                className="cursor-can-hover inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-zinc-900 dark:bg-zinc-50 px-7 py-3.5 text-sm font-semibold text-white dark:text-zinc-950 shadow-sm transition-[background-color,transform,box-shadow] duration-150 hover:bg-zinc-800 hover:shadow-glow active:scale-[0.98] dark:hover:bg-zinc-200"
               >
                 <FileText className="h-4 w-4" />
                 <span>{t.hero.downloadCv}</span>
@@ -154,7 +154,7 @@ export default function Hero() {
               <div className="flex flex-wrap items-center gap-2.5">
                 <a
                   href="#projects"
-                  className="cursor-can-hover group inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-5 text-sm font-medium text-zinc-900 dark:text-zinc-100 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800"
+                  className="cursor-can-hover group inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-5 text-sm font-medium text-zinc-900 dark:text-zinc-100 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-[background-color,transform] duration-150 hover:bg-white/80 active:scale-[0.97] dark:hover:bg-zinc-800"
                 >
                   <span>{t.hero.viewProjects}</span>
                   <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -162,7 +162,7 @@ export default function Hero() {
 
                 <a
                   href="#contact"
-                  className="cursor-can-hover inline-flex h-11 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-5 text-sm font-medium text-zinc-900 dark:text-zinc-100 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800"
+                  className="cursor-can-hover inline-flex h-11 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-5 text-sm font-medium text-zinc-900 dark:text-zinc-100 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-[background-color,transform] duration-150 hover:bg-white/80 active:scale-[0.97] dark:hover:bg-zinc-800"
                 >
                   <span>{t.hero.hire}</span>
                 </a>
@@ -172,7 +172,7 @@ export default function Hero() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${t.common.githubAria} ${t.common.newTab}`}
-                  className="cursor-can-hover inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800"
+                  className="cursor-can-hover inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-[background-color,transform] duration-150 hover:bg-white/80 active:scale-[0.97] dark:hover:bg-zinc-800"
                 >
                   <GitHubIcon className="h-5 w-5" />
                 </a>
@@ -182,7 +182,7 @@ export default function Hero() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${t.common.linkedinAria} ${t.common.newTab}`}
-                  className="cursor-can-hover inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800"
+                  className="cursor-can-hover inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 text-zinc-800 dark:text-zinc-200 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-[background-color,transform] duration-150 hover:bg-white/80 active:scale-[0.97] dark:hover:bg-zinc-800"
                 >
                   <LinkedInIcon className="h-5 w-5" />
                 </a>

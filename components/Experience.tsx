@@ -18,7 +18,6 @@ import {
 import { useApp } from "@/context/AppContext";
 import { useT } from "@/messages";
 import TechBadge from "./TechBadge";
-import TiltSurface from "./TiltSurface";
 
 interface TimelineItem {
   id: string;
@@ -418,13 +417,10 @@ function TimelineColumn({
           const eraInfo = ENGINEERING_ERAS[item.eraIndex] ?? ENGINEERING_ERAS[0];
 
           return (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.4, delay: index * 0.08 }}
+            <div
+              key={item.id} data-reveal
               onMouseEnter={() => onHoverEra(item.eraIndex)}
+              style={{ "--reveal-i": index } as React.CSSProperties}
               className="group relative"
             >
               {/* Required Absolute Timeline Indicator Dot: absolute -left-[9px] */}
@@ -436,7 +432,6 @@ function TimelineColumn({
                 }`}
               />
 
-              <TiltSurface maxTilt={4}>
                 <div
                   className={`rounded-2xl border p-6 ring-1 ring-zinc-900/[0.06] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 ${
                     isEraHighlighted
@@ -499,8 +494,7 @@ function TimelineColumn({
                     ))}
                   </div>
                 </div>
-              </TiltSurface>
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -552,11 +546,7 @@ export default function Experience() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Centered Monumental Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.45 }}
+        <div data-reveal
           className="mb-10 text-center"
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-3.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl">
@@ -569,7 +559,7 @@ export default function Experience() {
           <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
             {t.experience.subtitle}
           </p>
-        </motion.div>
+        </div>
 
         {/* Interactive Scroll-Scrubbed Stage Selector Bar with Frosted Glass */}
         <div className="mb-14 rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 p-4 sm:p-5 ring-1 ring-zinc-900/[0.06] shadow-[0_12px_40px_-12px_rgba(15,23,42,0.08),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl backdrop-saturate-150">
