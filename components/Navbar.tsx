@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { useT } from "@/messages";
+import { scrollToSection } from "@/lib/scrollToSection";
 
 const NAV_KEYS = [
   "hero",
@@ -88,24 +89,32 @@ export default function Navbar() {
     e.preventDefault();
     window.history.pushState(null, "", href);
     // Wait for the drawer exit animation (0.22s) so layout is stable.
-    window.setTimeout(() => {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-      // Lazily mounted content above can change height mid-scroll: correct once it settles.
-      const correct = () => {
-        const top = target.getBoundingClientRect().top;
-        if (Math.abs(top - 72) > 8) target.scrollIntoView({ behavior: "auto", block: "start" });
-      };
-      const fallback = window.setTimeout(correct, 1400);
-      window.addEventListener(
-        "scrollend",
-        () => {
-          window.clearTimeout(fallback);
-          window.setTimeout(correct, 120);
-        },
-        { once: true }
-      );
-    }, 260);
+    window.setTimeout(() => scrollToSection(target), 260);
   };
+
+  // Every other in-page link (desktop nav, hero CTAs, footer, cross-links):
+  // smooth jump with a landing correction instead of the native anchor scroll,
+  // which stops short when lazily mounted content changes the page height.
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = (event.target as Element | null)?.closest?.('a[href^="#"]');
+      if (!(link instanceof HTMLAnchorElement)) return;
+      const id = decodeURIComponent(link.hash.slice(1));
+      const target = id ? document.getElementById(id) : null;
+      if (!target) return; // e.g. #beyond-games: handled by the Beyond tabs
+      event.preventDefault();
+      const next = `#${id}`;
+      if (window.location.hash !== next) {
+        window.history.pushState(null, "", next);
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      }
+      scrollToSection(target);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
 
   return (
     <header
