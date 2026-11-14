@@ -152,26 +152,35 @@ export default function DeviceLab({
     window.requestAnimationFrame(() => trigger?.focus());
   }, []);
 
+  const chipRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
   // External selection (e.g. the "Ver proyecto" action of the Beyond menu).
+  // Focus follows the jump so keyboard users continue from the selected device.
+  const pendingRef = useRef<string | null>(null);
   useEffect(() => {
-    const onSelect = (event: Event) => {
-      const id = (event as CustomEvent<string>).detail;
+    const apply = (id: string) => {
       const index = items.findIndex((item) => item.project.id === id);
       const root = rootRef.current;
       if (index < 0 || !root) return;
+      if (mode === "pending") {
+        pendingRef.current = id; // applied once the mode resolves
+        return;
+      }
+      pendingRef.current = null;
       if (mode === "3d") {
         scrollToDevice(index);
+        chipRefs.current[index]?.focus({ preventScroll: true });
         return;
       }
       setActive(index);
       scrollToSection(root);
       root.querySelector<HTMLElement>(`[data-device-id="${id}"]`)?.focus({ preventScroll: true });
     };
+    if (pendingRef.current && mode !== "pending") apply(pendingRef.current);
+    const onSelect = (event: Event) => apply((event as CustomEvent<string>).detail);
     window.addEventListener(DEVICE_LAB_SELECT, onSelect);
     return () => window.removeEventListener(DEVICE_LAB_SELECT, onSelect);
   }, [items, mode, scrollToDevice]);
-
-  const chipRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const activeItem = items[active] ?? items[0];
   const reduced = mode === "static";
 
