@@ -19,7 +19,11 @@ const text = IBM_Plex_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
+const SITE_URL = "https://gabodevportafolio.netlify.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/" },
   title:
     "Gabriel Esteban Paz Guerrero | Desarrollador Full-Stack y fundador de VICARDEV",
   description:
@@ -43,18 +47,18 @@ export const metadata: Metadata = {
     description:
       "Arquitectando plataformas web escalables, comercio electrónico en producción e integraciones de inteligencia artificial desde Pasto, Colombia.",
     type: "website",
+    url: SITE_URL,
     locale: "es_CO",
     siteName: "Portafolio de Gabriel Esteban Paz Guerrero",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title:
       "Gabriel Esteban Paz Guerrero | Desarrollador Full-Stack y fundador de VICARDEV",
     description:
       "Portafolio profesional: plataformas web, e-commerce y apps con IA desde Pasto, Colombia.",
   },
-  // favicon: app/favicon.ico is picked up automatically by Next.js
-  // TODO_GABO: set metadataBase + an Open Graph image once the Vercel production URL is known.
+  // favicon: app/favicon.ico and the Open Graph image (app/opengraph-image.tsx) are picked up automatically.
 };
 
 export default function RootLayout({
