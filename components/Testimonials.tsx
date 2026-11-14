@@ -141,9 +141,10 @@ export default function Testimonials({ avatars = {} }: { avatars?: Record<string
             onBlur={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHoverPaused(false);
             }}
-            className="relative rounded-stage lg:col-span-8"
+            className="relative isolate rounded-stage lg:col-span-8"
             data-reveal
           >
+            <div className="relative">
             {/* cards stacked behind (decorative depth) */}
             {!reduced &&
               behind.map((item, i) => (
@@ -152,14 +153,14 @@ export default function Testimonials({ avatars = {} }: { avatars?: Record<string
                   aria-hidden="true"
                   className="absolute inset-0 rounded-stage border border-line bg-surface-1/70 shadow-elev-1 backdrop-blur-xl transition-transform duration-500 ease-out-expo"
                   style={{
-                    transform: `translate(${(i + 1) * 14}px, ${(i + 1) * -14}px) scale(${1 - (i + 1) * 0.035})`,
-                    zIndex: -1 - i,
-                    opacity: 0.6 - i * 0.25,
+                    transform: `translate(${(i + 1) * 18}px, ${(i + 1) * -18}px) scale(${1 - (i + 1) * 0.03})`,
+                    zIndex: 2 - i,
+                    opacity: 0.85 - i * 0.3,
                   }}
                 />
               ))}
 
-            <figure className="relative flex min-h-[26rem] flex-col justify-between overflow-hidden rounded-stage border border-line bg-surface-1 p-8 shadow-elev-3 sm:p-10 lg:p-12">
+            <figure className="relative z-10 flex min-h-[26rem] flex-col justify-between overflow-hidden rounded-stage border border-line bg-surface-1 p-8 shadow-elev-3 sm:p-10 lg:p-12">
               <span
                 aria-hidden="true"
                 className="pointer-events-none absolute -left-2 -top-10 select-none font-serif text-[14rem] leading-none text-primary-ink/15"
@@ -234,6 +235,7 @@ export default function Testimonials({ avatars = {} }: { avatars?: Record<string
                 />
               </span>
             </figure>
+            </div>
 
             <div className="mt-5 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">

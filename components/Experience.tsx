@@ -393,12 +393,12 @@ function TimelineTrack({
       {/* Rail: faint track + primary line that draws on scroll */}
       <span
         aria-hidden="true"
-        className="absolute bottom-3 left-[4.75rem] top-3 w-px bg-white/10 sm:left-[9.25rem]"
+        className="absolute bottom-3 left-[4.75rem] top-3 w-px bg-white/10 sm:left-[9.75rem]"
       />
       <motion.span
         aria-hidden="true"
         style={{ scaleY: reduced ? 1 : progress }}
-        className="absolute bottom-3 left-[4.75rem] top-3 w-[2px] -translate-x-[0.5px] origin-top rounded-full bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 shadow-[0_0_14px_var(--primary-400)] sm:left-[9.25rem]"
+        className="absolute bottom-3 left-[4.75rem] top-3 w-[2px] -translate-x-[0.5px] origin-top rounded-full bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 shadow-[0_0_14px_var(--primary-400)] sm:left-[9.75rem]"
       />
 
       {items.map((item, index) => {
@@ -413,13 +413,13 @@ function TimelineTrack({
             onMouseEnter={() => onHoverEra(item.eraIndex)}
             onFocus={() => onHoverEra(item.eraIndex)}
             style={{ "--reveal-i": index } as React.CSSProperties}
-            className="group relative grid grid-cols-[3.75rem_1fr] gap-x-8 sm:grid-cols-[8rem_1fr] sm:gap-x-10"
+            className="group relative grid grid-cols-[3.75rem_1fr] gap-x-8 sm:grid-cols-[8rem_1fr] sm:gap-x-14"
           >
             {/* Large year marker (the exact period is repeated in the card) */}
             <div aria-hidden="true" className="pt-5 text-right">
               <span
                 className={`block font-display text-2xl font-extrabold leading-none tracking-tighter tabular-nums transition-colors duration-500 sm:text-6xl ${
-                  isEraHighlighted ? "text-primary-200" : "text-transparent"
+                  isEraHighlighted ? "text-primary-200" : "text-primary-300 sm:text-transparent"
                 }`}
                 style={{ WebkitTextStroke: "1px var(--primary-300)" }}
               >
@@ -430,7 +430,7 @@ function TimelineTrack({
             {/* Node on the rail */}
             <span
               aria-hidden="true"
-              className={`absolute left-[4.75rem] top-7 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 transition-all duration-300 sm:left-[9.25rem] ${
+              className={`absolute left-[4.75rem] top-7 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 transition-all duration-300 sm:left-[9.75rem] ${
                 isEraHighlighted
                   ? "scale-125 border-primary-200 bg-primary-300 shadow-[0_0_16px_var(--primary-300)]"
                   : "border-primary-300 bg-primary-950 group-hover:scale-125"
