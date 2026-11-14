@@ -174,6 +174,8 @@ export default function Contact() {
                       transition={{ duration: 0.9, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
                     >
                       {line}
+                      {/* keeps a word break for screen readers and copy/paste between the two block lines */}
+                      {i === 0 ? " " : null}
                     </motion.span>
                   </span>
                 ))}
