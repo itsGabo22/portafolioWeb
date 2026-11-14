@@ -31,9 +31,9 @@ const CARD =
   "rounded-card border border-line bg-surface-1/80 shadow-elev-1 backdrop-blur-xl";
 
 const INTERESTS = [
-  { key: "music", hash: "#beyond-music", icon: Disc3 },
+  { key: "music", hash: "#beyond-media", icon: Disc3 },
   { key: "games", hash: "#beyond-games", icon: Gamepad2 },
-  { key: "club", hash: "#beyond-club", icon: Ticket },
+  { key: "club", hash: "#beyond-likes", icon: Ticket },
 ] as const;
 
 // Quick facts derived from data (no self-reported numbers).

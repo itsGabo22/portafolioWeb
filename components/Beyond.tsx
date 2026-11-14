@@ -2,25 +2,29 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { BEYOND_TAB_IDS, type BeyondTabId } from "@/data/personal";
 import { useT } from "@/messages";
-import { BEYOND_TABS, type BeyondTab } from "./beyond/tabs";
+import { BEYOND_PHOTOS } from "./beyond/photos";
 
-function PanelLoader() {
+function MenuLoader() {
   const t = useT();
   return (
-    <div role="status" className="flex min-h-[520px] items-center justify-center rounded-stage border border-line bg-surface-1/60">
+    <div role="status" className="ps-loader">
       <span className="text-sm text-ink-muted">{t.beyond.loading}</span>
     </div>
   );
 }
 
-const BeyondPanel = dynamic(() => import("./beyond/BeyondPanel"), { ssr: false, loading: () => <PanelLoader /> });
+const PsMenu = dynamic(() => import("./beyond/PsMenu"), { ssr: false, loading: () => <MenuLoader /> });
 
-/* The active tab lives in the URL hash (#beyond-music | #beyond-games | #beyond-club). */
+/* Active tab lives in the URL hash (#beyond-games | #beyond-media | #beyond-likes). */
 const HASH_EVENT = "beyond-hash";
-const tabFromHash = (hash: string): BeyondTab | null => {
-  const id = hash.replace("#beyond-", "");
-  return hash.startsWith("#beyond-") && (BEYOND_TABS as readonly string[]).includes(id) ? (id as BeyondTab) : null;
+const LEGACY: Record<string, BeyondTabId> = { music: "media", club: "likes" };
+const tabFromHash = (hash: string): BeyondTabId | null => {
+  if (!hash.startsWith("#beyond-")) return null;
+  const id = hash.slice("#beyond-".length);
+  if ((BEYOND_TAB_IDS as readonly string[]).includes(id)) return id as BeyondTabId;
+  return LEGACY[id] ?? null;
 };
 function subscribeHash(onChange: () => void) {
   window.addEventListener("hashchange", onChange);
@@ -36,7 +40,7 @@ export default function Beyond() {
   const t = useT();
   const hash = useSyncExternalStore(subscribeHash, readHash, () => "");
   const hashTab = tabFromHash(hash);
-  const tab: BeyondTab = hashTab ?? "music";
+  const tab: BeyondTabId = hashTab ?? "games";
 
   const sectionRef = useRef<HTMLElement>(null);
   const [near, setNear] = useState(false);
@@ -55,7 +59,7 @@ export default function Beyond() {
     return () => window.removeEventListener("hashchange", reveal);
   }, []);
 
-  // Lazy-mount near the viewport; pause textures/particles while off-screen.
+  // Lazy-mount near the viewport; pause textures, particles and the gamepad while off-screen.
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -77,7 +81,7 @@ export default function Beyond() {
     };
   }, []);
 
-  const onTab = useCallback((next: BeyondTab) => {
+  const onTab = useCallback((next: BeyondTabId) => {
     window.history.replaceState(null, "", `#beyond-${next}`);
     window.dispatchEvent(new Event(HASH_EVENT));
   }, []);
@@ -92,7 +96,20 @@ export default function Beyond() {
           <p className="mt-4 text-base text-ink-muted">{t.beyond.subtitle}</p>
         </div>
 
-        {near || hashTab ? <BeyondPanel tab={tab} onTab={onTab} paused={paused} /> : <PanelLoader />}
+        {near || hashTab ? <PsMenu tab={tab} onTab={onTab} paused={paused} /> : <MenuLoader />}
+
+        <p className="mt-3 max-w-3xl text-xs text-ink-muted">
+          {BEYOND_PHOTOS ? t.beyond.photoNote : t.beyond.moodNote}{" "}
+          <a
+            href="/CREDITS.md"
+            target="_blank"
+            rel="noopener"
+            className="cursor-can-hover inline-flex min-h-6 items-center font-semibold text-primary-ink underline underline-offset-4"
+          >
+            {t.beyond.credits}
+            <span className="sr-only"> {t.common.newTab}</span>
+          </a>
+        </p>
       </div>
     </section>
   );
