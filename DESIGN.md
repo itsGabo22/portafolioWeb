@@ -25,6 +25,55 @@ Fuente de verdad de los tokens: `app/globals.css` (variables CSS en `:root` / `.
 
 Todo texto cumple WCAG AA (≥4.5:1 normal, ≥3:1 grande). Los moods de la sección *Fuera del código* tienen su propia tabla en §8.
 
+### 2.1 Primary color — verde bosque profundo
+
+**Rol.** El color primario es la identidad de marca del portafolio: marca *lo que se puede hacer* (CTA principales, descarga del CV, enlace activo del menú, enlaces de texto, chips, etiquetas de sección, foco) y da cuerpo a tres bandas a sangre completa. El esmeralda brillante (`--accent-fill`) queda como **acento** más claro para brillos, puntos de estado y detalles vivos; el índigo sigue siendo acento secundario escaso.
+
+**Escala.** Derivada de la familia esmeralda pero más profunda y menos turquesa, definida en OKLCH con un único tono: `--primary-hue: 158`. Cambiar ese token (p. ej. `255` para azul profundo) cambia toda la escala y todos los alias manteniendo AA (verificado para ambos tonos).
+
+| Token | OKLCH (L C) | Hex (tono 158) | Uso |
+|---|---|---|---|
+| `--primary-50` | 0.975 0.015 | `#effaf3` | lavados muy suaves |
+| `--primary-100` | 0.937 0.036 | `#d7f2e1` | — |
+| `--primary-200` | 0.875 0.067 | `#b1e4c5` | anillo de foco dentro de bandas |
+| `--primary-300` | 0.787 0.101 | `#7fcea1` | texto primario en tema oscuro y en bandas |
+| `--primary-400` | 0.692 0.124 | `#4db37e` | rellenos/indicadores dentro de bandas |
+| `--primary-500` | 0.603 0.125 | `#2b9763` | selección de texto |
+| `--primary-600` | 0.516 0.108 | `#1f7a4f` | **CTA en tema oscuro**, scrollbar |
+| `--primary-700` | 0.449 0.092 | `#1b6441` | **primario en superficies claras**: CTA, texto, foco |
+| `--primary-800` | 0.383 0.075 | `#174f33` | hover/pressed de CTA en claro |
+| `--primary-900` | 0.330 0.061 | `#143f29` | bandas (inicio del degradado) |
+| `--primary-950` | 0.231 0.039 | `#0b2316` | bandas (final), Footer |
+
+**Alias semánticos** (`app/globals.css`, expuestos en Tailwind como `bg-primary`, `text-primary-ink`, `bg-primary-900`…):
+
+| Alias | Claro | Oscuro |
+|---|---|---|
+| `--primary` (relleno de CTA) | `primary-700` | `primary-600` |
+| `--primary-strong` (hover) | `primary-800` | `primary-700` |
+| `--on-primary` (texto sobre CTA) | `#ffffff` | `#ffffff` |
+| `--primary-ink` (texto/enlaces/etiquetas) | `primary-700` | `primary-300` |
+| `--primary-soft` / `--primary-line` (chips) | 11 % / 35 % de `primary-600` | 15 % / 35 % de `primary-400` |
+
+**Reglas de uso.**
+1. **En todas partes, en pequeño y constante:** CTA principales (incluido "Descargar CV" del Hero y el botón CV del menú), indicador del enlace activo, enlaces de texto, etiquetas numeradas de sección, chips/tags, anillo de foco, selección de texto y scrollbar.
+2. **Bandas a sangre completa solo en tres lugares:** Experiencia (degradado `900→950` con retícula sutil), Contacto (`950→900`) y Footer (`950`). Una banda es verde oscuro en **ambos temas**: activa el set de tokens oscuros en su subárbol y re-tiñe la rampa neutra oscura hacia el tono primario (`.band-primary` en `globals.css`).
+3. **Sin cambios:** Hero, Proyectos, Testimonios, Habilidades y *Fuera del código* conservan su superficie zinc (los moods mantienen su paleta propia).
+4. Nunca texto pequeño en `primary-400/500` sobre blanco; el primario como texto sobre claro es siempre `primary-700`.
+
+**Contraste (fórmula WCAG 2.x, calculado por script; azul `255` entre paréntesis):**
+
+| Par | Ratio | Requisito |
+|---|---|---|
+| texto blanco sobre `--primary` claro (`700`) | 7.13:1 (7.50) | AA ≥ 4.5 — cumple |
+| texto blanco sobre `--primary` oscuro (`600`) | 5.31:1 (5.62) | AA ≥ 4.5 — cumple |
+| `primary-700` como texto sobre `#ffffff` / `#fafafa` | 7.13 / 6.83:1 (7.50 / 7.18) | AA — cumple |
+| `primary-300` como texto sobre zinc-950 / zinc-900 | 10.65 / 9.49:1 (10.22 / 9.10) | AA — cumple |
+| zinc-50 sobre banda `primary-900` | 11.35:1 (11.74) | AA — cumple |
+| texto secundario de banda (zinc-300 / zinc-400 re-teñido) sobre `900` | 8.01 / 6.43:1 | AA — cumple |
+| `primary-300` sobre banda `900` | 6.34:1 (6.30) | AA — cumple |
+| anillo de foco `primary-200` sobre `950` | 11.67:1 | 1.4.11 ≥ 3 — cumple |
+
 ## 3. Tipografía (máx. 2 familias)
 
 - **Display:** *Bricolage Grotesque* (500–800) — grotesca con carácter y ejes ópticos; títulos, cifras, nombres de proyecto.
@@ -88,4 +137,4 @@ Contraste (calculado con la fórmula WCAG): texto/fondo y texto/superficie ≥ 1
 
 ## 9. Accesibilidad
 
-Foco visible único (`outline 2px var(--accent-fill)`, offset 3 px); objetivos táctiles ≥ 44 px; iconos de `lucide-react` (cero emojis); cada icono-botón con `aria-label` traducido; tabs con patrón ARIA completo (flechas, Home/End); diálogos con Esc y retorno de foco.
+Foco visible único (`outline 2px var(--focus-ring)`, primario `700` en claro, `300` en oscuro, `200` en bandas; offset 3 px); objetivos táctiles ≥ 44 px; iconos de `lucide-react` (cero emojis); cada icono-botón con `aria-label` traducido; tabs con patrón ARIA completo (flechas, Home/End); diálogos con Esc y retorno de foco.

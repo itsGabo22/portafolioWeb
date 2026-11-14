@@ -18,6 +18,29 @@
 @property --mood-line { syntax: "<color>"; inherits: true; initial-value: #24443a; }
 
 :root {
+  /* PRIMARY — deep forest green (DESIGN.md §2.1). One perceptual scale in
+     OKLCH driven by a single hue: change --primary-hue (158 = forest green,
+     ~255 = deep blue) and every primary token follows, keeping WCAG AA. */
+  --primary-hue: 158;
+  --primary-50: oklch(0.975 0.015 var(--primary-hue));
+  --primary-100: oklch(0.937 0.036 var(--primary-hue));
+  --primary-200: oklch(0.875 0.067 var(--primary-hue));
+  --primary-300: oklch(0.787 0.101 var(--primary-hue));
+  --primary-400: oklch(0.692 0.124 var(--primary-hue));
+  --primary-500: oklch(0.603 0.125 var(--primary-hue));
+  --primary-600: oklch(0.516 0.108 var(--primary-hue));
+  --primary-700: oklch(0.449 0.092 var(--primary-hue));
+  --primary-800: oklch(0.383 0.075 var(--primary-hue));
+  --primary-900: oklch(0.330 0.061 var(--primary-hue));
+  --primary-950: oklch(0.231 0.039 var(--primary-hue));
+  /* semantic aliases — light theme */
+  --primary: var(--primary-700);          /* CTA fill: white text 7.1:1 */
+  --primary-strong: var(--primary-800);   /* CTA hover/pressed */
+  --on-primary: #ffffff;
+  --primary-ink: var(--primary-700);      /* primary-coloured text/links: 6.8:1 on #fafafa */
+  --primary-soft: color-mix(in oklch, var(--primary-600) 11%, transparent); /* chip/tag wash */
+  --primary-line: color-mix(in oklch, var(--primary-600) 35%, transparent);
+
   /* colour — light (default) */
   --surface-0: #fafafa;          /* page */
   --surface-1: #ffffff;          /* cards */
@@ -32,7 +55,7 @@
   --accent-fill: #10b981;        /* emerald-500 fills, rings, glows */
   --accent-soft: rgb(16 185 129 / 0.1);
   --accent-2: #4f46e5;           /* indigo-600 secondary accent 6.3:1 */
-  --focus-ring: #047857;         /* emerald-700, 5.5:1 vs white (WCAG 1.4.11) */
+  --focus-ring: var(--primary-700); /* 7.1:1 vs white (WCAG 1.4.11) */
   --warn: #b45309;               /* amber-700, "in progress" 5.0:1 */
   --warn-soft: rgb(245 158 11 / 0.12);
   --danger: #b91c1c;
@@ -96,7 +119,12 @@
   --accent-fill: #10b981;
   --accent-soft: rgb(16 185 129 / 0.14);
   --accent-2: #818cf8;           /* indigo-400 6.7:1 */
-  --focus-ring: #34d399;
+  --focus-ring: var(--primary-300);
+  --primary: var(--primary-600);          /* CTA fill: white text 5.3:1 */
+  --primary-strong: var(--primary-700);
+  --primary-ink: var(--primary-300);      /* 10.6:1 on zinc-950, 9.4:1 on zinc-900 */
+  --primary-soft: color-mix(in oklch, var(--primary-400) 15%, transparent);
+  --primary-line: color-mix(in oklch, var(--primary-400) 35%, transparent);
   --warn: #fbbf24;
   --warn-soft: rgb(251 191 36 / 0.12);
   --danger: #f87171;
@@ -122,6 +150,23 @@
   --color-accent-fill: var(--accent-fill);
   --color-accent-soft: var(--accent-soft);
   --color-accent-2: var(--accent-2);
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+  --color-primary-950: var(--primary-950);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-on-primary: var(--on-primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-line: var(--primary-line);
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
   --color-mood-bg: var(--mood-bg);
@@ -260,8 +305,70 @@ main [data-interactive] {
 }
 
 ::selection {
-  background-color: rgb(16 185 129 / 0.22);
+  background-color: color-mix(in oklch, var(--primary-500) 28%, transparent);
   color: inherit;
+}
+
+html {
+  scrollbar-color: color-mix(in oklch, var(--primary-600) 70%, transparent) transparent;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PRIMARY BANDS — exactly three full-bleed places: Experience,
+   Contact and Footer (DESIGN.md §2.1). A band is always deep green in
+   both themes, so it opts its subtree into the dark token set (.dark on
+   the element) and re-tints the dark neutral ramp toward the primary hue
+   so cards read as green glass instead of grey. Text stays AA:
+   zinc-50 11.4:1, zinc-300 8.0:1, zinc-400 6.4:1, zinc-500 4.9:1 on primary-900.
+   ───────────────────────────────────────────────────────────── */
+.band-primary {
+  --surface-0: var(--primary-950);
+  --surface-1: oklch(0.285 0.05 var(--primary-hue));
+  --surface-2: oklch(0.33 0.055 var(--primary-hue));
+  --line: oklch(0.4 0.05 var(--primary-hue) / 0.55);
+  --line-strong: oklch(0.48 0.06 var(--primary-hue) / 0.6);
+  --ink-subtle: oklch(0.8 0.03 var(--primary-hue));
+  --accent: var(--primary-300);
+  --accent-strong: var(--primary-200);
+  --accent-fill: var(--primary-400);
+  --accent-soft: color-mix(in oklch, var(--primary-400) 16%, transparent);
+  --primary-ink: var(--primary-300);
+  --focus-ring: var(--primary-200);
+  --color-zinc-950: var(--primary-950);
+  --color-zinc-900: oklch(0.285 0.05 var(--primary-hue));
+  --color-zinc-800: oklch(0.36 0.05 var(--primary-hue));
+  --color-zinc-700: oklch(0.44 0.045 var(--primary-hue));
+  --color-zinc-600: oklch(0.56 0.035 var(--primary-hue));
+  --color-zinc-500: oklch(0.72 0.03 var(--primary-hue));
+  --color-zinc-400: oklch(0.8 0.03 var(--primary-hue));
+  position: relative;
+  isolation: isolate;
+  color: var(--ink);
+  color-scheme: dark;
+  background-color: var(--primary-950);
+}
+.band-primary::before {
+  /* subtle texture: hairline grid fading out toward the edges */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, oklch(1 0 0 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(1 0 0 / 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 100%);
+}
+.band-gradient {
+  background-image:
+    radial-gradient(ellipse 70% 50% at 85% 0%, color-mix(in oklch, var(--primary-600) 35%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--primary-900) 0%, var(--primary-950) 100%);
+}
+.band-gradient-rev {
+  background-image:
+    radial-gradient(ellipse 60% 55% at 15% 100%, color-mix(in oklch, var(--primary-600) 30%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--primary-950) 0%, var(--primary-900) 100%);
 }
 
 /* Indeterminate progress bar (Device Lab loader never shows a fake percentage) */
