@@ -13,7 +13,18 @@
 
 ## Fuera del código (sección personal)
 
-- **Paletas, texturas y composiciones de los moods son interpretaciones originales** del ambiente general de cada artista, juego y club. No se usan portadas de álbumes, arte oficial de videojuegos, logos, escudos, tipografías oficiales, letras de canciones ni fotos de jugadores.
+- **Paletas, texturas y composiciones de los moods son interpretaciones originales** del ambiente general de cada artista, juego y club. No se usan portadas de álbumes, logos, escudos, tipografías oficiales, letras de canciones ni fotos de jugadores.
+- **Fotografías de fondo (temporal).** Por decisión del autor, durante la semana de exhibición del curso cada mood muestra una fotografía real detrás de una veladura de color (`public/images/beyond/`, interruptor `BEYOND_PHOTOS` en `components/beyond/photos.ts`; al ponerlo en `false` el sitio vuelve a las texturas procedurales). Todas fueron redimensionadas, recortadas, recomprimidas a WebP y oscurecidas/veladas en pantalla:
+  - `joji.webp` — "Joji Performing Live in 2018", foto de **Samuel Kenwright**, **CC BY 2.0**, Wikimedia Commons.
+  - `radiohead.webp` — "2025 Radiohead live concert at Uber Arena, Berlin 92", foto de **Raph_PH**, **CC BY 4.0**, Wikimedia Commons.
+  - `macdemarco.webp` — "2021 Shaky Knees - Mac DeMarco (5)", foto de **Thomson200**, **CC0** (dominio público), Wikimedia Commons.
+  - `barca.webp` — "2014. Camp Nou. Més que un club. Barcelona B40", foto de **Luis Miguel Bugallo Sánchez (Lmbuga)**, **CC BY-SA 3.0**, Wikimedia Commons; la versión adaptada se comparte bajo la misma licencia.
+  - `rdr2.webp` / `rdr2-tile.webp` — captura oficial de *Red Dead Redemption 2* (página de Steam), **© Rockstar Games / Take-Two Interactive**.
+  - `skyrim.webp` / `skyrim-tile.webp` — captura oficial de *The Elder Scrolls V: Skyrim Special Edition* (página de Steam), **© Bethesda Softworks / ZeniMax Media**.
+  - `eldenring.webp` / `eldenring-tile.webp` — captura oficial de *Elden Ring* (página de Steam), **© Bandai Namco Entertainment / FromSoftware**.
+  - `bloodborne.webp` / `bloodborne-tile.webp` — arte promocional oficial de *Bloodborne* (PlayStation Store), **© Sony Interactive Entertainment / FromSoftware**.
+  - Las imágenes de videojuegos **no tienen licencia libre**: se muestran como elemento de fan, sin fines comerciales, de forma temporal y se retiran a petición del titular.
+- El menú de juegos imita el *estilo* de una pantalla de inicio de consola (fila de portadas, arte a pantalla completa); no usa logos, iconos, sonidos ni tipografías de ninguna consola.
 - Los nombres (Joji, Radiohead, Mac DeMarco, Red Dead Redemption 2, Skyrim, Elden Ring, Bloodborne, FC Barcelona) aparecen solo como texto para identificar gustos personales; las marcas pertenecen a sus titulares.
 - FC Barcelona: se usan únicamente los colores `#004D98` y `#A50044` como color plano (sin escudo ni logos de patrocinadores o equipación).
 - Texturas (grano, papel, niebla, nieve, brasas, franjas) generadas con CSS y filtros SVG `feTurbulence` en `components/beyond/beyond.css`.

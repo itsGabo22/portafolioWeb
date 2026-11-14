@@ -229,6 +229,7 @@ export const en: Messages = {
     subtitle: "My playlist, my favorite artists and games, and my club.",
     tabsAria: "Personal interests",
     moodNote: "Palettes and textures: original interpretations of each work's atmosphere, not official art.",
+    photoNote: "Concert and stadium photos under free licenses; game screenshots © their publishers, non-commercial fan use. Credits in /CREDITS.md.",
     tabs: {
       music: "Soundtrack",
       games: "Player mode",
@@ -248,6 +249,7 @@ export const en: Messages = {
     },
     games: {
       title: "Favorite games",
+      menuAria: "Games menu: use the arrow keys to switch games",
       slot: "Slot {n}",
       crossLink: "What I build around games:",
       gamerbox: "GamerBox",

@@ -6,7 +6,9 @@ import type { MoodId } from "@/data/personal";
 import { useT } from "@/messages";
 import ClubTab from "./ClubTab";
 import GamesTab from "./GamesTab";
+import MoodPhoto from "./MoodPhoto";
 import MoodTexture from "./MoodTexture";
+import { BEYOND_PHOTOS } from "./photos";
 import MusicTab from "./MusicTab";
 import { moodStyle } from "./moods";
 import { styles } from "./styles";
@@ -33,7 +35,7 @@ export default function BeyondPanel({
   const t = useT();
   const [moods, setMoods] = useState<Record<BeyondTab, MoodId>>({
     music: "base",
-    games: "base",
+    games: "rdr2",
     club: "barca",
   });
   const mood = moods[tab];
@@ -59,6 +61,7 @@ export default function BeyondPanel({
       style={moodStyle(mood)}
       data-mood={mood}
     >
+      <MoodPhoto mood={mood} />
       <MoodTexture mood={mood} />
 
       <div className="relative p-4 sm:p-8">
@@ -114,7 +117,9 @@ export default function BeyondPanel({
           </div>
         ))}
 
-        <p className={`${styles.muted} mt-8 text-xs`}>{t.beyond.moodNote}</p>
+        <p className={`${styles.muted} mt-8 text-xs`}>
+          {BEYOND_PHOTOS ? t.beyond.photoNote : t.beyond.moodNote}
+        </p>
       </div>
     </div>
   );

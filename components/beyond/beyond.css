@@ -353,3 +353,133 @@
   .bx-particles { display: none; }
   .bx-panel { transition: none; }
 }
+
+/* ─── real-photo layer (components/beyond/photos.ts, BEYOND_PHOTOS) ─── */
+.bx-photos {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bx-photo {
+  position: absolute;
+  inset: -7%;
+  opacity: 0;
+  transform: translate3d(var(--bx-px, 0%), calc(var(--bx-py, 0%) + var(--bx-pt, 0%)), 0) scale(1.03);
+  transition:
+    opacity 760ms var(--ease-in-out),
+    transform 900ms var(--ease-out-expo);
+}
+.bx-photo[data-on="true"] {
+  opacity: 1;
+  transform: translate3d(var(--bx-px, 0%), calc(var(--bx-py, 0%) + var(--bx-pt, 0%)), 0) scale(1.08);
+}
+/* cap highlights so the mood scrim can keep every text pair AA */
+.bx-photo[data-tone="dark"] img {
+  filter: brightness(0.82) saturate(1.15);
+}
+.bx-photo[data-tone="light"] img {
+  filter: brightness(1.15) saturate(0.9);
+}
+.bx-photo-scrim {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 760ms var(--ease-in-out);
+  /* console-style: dense where the copy sits (left / bottom), the art breathes on the right */
+  background:
+    linear-gradient(0deg, color-mix(in srgb, var(--mood-bg) 72%, transparent) 0%, transparent 42%),
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--mood-bg) 92%, transparent) 0%,
+      color-mix(in srgb, var(--mood-bg) 82%, transparent) 36%,
+      color-mix(in srgb, var(--mood-bg) 45%, transparent) 72%,
+      color-mix(in srgb, var(--mood-bg) 25%, transparent) 100%);
+}
+@media (max-width: 767px) {
+  /* single column: copy spans the full width, keep the scrim even */
+  .bx-photo-scrim {
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--mood-bg) 70%, transparent) 0%,
+      color-mix(in srgb, var(--mood-bg) 88%, transparent) 45%,
+      color-mix(in srgb, var(--mood-bg) 92%, transparent) 100%);
+  }
+}
+.bx-photos[data-active="true"] .bx-photo-scrim {
+  opacity: 1;
+}
+.bx-photos[data-active="true"] ~ .bx-texture,
+.bx-photos[data-active="true"] ~ div .bx-texture {
+  opacity: 0.55;
+}
+
+/* ─── console-style games home ─── */
+.bx-console-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0.75rem 0.25rem 1rem;
+  scrollbar-width: none;
+}
+.bx-console-row::-webkit-scrollbar {
+  display: none;
+}
+.bx-console-tile {
+  position: relative;
+  flex: 0 0 auto;
+  width: 6.25rem;
+  aspect-ratio: 1;
+  scroll-snap-align: start;
+  border-radius: 1.1rem;
+  overflow: hidden;
+  background: var(--mood-surface);
+  box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.6);
+  transition:
+    width 420ms var(--ease-out-expo),
+    box-shadow 300ms ease,
+    transform 300ms var(--ease-out-expo);
+}
+.bx-console-tile[aria-current="true"] {
+  width: 9.5rem;
+  box-shadow:
+    0 0 0 3px #fff,
+    0 18px 50px -12px rgb(0 0 0 / 0.75);
+}
+.bx-console-tile:not([aria-current="true"]):hover {
+  transform: translateY(-4px);
+}
+.bx-console-tile:focus-visible {
+  outline: 3px solid var(--mood-accent);
+  outline-offset: 4px;
+}
+@media (min-width: 640px) {
+  .bx-console-tile { width: 8rem; }
+  .bx-console-tile[aria-current="true"] { width: 12rem; }
+}
+.bx-console-hero {
+  animation: bx-console-in 560ms var(--ease-out-expo) both;
+}
+@keyframes bx-console-in {
+  from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.bx-console-pill {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: transform 200ms var(--ease-spring), background-color 200ms ease;
+}
+.bx-console-pill:hover {
+  transform: scale(1.04);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bx-photo, .bx-photo[data-on="true"] { transform: none; transition: opacity 1ms; }
+  .bx-console-hero { animation: none; }
+  .bx-console-tile { transition: none; }
+}
