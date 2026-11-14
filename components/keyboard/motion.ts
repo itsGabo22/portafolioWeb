@@ -20,14 +20,14 @@ export const isVividSection = (s: KeyboardSection) => VIVID_SECTIONS.includes(s)
 
 /**
  * Whether the keyboard may be drawn right now without sitting behind text:
- * - #hero only on wide layouts (>=1024px), where the copy and the keyboard
+ * - #hero only on wide layouts (>=1200px), where the copy and the keyboard
  *   occupy separate columns; on single-column layouts it would cover the bio.
  * - #skills only while its empty stage (#skills-stage) is centred in the
  *   viewport, so the heading above and the cards below stay clear.
  */
 export function isKeyboardVivid(section: KeyboardSection): boolean {
   if (typeof window === "undefined") return false;
-  if (section === "hero") return window.innerWidth >= 1024;
+  if (section === "hero") return window.innerWidth >= 1200;
   if (section !== "skills") return false;
   const stage = document.getElementById("skills-stage");
   if (!stage) return false;
@@ -237,12 +237,16 @@ export function createKeyboardMotion(
     let rot: Vector = { x: 0, y: 0, z: 0 };
 
     switch (targetSection) {
-      case "hero":
-        sizeFactor = mobile ? 0.74 : 0.82;
-        right = mobile ? 0 : 2.55;
+      case "hero": {
+        // Narrower desktops: a bit smaller and further right so it never
+        // reaches the subtitle/bio column.
+        const w = window.innerWidth;
+        sizeFactor = mobile ? 0.74 : w < 1280 ? 0.64 : w < 1600 ? 0.7 : 0.74;
+        right = mobile ? 0 : w < 1280 ? 3.4 : w < 1600 ? 3.15 : 3.55;
         up = mobile ? -1.6 : -0.15;
         rot = { x: 0, y: 0, z: 0 };
         break;
+      }
       case "about":
         sizeFactor = mobile ? 0.72 : 0.88;
         right = mobile ? 0 : 2.25;
