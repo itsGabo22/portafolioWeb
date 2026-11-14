@@ -35,6 +35,10 @@ export type KeyboardScene = {
   spinId: string;
   revealId: string;
   labelsId: string;
+  /** Bongo Cat: anchor (visibility), pop group (emerge tween), two paw frames. */
+  catAnchorId: string;
+  catPopId: string;
+  catFrameIds: [string, string];
   defaultLabelId: BilingualLabelIds;
   allLabelIds: string[];
   pointerTargets: string[];
@@ -60,6 +64,10 @@ const KIT = {
 };
 
 export const KEYBOARD_MODEL_URL = "/assets/keyboard/keycaps.glb";
+export const BONGO_MODEL_URL = "/assets/keyboard/bongo-frames.glb";
+// Placement relative to the case (x/z as fractions of its half-size).
+const CAT_MOUNT_YAW = Math.PI;
+const CAT_PLACE = { x: -0.85, y: 2.356, z: 0.2, scale: 0.55 };
 
 export function createKeyboardScene(
   skills: readonly KeyboardSkill[],
@@ -442,10 +450,66 @@ export function createKeyboardScene(
     };
   });
 
-  // The third-party "Bongo Cat" topper that used to sit here was removed:
-  // the keyboard ships without any character mascot.
+  // "Bongo Cat" topper (third-party meme character, restored at the author's
+  // request; provenance in public/CREDITS.md). It lives inside the keyboard
+  // layout, so it moves, fades, parks and pauses together with the keyboard.
+  //   mount (yaw) → anchor (edge of the case) → pop (emerge tween) → cat (pose) → 2 paw frames
+  // The original placement faced the camera in the old "about" pose (net yaw
+  // 2π/3); the mount turns it so it faces the camera in the hero/skills poses
+  // and stands on the far-right edge, away from the 3D skill label.
+  const catMountId = group("Bongo cat mount", layout);
+  doc.nodes[catMountId].transform.rotation = [0, CAT_MOUNT_YAW, 0];
+  const catAnchorId = group("Bongo cat anchor", catMountId, [
+    CAT_PLACE.x * outerX,
+    CAT_PLACE.y,
+    CAT_PLACE.z * outerZ,
+  ]);
+  doc.nodes[catAnchorId].visible = false;
+  const catPopId = group("Bongo cat pop", catAnchorId);
+  const catId = group("Bongo cat", catPopId, undefined, [
+    CAT_PLACE.scale,
+    CAT_PLACE.scale,
+    CAT_PLACE.scale,
+  ]);
+  doc.nodes[catId].transform.rotation = [
+    -141.199253,
+    -1.535221,
+    -167.469916,
+  ].map((angle) => (angle * Math.PI) / 180) as Vec3;
+
+  const catAssetId = newId("as");
+  doc.assets[catAssetId] = {
+    id: catAssetId,
+    kind: "glb",
+    name: BONGO_MODEL_URL,
+    hash: "2a16506ae6e6b571fc02a73e6822345a73e15de05a5a13b86a391fafd94fa908",
+    size: 28292,
+  };
+  const catFrameIds = [0, 1].map((frame) =>
+    add(
+      {
+        id: newId("nd"),
+        name: `Bongo frame ${frame + 1}`,
+        type: "model",
+        assetId: catAssetId,
+        path: String(frame),
+        transform: transform(
+          [0, (-5.336 * 289) / 457 / 2, 0],
+          [5.336, (5.336 * 289) / 457, 1]
+        ),
+        visible: frame === 0,
+        castShadow: false,
+        receiveShadow: false,
+        children: [],
+      },
+      catId
+    )
+  ) as [string, string];
 
   return {
+    catAnchorId,
+    catPopId,
+    catFrameIds,
     document: doc,
     keys,
     boardId,

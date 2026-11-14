@@ -3,7 +3,7 @@
 ## Teclado 3D (Hero y Skills)
 
 - **Escena, modelo `assets/keyboard/keycaps.glb`, sonidos `assets/keycap-sounds/*.mp3` y logos monocromos `assets/logos/*` / `assets/keyboard/logos/*`**: adaptados del portafolio de **Naresh Khatri** — <https://github.com/Naresh-Khatri/3d-portfolio> — publicado bajo **licencia MIT** (© 2026 Naresh Khatri). Se conserva este aviso conforme a la licencia.
-- El personaje "Bongo Cat" que incluía esa escena **se eliminó** (es un meme/personaje de terceros); el teclado ya no lleva mascota.
+- **Bongo Cat** (`assets/keyboard/bongo-frames.glb`, dos fotogramas de patas): el gato que asoma del teclado es el personaje del meme "Bongo Cat", **creación de terceros** — no es obra original del autor de este portafolio y sus derechos pertenecen a su creador. Se incluye por decisión expresa del autor como **elemento de fan, sin fines comerciales**. El archivo del modelo proviene del portafolio de Naresh Khatri citado arriba; la licencia MIT cubre ese código y archivo, **no** al personaje. Si el titular lo solicita, se retira.
 - Los logos de tecnologías identifican herramientas reales que se usan en los proyectos; pertenecen a sus respectivos dueños.
 
 ## Device Lab (Projects)

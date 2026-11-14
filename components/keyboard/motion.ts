@@ -129,6 +129,70 @@ export function createKeyboardMotion(
   // Parked = outside hero/skills: the canvas is faded out by the component and rendering is paused.
   let parked = false;
   let parkTimer = 0;
+  // Unparked was requested (the keyboard is vivid); the cat follows it.
+  let vividWanted = false;
+
+  // ── Bongo Cat: pops out of the keyboard whenever the keyboard turns vivid,
+  // taps a paw on every key press, disappears with it when it parks.
+  const reducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const catPop = { y: 0, s: 1 };
+  // On tablet widths the skills camera looks across the back keys, which would
+  // hide the cat; it rests higher there so it still peeks over the corner.
+  const catRestY = () =>
+    window.innerWidth >= 768 && window.innerWidth < 1024 ? 1.5 : 0;
+  let catShown = false;
+  let catFrame = 0;
+  let catTween: gsap.core.Tween | null = null;
+  let catPawTimer = 0;
+  const applyCatPop = () => {
+    setTransform(scene.catPopId, {
+      position: [0, catPop.y, 0],
+      scale: [catPop.s, catPop.s, catPop.s],
+    });
+  };
+  const showCatFrame = (frame: number) => {
+    catFrame = frame;
+    scene.catFrameIds.forEach((id, index) =>
+      api.setNodeVisible(id, index === frame)
+    );
+    onActivity?.();
+  };
+  const emergeCat = () => {
+    if (disposed || !revealed || catShown) return;
+    catShown = true;
+    catTween?.kill();
+    showCatFrame(0);
+    api.setNodeVisible(scene.catAnchorId, true);
+    const restY = catRestY();
+    if (reducedMotion) {
+      catPop.y = restY;
+      catPop.s = 1;
+      applyCatPop();
+      return;
+    }
+    // starts sunk into the case, small, then springs up out of it
+    catPop.y = restY - 1.9;
+    catPop.s = 0.35;
+    applyCatPop();
+    catTween = gsap.to(catPop, {
+      y: restY,
+      s: 1,
+      duration: 0.95,
+      delay: 0.25,
+      ease: "back.out(2.2)",
+      onUpdate: applyCatPop,
+    });
+  };
+  const hideCat = () => {
+    catShown = false;
+    catTween?.kill();
+    catTween = null;
+    window.clearTimeout(catPawTimer);
+    api.setNodeVisible(scene.catAnchorId, false);
+    onActivity?.();
+  };
 
   const updateVisibilityForSection = (currentSection: KeyboardSection) => {
     // 3D Extruded labels ONLY appear in #skills so they never overlap the #hero subtitle
@@ -352,15 +416,18 @@ export function createKeyboardMotion(
 
   const setParked = (next: boolean) => {
     window.clearTimeout(parkTimer);
+    vividWanted = !next;
     if (next) {
       // wait for the CSS fade-out before freezing the render loop
       parkTimer = window.setTimeout(() => {
         parked = true;
+        hideCat();
         onVisibility();
       }, 520);
     } else {
       parked = false;
       onVisibility();
+      emergeCat();
     }
   };
 
@@ -374,6 +441,7 @@ export function createKeyboardMotion(
       ...keyTweens,
     ].forEach((t) => t.paused(hidden));
     idleLoop?.paused(hidden);
+    catTween?.paused(hidden);
   };
 
   const detectSection = detectKeyboardSection;
@@ -394,6 +462,10 @@ export function createKeyboardMotion(
   };
 
   const resize = () => {
+    if (catShown && !catTween?.isActive()) {
+      catPop.y = catRestY();
+      applyCatPop();
+    }
     if (revealed && !disposed) {
       applySection(detectSection(), true);
     }
@@ -407,6 +479,14 @@ export function createKeyboardMotion(
   return {
     /** Parking is decided by the component from the live layout (see isKeyboardVivid). */
     setParked,
+    /** A key went down: the cat alternates paws (static under reduced motion). */
+    tapCat() {
+      if (disposed || !catShown || parked || reducedMotion) return;
+      showCatFrame(catFrame === 0 ? 1 : 0);
+      window.clearTimeout(catPawTimer);
+      // paws settle back to rest shortly after the last tap
+      catPawTimer = window.setTimeout(() => showCatFrame(0), 260);
+    },
     setCounterEnabled(enabled: boolean) {
       if (disposed || enabled === counterEnabled) return;
       counterEnabled = enabled;
@@ -454,10 +534,13 @@ export function createKeyboardMotion(
         })
       );
       onVisibility();
+      if (vividWanted) emergeCat();
     },
     dispose() {
       disposed = true;
       window.clearTimeout(parkTimer);
+      window.clearTimeout(catPawTimer);
+      catTween?.kill();
       if (scrollRaf) {
         window.cancelAnimationFrame(scrollRaf);
         scrollRaf = 0;
@@ -478,7 +561,10 @@ export function createKeyboardMotion(
         scene.revealId,
         ...scene.keys.map((key) => key.motionId),
         scene.labelsId,
+        scene.catPopId,
+        ...scene.catFrameIds,
       ].forEach((id) => api.clearNodeOverrides(id));
+      api.setNodeVisible(scene.catAnchorId, false);
       api.clearNodeOverrides(scene.counterId);
     },
   };

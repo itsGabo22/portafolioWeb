@@ -255,6 +255,7 @@ export default function InteractiveKeyboard3D() {
             setPressCount((prev) => prev + 1);
           }
           heldKeys.current.push(key);
+          motion.current?.tapCat();
         }
         const shown = heldKeys.current.at(-1) ?? null;
         activeKeyRef.current = shown;
