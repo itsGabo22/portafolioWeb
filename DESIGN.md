@@ -119,7 +119,9 @@ Reglas: un único sistema de revelado (`[data-reveal]`, se activa con `.reveal-a
 
 ## 8. Moods de *Fuera del código*
 
-Cada ítem define `--mood-bg/-surface/-fg/-muted/-accent/-accent-2/-line` (registradas con `@property`, así que el panel interpola colores). Texturas 100 % procedurales (CSS/SVG). Son **interpretaciones originales** del ambiente general, sin arte, logos, escudos ni tipografías oficiales. **Temporal (semana de exhibición):** con `BEYOND_PHOTOS = true` (`components/beyond/photos.ts`) cada mood muestra además una fotografía real con parallax bajo una veladura direccional del color del mood (densa bajo el texto, abierta sobre el arte) que mantiene AA; la pestaña de juegos adopta un inicio estilo consola. Procedencia y licencias en `public/CREDITS.md`; con `false` se vuelve a las texturas procedurales.
+La sección es un **menú de inicio estilo PS5** (`components/beyond/PsMenu.tsx`): marco 16:9 (`aspect-ratio`, `rounded-3xl`, sin secuestrar el scroll) medido en unidades de contenedor (`cqw`) sobre la referencia a 1280×720 / 1920×1080 — barra superior a ~6 % de alto (pestañas Juegos / Multimedia / Gustos, buscar, ajustes, avatar con punto verde, reloj local 12 h), fila de portadas desde ~11 % (normal 5.6 cqw, seleccionada 9.3 cqw con contorno + brillo y resorte), título abajo-izquierda (x ≈ 8.5 %), botón píldora + "…" y panel de trofeos abajo-derecha. Arte a sangre con fundido (~420 ms, leve escala) del ítem seleccionado; solo se montan el actual, el anterior y los vecinos. < 768 px: barra compacta (buscar dentro de ajustes), arte en el ~45 % superior, fila deslizable con *scroll-snap*, panel bajo las acciones. `prefers-reduced-motion`: cambios instantáneos. Sin logos, glifos, tipografías, sonidos ni arte de trofeos de la consola: iconos `lucide-react` y las fuentes del sitio.
+
+Cada ítem define `--mood-bg/-surface/-fg/-muted/-accent/-accent-2/-line` (registradas con `@property`, así que el marco interpola colores). Texturas 100 % procedurales (CSS/SVG). Son **interpretaciones originales** del ambiente general, sin arte, logos, escudos ni tipografías oficiales. Una veladura del color del mood (densa arriba, abajo y a la izquierda) mantiene ≥ 4.5:1 sobre cualquier foto. **Temporal (presentación del curso):** con `BEYOND_PHOTOS = true` (`components/beyond/photos.ts`) se muestran fotos e imágenes reales; con `false` el menú es 100 % tipográfico (inicial grande en portadas pequeñas, título contorneado en el escenario). Arte opcional: `assets-src/ps5Menu/<slug>.*` → `npm run ps5:images`. Procedencia y licencias en `public/CREDITS.md`.
 
 | Ítem | Fondo | Superficie | Texto | Acento | Textura / composición | Easing |
 |---|---|---|---|---|---|---|
@@ -131,9 +133,12 @@ Cada ítem define `--mood-bg/-surface/-fg/-muted/-accent/-accent-2/-line` (regis
 | Skyrim | `#0f1a24` | `#182837` | `#eaf3fa` | `#9ccbee` | trazos angulares originales, nieve | expo |
 | Elden Ring | `#0b0a08` | `#18150e` | `#f5ecd6` | `#d9b65c` | haces verticales dorados, brasas | in-out lento |
 | Bloodborne | `#1a0709` | `#2a0d11` | `#f1e6e6` | `#ea7880` | viñeta, niebla, serif itálica de sistema | in-out lento |
-| FC Barcelona | `#0a1630` | `#13255a` | `#ffffff` | `#ffd23f` | franjas `#004D98` / `#A50044` (solo color), ticket de partido | spring |
+| Resident Evil Requiem | `#0d1110` | `#17201d` | `#eef1ec` | `#e8776b` | niebla, mayúsculas | in-out lento |
+| Death Stranding DC | `#0c1219` | `#152230` | `#edf2f7` | `#f0b14a` | grano, mayúsculas | in-out |
+| Nexo: Protocolo Sombra | `#0b0b16` | `#15152a` | `#eeeefe` | `#7cf0d0` | scanlines, mono | expo |
+| FC Barcelona (club, Pedri, Clásico, Camp Nou) | `#0a1630` | `#13255a` | `#ffffff` | `#ffd23f` | franjas `#004D98` / `#A50044` (solo color, sin escudo) | spring |
 
-Contraste (calculado con la fórmula WCAG): texto/fondo y texto/superficie ≥ 11:1, texto secundario ≥ 7:1 y acento ≥ 5.4:1 en todos los moods (verificado con axe en la revisión).
+Contraste (calculado con la fórmula WCAG): texto/fondo y texto/superficie ≥ 11:1, texto secundario ≥ 7:1 y acento ≥ 5.5:1 en todos los moods; tintes de trofeos (oro `#e3b341`, plata `#c9d1d9`, bronce `#d08a54`, platino `#8fd3ff`) ≥ 5.2:1 sobre el panel.
 
 ## 9. Accesibilidad
 
