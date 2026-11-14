@@ -13,29 +13,23 @@ import {
   VolumeX,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
+import { useT } from "@/messages";
 
-interface NavItem {
-  label: {
-    es: string;
-    en: string;
-  };
-  href: string;
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: { es: "Inicio", en: "Home" }, href: "#hero" },
-  { label: { es: "Sobre mí", en: "About" }, href: "#about" },
-  { label: { es: "Proyectos", en: "Projects" }, href: "#projects" },
-  { label: { es: "Testimonios", en: "Testimonials" }, href: "#testimonials" },
-  { label: { es: "Experiencia", en: "Experience" }, href: "#experience" },
-  { label: { es: "Contacto", en: "Contact" }, href: "#contact" },
-  { label: { es: "Skills", en: "Skills" }, href: "#skills" },
-  { label: { es: "Fuera del código", en: "Beyond code" }, href: "#beyond" },
-];
+const NAV_KEYS = [
+  "hero",
+  "about",
+  "projects",
+  "testimonials",
+  "experience",
+  "contact",
+  "skills",
+  "beyond",
+] as const;
 
 export default function Navbar() {
   const { theme, toggleTheme, lang, toggleLang, sfxMuted, toggleSfx } =
     useApp();
+  const t = useT();
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("hero");
   const [scrolled, setScrolled] = useState(false);
@@ -44,16 +38,7 @@ export default function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 12);
 
-      const sections = [
-        "hero",
-        "about",
-        "projects",
-        "testimonials",
-        "experience",
-        "contact",
-        "skills",
-        "beyond",
-      ];
+      const sections = NAV_KEYS;
 
       const scrollPosition = window.scrollY + 160;
 
@@ -106,14 +91,14 @@ export default function Navbar() {
       }`}
     >
       <nav
-        aria-label={lang === "es" ? "Navegación principal" : "Main navigation"}
+        aria-label={t.nav.aria}
         className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8"
       >
         {/* Minimalist Typographic Brand Mark */}
         <a
           href="#hero"
           onClick={handleLinkClick}
-          className="cursor-can-hover group flex items-center gap-2.5 px-2 py-1 focus:outline-none"
+          className="cursor-can-hover group flex items-center gap-2.5 px-2 py-1"
         >
           <span className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
             Gabriel Paz
@@ -122,22 +107,22 @@ export default function Navbar() {
         </a>
 
         {/* Clean Center Navigation Links inside Frosted Pill */}
-        <div className="hidden lg:flex lg:items-center lg:gap-1 rounded-2xl border border-white/75 dark:border-white/10 bg-white/45 dark:bg-zinc-900/45 px-2 py-1 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-2xl">
-          {NAV_ITEMS.map((item) => {
-            const sectionKey = item.href.replace("#", "");
+        <div className="hidden xl:flex xl:items-center xl:gap-0.5 rounded-2xl border border-white/75 dark:border-white/10 bg-white/45 dark:bg-zinc-900/45 px-2 py-1 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-2xl">
+          {NAV_KEYS.map((sectionKey) => {
+            const href = `#${sectionKey}`;
             const isActive = activeSection === sectionKey;
 
             return (
               <a
-                key={item.href}
-                href={item.href}
-                className={`cursor-can-hover relative rounded-xl px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 ${
+                key={href}
+                href={href}
+                className={`cursor-can-hover relative rounded-xl px-3 py-1.5 text-sm font-medium transition-colors duration-200 ${
                   isActive
                     ? "text-zinc-950 dark:text-white font-semibold"
                     : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100"
                 }`}
               >
-                {item.label[lang]}
+                {t.nav.items[sectionKey]}
                 {isActive && (
                   <motion.span
                     layoutId="navbar-active-indicator"
@@ -155,11 +140,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleLang}
-            aria-label={
-              lang === "es"
-                ? "Switch language to English"
-                : "Cambiar idioma a Español"
-            }
+            aria-label={t.nav.switchLang}
             className="cursor-can-hover inline-flex h-9 items-center gap-1.5 rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800/70"
           >
             <span
@@ -187,24 +168,8 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleSfx}
-            title={
-              sfxMuted
-                ? lang === "es"
-                  ? "Activar sonidos del teclado 3D"
-                  : "Unmute 3D keyboard sound effects"
-                : lang === "es"
-                  ? "Silenciar sonidos del teclado 3D"
-                  : "Mute 3D keyboard sound effects"
-            }
-            aria-label={
-              sfxMuted
-                ? lang === "es"
-                  ? "Activar sonidos del teclado"
-                  : "Toggle keyboard sound effects (Unmute)"
-                : lang === "es"
-                  ? "Silenciar sonidos del teclado"
-                  : "Toggle keyboard sound effects (Mute)"
-            }
+            aria-pressed={!sfxMuted}
+            aria-label={sfxMuted ? t.nav.sfxUnmute : t.nav.sfxMute}
             className="cursor-can-hover inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 text-zinc-700 dark:text-zinc-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800/70"
           >
             {sfxMuted ? (
@@ -217,15 +182,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleTheme}
-            aria-label={
-              theme === "light"
-                ? lang === "es"
-                  ? "Activar modo oscuro"
-                  : "Enable dark mode"
-                : lang === "es"
-                  ? "Activar modo claro"
-                  : "Enable light mode"
-            }
+            aria-label={theme === "light" ? t.nav.darkOn : t.nav.lightOn}
             className="cursor-can-hover inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 text-zinc-700 dark:text-zinc-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800/70"
           >
             {theme === "light" ? (
@@ -241,20 +198,16 @@ export default function Navbar() {
             className="cursor-can-hover inline-flex h-9 items-center gap-1.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-3.5 text-xs font-semibold text-white dark:text-zinc-950 transition-all hover:bg-zinc-800 dark:hover:bg-white"
           >
             <FileText className="h-3.5 w-3.5" />
-            <span>CV</span>
+            <span>{t.nav.cv}</span>
           </a>
         </div>
 
         {/* Mobile Controls */}
-        <div className="flex items-center gap-1.5 lg:hidden">
+        <div className="flex items-center gap-1.5 xl:hidden">
           <button
             type="button"
             onClick={toggleLang}
-            aria-label={
-              lang === "es"
-                ? "Switch language to English"
-                : "Cambiar idioma a Español"
-            }
+            aria-label={t.nav.switchLang}
             className="inline-flex h-9 items-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 px-2.5 text-xs font-semibold text-zinc-800 dark:text-zinc-200 backdrop-blur-xl md:hidden"
           >
             {lang.toUpperCase()}
@@ -263,11 +216,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleSfx}
-            aria-label={
-              lang === "es"
-                ? "Activar o silenciar sonidos del teclado"
-                : "Toggle keyboard sound effects"
-            }
+            aria-label={sfxMuted ? t.nav.sfxUnmute : t.nav.sfxMute}
             className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 text-zinc-700 dark:text-zinc-200 backdrop-blur-xl md:hidden"
           >
             {sfxMuted ? (
@@ -280,15 +229,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleTheme}
-            aria-label={
-              theme === "light"
-                ? lang === "es"
-                  ? "Activar modo oscuro"
-                  : "Enable dark mode"
-                : lang === "es"
-                  ? "Activar modo claro"
-                  : "Enable light mode"
-            }
+            aria-label={theme === "light" ? t.nav.darkOn : t.nav.lightOn}
             className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 text-zinc-700 dark:text-zinc-200 backdrop-blur-xl md:hidden"
           >
             {theme === "light" ? (
@@ -303,16 +244,8 @@ export default function Navbar() {
             onClick={() => setIsOpen((prev) => !prev)}
             aria-expanded={isOpen}
             aria-controls="mobile-navigation-drawer"
-            aria-label={
-              isOpen
-                ? lang === "es"
-                  ? "Cerrar menú de navegación"
-                  : "Close navigation menu"
-                : lang === "es"
-                  ? "Abrir menú de navegación"
-                  : "Open navigation menu"
-            }
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 text-zinc-800 dark:text-zinc-200 backdrop-blur-xl focus:outline-none"
+            aria-label={isOpen ? t.nav.menuClose : t.nav.menuOpen}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/55 text-zinc-800 dark:text-zinc-200 backdrop-blur-xl"
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -328,25 +261,25 @@ export default function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.22, ease: "easeInOut" }}
-            className="overflow-hidden border-b border-white/75 dark:border-white/10 bg-white/65 dark:bg-zinc-950/75 backdrop-blur-2xl backdrop-saturate-150 lg:hidden"
+            className="overflow-hidden border-b border-white/75 dark:border-white/10 bg-white/65 dark:bg-zinc-950/75 backdrop-blur-2xl backdrop-saturate-150 xl:hidden"
           >
             <div className="mx-auto max-w-7xl space-y-1 px-4 pt-2 pb-5">
-              {NAV_ITEMS.map((item) => {
-                const sectionKey = item.href.replace("#", "");
+              {NAV_KEYS.map((sectionKey) => {
+                const href = `#${sectionKey}`;
                 const isActive = activeSection === sectionKey;
 
                 return (
                   <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={(e) => handleDrawerAnchorClick(e, item.href)}
+                    key={href}
+                    href={href}
+                    onClick={(e) => handleDrawerAnchorClick(e, href)}
                     className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
                       isActive
                         ? "bg-white/70 dark:bg-zinc-900 text-zinc-950 dark:text-white font-semibold"
                         : "text-zinc-700 dark:text-zinc-300 hover:bg-white/50 dark:hover:bg-zinc-900/50 hover:text-zinc-950 dark:hover:text-white"
                     }`}
                   >
-                    <span>{item.label[lang]}</span>
+                    <span>{t.nav.items[sectionKey]}</span>
                     <ChevronRight className="h-4 w-4 text-zinc-400" />
                   </a>
                 );
@@ -360,9 +293,7 @@ export default function Navbar() {
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-4 py-2.5 text-xs font-semibold text-white dark:text-zinc-950"
                 >
                   <FileText className="h-4 w-4" />
-                  <span>
-                    {lang === "es" ? "Descargar CV" : "Download CV"}
-                  </span>
+                  <span>{t.nav.downloadCv}</span>
                 </a>
               </div>
             </div>

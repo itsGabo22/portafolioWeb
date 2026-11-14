@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
+import { useT } from "@/messages";
 import TechBadge from "./TechBadge";
 import TiltSurface from "./TiltSurface";
 
@@ -369,6 +370,7 @@ function TimelineColumn({
   onHoverEra: (eraIndex: number) => void;
 }) {
   const { lang } = useApp();
+  const t = useT();
   const columnRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -478,8 +480,9 @@ function TimelineColumn({
                           rel="noopener noreferrer"
                           className="cursor-can-hover inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 underline underline-offset-4"
                         >
-                          <span>Web</span>
-                          <ArrowUpRight className="h-3 w-3" />
+                          <span>{t.experience.web}</span>
+                          <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                          <span className="sr-only">{t.common.newTab}</span>
                         </a>
                       )}
                     </div>
@@ -507,6 +510,7 @@ function TimelineColumn({
 
 export default function Experience() {
   const { lang } = useApp();
+  const t = useT();
   const sectionRef = useRef<HTMLElement>(null);
   const [activeEra, setActiveEra] = useState<number>(0);
 
@@ -557,19 +561,13 @@ export default function Experience() {
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-3.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>
-              {lang === "es"
-                ? "Evolución Profesional y Académica · 2023 – 2026"
-                : "Professional & Academic Evolution · 2023 – 2026"}
-            </span>
+            <span>{t.experience.eyebrow}</span>
           </span>
-          <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-7xl">
-            {lang === "es" ? "Experiencia" : "Experience"}
+          <h2 className="mt-4 font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
+            {t.experience.title}
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
-            {lang === "es"
-              ? "Evolución en 4 etapas: desde fundamentos lógicos y formación en Ingeniería de Software hasta e-commerce en producción y liderazgo en VICARDEV."
-              : "4-stage evolution: from algorithmic foundations and Software Engineering academia to live production e-commerce and VICARDEV leadership."}
+            {t.experience.subtitle}
           </p>
         </motion.div>
 
@@ -601,13 +599,14 @@ export default function Experience() {
           </div>
 
           {/* 4-Stage Interactive Selector Strip */}
-          <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4" role="group" aria-label={t.experience.stagesAria}>
             {ENGINEERING_ERAS.map((era) => {
               const isSelected = activeEra === era.index;
               return (
                 <button
                   key={era.year}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => setActiveEra(era.index)}
                   className={`cursor-can-hover flex flex-col items-start rounded-xl border p-3 text-left transition-all ${
                     isSelected
@@ -637,28 +636,16 @@ export default function Experience() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-10">
           <TimelineColumn
             items={WORK_EXPERIENCE}
-            trackLabel={
-              lang === "es" ? "Experiencia Laboral" : "Work Experience"
-            }
-            trackSubtitle={
-              lang === "es"
-                ? "VICARDEV & Clientes en Producción"
-                : "VICARDEV & Live Commercial Clients"
-            }
+            trackLabel={t.experience.work}
+            trackSubtitle={t.experience.workSubtitle}
             activeEra={activeEra}
             onHoverEra={setActiveEra}
           />
 
           <TimelineColumn
             items={ACADEMIC_EXPERIENCE}
-            trackLabel={
-              lang === "es" ? "Experiencia Académica" : "Academic Experience"
-            }
-            trackSubtitle={
-              lang === "es"
-                ? "Ingeniería de Software · UCC Pasto"
-                : "Software Engineering · UCC Pasto"
-            }
+            trackLabel={t.experience.academic}
+            trackSubtitle={t.experience.academicSubtitle}
             activeEra={activeEra}
             onHoverEra={setActiveEra}
           />

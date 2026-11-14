@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useApp } from "@/context/AppContext";
+import { useT } from "@/messages";
 import TechBadge from "./TechBadge";
 
 interface SkillCategory {
@@ -120,6 +121,7 @@ const SKILL_CATEGORIES: SkillCategory[] = [
 
 export default function Skills() {
   const { lang } = useApp();
+  const t = useT();
   const [activeTab, setActiveTab] = useState<string>("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -142,14 +144,12 @@ export default function Skills() {
           transition={{ duration: 0.45 }}
           className="text-center"
         >
-          <h2 className="font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-7xl">
-            {lang === "es" ? "Tech Stack" : "Tech Stack"}
+          <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
+            {t.skills.title}
           </h2>
 
           <p className="mx-auto mt-2 text-base text-zinc-600 dark:text-zinc-400">
-            {lang === "es"
-              ? "(pista: pasa el cursor o presiona una tecla en el teclado 3D)"
-              : "(hint: hover or press a key on the 3D keyboard)"}
+            {t.skills.hint}
           </p>
         </motion.div>
 
@@ -163,38 +163,29 @@ export default function Skills() {
         <div className="mb-8 flex flex-col items-center justify-between gap-4 border-t border-zinc-300/60 dark:border-zinc-800 pt-10 sm:flex-row">
           <div className="text-center sm:text-left">
             <h3 className="font-display text-2xl font-bold text-zinc-900 dark:text-zinc-50 sm:text-3xl">
-              {lang === "es"
-                ? "Arquitectura y Ecosistema Técnico"
-                : "Architecture & Tech Ecosystem"}
+              {t.skills.ecosystem}
             </h3>
             <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-              {lang === "es"
-                ? "Tecnologías utilizadas en plataformas comerciales y sistemas universitarios"
-                : "Technologies deployed across commercial platforms and university systems"}
+              {t.skills.ecosystemSub}
             </p>
           </div>
 
           <div
-            role="tablist"
-            aria-label={
-              lang === "es"
-                ? "Filtrar categorías técnicas"
-                : "Filter technical categories"
-            }
+            role="group"
+            aria-label={t.skills.filterAria}
             className="flex flex-wrap justify-center gap-1.5 rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 p-1.5 ring-1 ring-zinc-900/[0.06] shadow-[0_8px_30px_rgba(15,23,42,0.06),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl backdrop-saturate-150"
           >
             <button
               type="button"
-              role="tab"
-              aria-selected={activeTab === "all"}
+              aria-pressed={activeTab === "all"}
               onClick={() => setActiveTab("all")}
-              className={`cursor-can-hover rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
+              className={`cursor-can-hover min-h-11 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                 activeTab === "all"
                   ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950"
                   : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
               }`}
             >
-              {lang === "es" ? "Todos" : "All"}
+              {t.skills.all}
             </button>
 
             {SKILL_CATEGORIES.map((category) => {
@@ -203,10 +194,9 @@ export default function Skills() {
                 <button
                   key={category.id}
                   type="button"
-                  role="tab"
-                  aria-selected={isSelected}
+                  aria-pressed={isSelected}
                   onClick={() => setActiveTab(category.id)}
-                  className={`cursor-can-hover rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
+                  className={`cursor-can-hover min-h-11 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                     isSelected
                       ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950"
                       : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
@@ -254,6 +244,7 @@ export default function Skills() {
                       </p>
                       <button
                         type="button"
+                        aria-expanded={isExpanded}
                         onClick={() =>
                           setExpandedId((prev) =>
                             prev === category.id ? null : category.id
@@ -262,13 +253,7 @@ export default function Skills() {
                         className="cursor-can-hover mt-3 inline-flex items-center gap-1 text-xs font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 lg:hidden"
                       >
                         <span>
-                          {isExpanded
-                            ? lang === "es"
-                              ? "Ocultar tecnologías"
-                              : "Hide technologies"
-                            : lang === "es"
-                              ? "Ver tecnologías"
-                              : "Show technologies"}
+                          {isExpanded ? t.skills.hide : t.skills.show}
                         </span>
                         <ChevronDown
                           className={`h-3.5 w-3.5 transition-transform ${

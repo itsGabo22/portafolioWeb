@@ -13,7 +13,7 @@ import {
   MapPin,
   Clock,
 } from "lucide-react";
-import { useApp } from "@/context/AppContext";
+import { useT } from "@/messages";
 
 type FormStatus = "idle" | "submitting" | "success";
 type FieldErrors = Partial<Record<"name" | "email" | "message", string>>;
@@ -21,25 +21,13 @@ type FieldErrors = Partial<Record<"name" | "email" | "message", string>>;
 const CONTACT_EMAIL = "vicardev2026@gmail.com";
 
 const DIRECT_CHANNELS = [
-  {
-    label: "VICARDEV Agency",
-    handle: "vicardev.digital",
-    href: "https://vicardev.digital",
-  },
-  {
-    label: "GitHub",
-    handle: "@itsGabo22",
-    href: "https://github.com/itsGabo22",
-  },
-  {
-    label: "LinkedIn",
-    handle: "in/itsgabo22",
-    href: "https://www.linkedin.com/in/itsgabo22",
-  },
-];
+  { key: "agency", href: "https://vicardev.digital" },
+  { key: "github", href: "https://github.com/itsGabo22" },
+  { key: "linkedin", href: "https://www.linkedin.com/in/itsgabo22" },
+] as const;
 
 export default function Contact() {
-  const { lang } = useApp();
+  const t = useT();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -69,19 +57,16 @@ export default function Contact() {
     const trimmedMessage = message.trim();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const es = lang === "es";
     const errors: FieldErrors = {};
 
-    if (!trimmedName) errors.name = es ? "Escribe tu nombre." : "Please enter your name.";
+    if (!trimmedName) errors.name = t.contact.errors.name;
     if (!trimmedEmail) {
-      errors.email = es ? "Escribe tu correo electrónico." : "Please enter your email.";
+      errors.email = t.contact.errors.email;
     } else if (!emailRegex.test(trimmedEmail)) {
-      errors.email = es
-        ? "Ingresa un correo electrónico válido."
-        : "Please enter a valid email address.";
+      errors.email = t.contact.errors.emailInvalid;
     }
     if (!trimmedMessage) {
-      errors.message = es ? "Escribe un mensaje." : "Please enter a message.";
+      errors.message = t.contact.errors.message;
     }
 
     setFieldErrors(errors);
@@ -103,15 +88,7 @@ export default function Contact() {
 
       if (!response.ok) {
         setStatus("idle");
-        setErrorMsg(
-          response.status === 503
-            ? es
-              ? "El envío no está disponible por ahora. Escríbeme directamente a " + CONTACT_EMAIL + "."
-              : "Sending is unavailable right now. Please email me directly at " + CONTACT_EMAIL + "."
-            : es
-              ? "No se pudo enviar el mensaje. Inténtalo de nuevo en unos minutos."
-              : "The message could not be sent. Please try again in a few minutes."
-        );
+        setErrorMsg(response.status === 503 ? t.contact.errors.unavailable : t.contact.errors.failed);
         return;
       }
 
@@ -121,18 +98,14 @@ export default function Contact() {
       setMessage("");
     } catch {
       setStatus("idle");
-      setErrorMsg(
-        es
-          ? "Error de conexión. Revisa tu internet e inténtalo de nuevo."
-          : "Connection error. Check your internet and try again."
-      );
+      setErrorMsg(t.contact.errors.network);
     }
   };
 
   return (
     <section
       id="contact"
-      className="relative min-h-screen border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
+      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Left/Center Studio Dispatch Desk (7 cols) + Right Spatial Stage for Levitating 3D Keycaps (5 cols) */}
@@ -142,47 +115,30 @@ export default function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.45 }}
-            className="lg:col-span-7"
+            className="lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3"
           >
             {/* Studio Dispatch Header */}
             <div className="border-b border-zinc-300/60 dark:border-zinc-800 pb-8">
               <div className="mb-4 flex flex-wrap items-center gap-3">
                 <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                   <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>
-                    {lang === "es"
-                      ? "Disponible para nuevos proyectos"
-                      : "Available for new projects"}
-                  </span>
+                  <span>{t.contact.available}</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
                   <MapPin className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Pasto, Colombia</span>
+                  <span>{t.contact.location}</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-400">
                   <Clock className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-                  <span>
-                    {lang === "es" ? "Respuesta < 24h" : "Response < 24h"}
-                  </span>
+                  <span>{t.contact.response}</span>
                 </span>
               </div>
 
-              <h2 className="font-display text-5xl font-black tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-6xl md:text-7xl leading-[0.92]">
-                {lang === "es" ? (
-                  <>
-                    TRABAJEMOS{" "}
-                    <span className="font-serif italic font-normal text-emerald-600 dark:text-emerald-400">
-                      JUNTOS
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    LET&apos;S WORK{" "}
-                    <span className="font-serif italic font-normal text-emerald-600 dark:text-emerald-400">
-                      TOGETHER
-                    </span>
-                  </>
-                )}
+              <h2 className="font-display text-5xl font-black tracking-tighter text-zinc-900 dark:text-zinc-50 sm:text-6xl md:text-7xl leading-[0.92] uppercase">
+                {t.contact.titleA}{" "}
+                <span className="font-serif italic font-normal text-emerald-700 dark:text-emerald-400">
+                  {t.contact.titleB}
+                </span>
               </h2>
 
               {/* Magnetic Direct Email Strip with Frosted Glass */}
@@ -190,6 +146,7 @@ export default function Contact() {
                 <button
                   type="button"
                   onClick={handleCopyEmail}
+                  aria-label={copied ? t.contact.copied : t.contact.copyAria}
                   className="cursor-can-hover group inline-flex items-center gap-3 rounded-2xl border border-white/80 dark:border-white/10 bg-white/55 dark:bg-zinc-900/60 px-4 py-2.5 text-left ring-1 ring-zinc-900/[0.06] shadow-[0_8px_30px_rgba(15,23,42,0.06),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl transition-all hover:border-emerald-500"
                 >
                   <span className="font-mono text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -199,12 +156,12 @@ export default function Contact() {
                     {copied ? (
                       <>
                         <Check className="h-3 w-3 text-emerald-400 dark:text-emerald-600" />
-                        <span>{lang === "es" ? "Copiado" : "Copied"}</span>
+                        <span>{t.contact.copied}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3 w-3" />
-                        <span>{lang === "es" ? "Copiar" : "Copy"}</span>
+                        <span>{t.contact.copy}</span>
                       </>
                     )}
                   </span>
@@ -212,14 +169,15 @@ export default function Contact() {
 
                 {DIRECT_CHANNELS.map((ch) => (
                   <a
-                    key={ch.label}
+                    key={ch.key}
                     href={ch.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="cursor-can-hover inline-flex items-center gap-1.5 rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/55 px-3.5 py-2.5 text-xs font-semibold text-zinc-700 dark:text-zinc-300 ring-1 ring-zinc-900/[0.06] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)] backdrop-blur-2xl transition-colors hover:bg-white/80 dark:hover:bg-zinc-800 hover:text-zinc-950 dark:hover:text-white"
                   >
-                    <span>{ch.label}</span>
-                    <ArrowUpRight className="h-3.5 w-3.5" />
+                    <span>{t.contact.channels[ch.key]}</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span className="sr-only">{t.common.newTab}</span>
                   </a>
                 ))}
               </div>
@@ -233,7 +191,7 @@ export default function Contact() {
             >
               {/* Honeypot: hidden from users and assistive tech, bots fill it */}
               <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-                <label htmlFor="contact-website">Website</label>
+                <label htmlFor="contact-website">{t.contact.form.honeypot}</label>
                 <input
                   id="contact-website"
                   name="website"
@@ -251,7 +209,7 @@ export default function Contact() {
                     htmlFor="contact-name"
                     className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
                   >
-                    {lang === "es" ? "Nombre completo" : "Full Name"}
+                    {t.contact.form.name}
                   </label>
                   <input
                     id="contact-name"
@@ -265,12 +223,8 @@ export default function Contact() {
                       setName(e.target.value);
                       if (status === "success") setStatus("idle");
                     }}
-                    placeholder={
-                      lang === "es"
-                        ? "Ej. Carlos Mendoza"
-                        : "e.g. Alex Morgan"
-                    }
-                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                    placeholder={t.contact.form.namePh}
+                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
                   />
                 {fieldErrors.name && (
                   <p id="contact-name-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700 dark:text-red-300">
@@ -284,7 +238,7 @@ export default function Contact() {
                     htmlFor="contact-email"
                     className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
                   >
-                    {lang === "es" ? "Correo electrónico" : "Email Address"}
+                    {t.contact.form.email}
                   </label>
                   <input
                     id="contact-email"
@@ -298,12 +252,8 @@ export default function Contact() {
                       setEmail(e.target.value);
                       if (status === "success") setStatus("idle");
                     }}
-                    placeholder={
-                      lang === "es"
-                        ? "carlos@empresa.com"
-                        : "alex@company.com"
-                    }
-                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                    placeholder={t.contact.form.emailPh}
+                    className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
                   />
                 {fieldErrors.email && (
                   <p id="contact-email-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700 dark:text-red-300">
@@ -318,9 +268,7 @@ export default function Contact() {
                   htmlFor="contact-message"
                   className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400"
                 >
-                  {lang === "es"
-                    ? "Detalles de tu proyecto"
-                    : "Project Details & Objectives"}
+                  {t.contact.form.message}
                 </label>
                 <textarea
                   id="contact-message"
@@ -334,12 +282,8 @@ export default function Contact() {
                     setMessage(e.target.value);
                     if (status === "success") setStatus("idle");
                   }}
-                  placeholder={
-                    lang === "es"
-                      ? "Cuéntame sobre tu plataforma web, e-commerce o integración con IA..."
-                      : "Tell me about your web platform, e-commerce store, or AI integration..."
-                  }
-                  className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
+                  placeholder={t.contact.form.messagePh}
+                  className="mt-2 w-full border-b-2 border-zinc-300/80 dark:border-zinc-700 bg-transparent px-1 py-3 text-base font-medium text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 dark:placeholder-zinc-400 transition-colors focus:border-emerald-500 dark:focus:border-emerald-400 focus:outline-none"
                 />
                 {fieldErrors.message && (
                   <p id="contact-message-error" role="alert" className="mt-1.5 text-xs font-medium text-red-700 dark:text-red-300">
@@ -374,11 +318,7 @@ export default function Contact() {
                     className="flex items-center gap-3 rounded-xl border border-emerald-500/50 bg-emerald-500/15 px-4 py-3.5 text-sm font-semibold text-emerald-800 dark:text-emerald-200"
                   >
                     <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                    <span>
-                      {lang === "es"
-                        ? "¡Mensaje enviado con éxito! Te responderé muy pronto."
-                        : "Message sent successfully! I will get back to you soon."}
-                    </span>
+                    <span>{t.contact.success}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -399,15 +339,11 @@ export default function Contact() {
                   {status === "submitting" ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>
-                        {lang === "es" ? "Enviando..." : "Sending..."}
-                      </span>
+                      <span>{t.contact.form.sending}</span>
                     </>
                   ) : (
                     <>
-                      <span>
-                        {lang === "es" ? "Enviar mensaje" : "Send Message"}
-                      </span>
+                      <span>{t.contact.form.send}</span>
                       <Send className="h-4 w-4" />
                     </>
                   )}
@@ -416,8 +352,6 @@ export default function Contact() {
             </form>
           </motion.div>
 
-          {/* Right Column: Open Spatial Stage for the Levitating Zero-Gravity 3D Keycaps */}
-          <div className="pointer-events-none hidden min-h-[520px] lg:col-span-5 lg:block" />
         </div>
       </div>
     </section>
