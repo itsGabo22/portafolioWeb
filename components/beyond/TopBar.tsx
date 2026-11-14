@@ -195,7 +195,10 @@ export default function TopBar({
       ref={barRef}
       className="ps-top"
       onBlur={(event) => {
-        if (open && !barRef.current?.contains(event.relatedTarget as Node | null)) setOpen(null);
+        // null relatedTarget (Safari clicks, clicks on popover padding) is not "outside":
+        // pointer dismissal is handled by the pointerdown listener above.
+        const next = event.relatedTarget as Node | null;
+        if (open && next && !barRef.current?.contains(next)) setOpen(null);
       }}
     >
       <div role="tablist" aria-label={t.beyond.tabsAria} onKeyDown={onTabKeyDown} className="ps-tabs">

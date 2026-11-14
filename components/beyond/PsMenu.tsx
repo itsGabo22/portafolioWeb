@@ -265,15 +265,17 @@ export default function PsMenu({
         if (alive && wanted && !stop) stop = m.startGamepad((c) => padRef.current(c));
       });
     };
-    const onConnect = () => start();
+    const onConnect = (event: GamepadEvent) => {
+      if (event.gamepad.mapping === "standard") start();
+    };
     const onDisconnect = () => {
-      if (navigator.getGamepads().some((p) => p?.connected)) return;
+      if (navigator.getGamepads().some((p) => p?.connected && p.mapping === "standard")) return;
       wanted = false;
       stop?.();
       stop = null;
       setPad(false);
     };
-    if (navigator.getGamepads().some((p) => p?.connected)) start();
+    if (navigator.getGamepads().some((p) => p?.connected && p.mapping === "standard")) start();
     window.addEventListener("gamepadconnected", onConnect);
     window.addEventListener("gamepaddisconnected", onDisconnect);
     return () => {

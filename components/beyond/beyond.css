@@ -174,15 +174,6 @@
 .ps-frame[data-embed="true"] {
   --info-w: clamp(240px, 26cqw, 340px);
 }
-.ps-loader {
-  display: flex;
-  aspect-ratio: 16 / 9;
-  align-items: center;
-  justify-content: center;
-  border-radius: 1.5rem;
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface-1) 60%, transparent);
-}
 .ps-focus:focus-visible {
   outline: 2px solid var(--mood-accent);
   outline-offset: 3px;
@@ -874,8 +865,7 @@ button.ps-pill:active {
 
 /* ─── 768–1023 px: same composition, scaled; a 4:3 frame leaves room for long titles/notes ─── */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .ps-frame,
-  .ps-loader {
+  .ps-frame {
     aspect-ratio: 4 / 3;
   }
 }
@@ -890,10 +880,6 @@ button.ps-pill:active {
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
-  }
-  .ps-loader {
-    aspect-ratio: auto;
-    min-height: 136vw; /* ≈ stacked frame height at 390 px */
   }
   .ps-frame {
     --art-h: min(74cqw, 420px); /* art ≈ top 45 % of the frame */
@@ -970,6 +956,7 @@ button.ps-pill:active {
     gap: 0;
   }
   .ps-clock {
+    min-width: auto; /* tight phones (320 px): never clip the time */
     margin-left: 4px;
   }
   .ps-tile-label {

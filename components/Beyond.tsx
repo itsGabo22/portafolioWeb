@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import { BEYOND_TAB_IDS, type BeyondTabId } from "@/data/beyondTabs";
 import { useT } from "@/messages";
 import { BEYOND_PHOTOS } from "./beyond/photos";
-// loader + frame styles available before the lazily loaded menu chunk
-import "./beyond/beyond.css";
+// only the loader shell ships with the page; beyond.css comes with the menu chunk
+import "./beyond/beyond-shell.css";
 
 function MenuLoader() {
   const t = useT();
