@@ -23,7 +23,7 @@ export default function GamesTab({
   return (
     <div>
       <h3 className="text-sm font-semibold">{t.beyond.games.title}</h3>
-      <ul className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <ul className="mt-3 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {games.map((game, index) => {
           const mood = MOODS[game.id];
           const pressed = selected === game.id;
@@ -36,14 +36,14 @@ export default function GamesTab({
                 onPointerEnter={() => onMood(game.id)}
                 onFocus={() => onMood(game.id)}
                 style={moodStyle(game.id)}
-                className={`${styles.card} ${styles.focusRing} cursor-can-hover flex aspect-[4/5] w-full flex-col justify-end rounded-card border border-[var(--mood-line)] p-5 text-left text-[var(--mood-fg)] sm:aspect-[3/4]`}
+                className={`${styles.card} ${styles.focusRing} cursor-can-hover flex aspect-[3/4] w-full flex-col justify-end rounded-card border border-[var(--mood-line)] p-3.5 text-left sm:p-5 text-[var(--mood-fg)] sm:aspect-[3/4]`}
               >
                 <span className={styles.cardArt} data-mood={game.id} aria-hidden="true" />
                 <span className="relative text-xs font-semibold text-[var(--mood-accent)]">
                   {fmt(t.beyond.games.slot, { n: index + 1 })}
                 </span>
                 <span
-                  className={`relative mt-1 text-2xl font-bold leading-tight ${FACE_CLASS[mood.face]} ${
+                  className={`relative mt-1 text-base font-bold leading-tight sm:text-2xl ${FACE_CLASS[mood.face]} ${
                     mood.caps ? "uppercase tracking-[0.08em]" : ""
                   } ${game.id === "bloodborne" ? "italic" : ""}`}
                 >

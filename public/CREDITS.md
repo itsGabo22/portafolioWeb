@@ -19,6 +19,10 @@
 - Texturas (grano, papel, niebla, nieve, brasas, franjas) generadas con CSS y filtros SVG `feTurbulence` en `components/beyond/beyond.css`.
 - **Spotify:** el reproductor embebido es contenido de terceros que solo se carga cuando la persona pulsa "Reproducir"; se rige por los términos de Spotify.
 
+## Capturas de proyectos
+
+- `images/projects/*.png` son capturas de pantalla hechas por el autor de sus proyectos y de los sitios públicos que desarrolló para clientes.
+
 ## Tipografías
 
 - **Bricolage Grotesque** y **IBM Plex Sans** — SIL Open Font License 1.1 (servidas mediante `next/font/google`, autoalojadas en el build).

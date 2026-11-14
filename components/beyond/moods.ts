@@ -61,7 +61,7 @@ export const MOODS: Record<MoodId, Mood> = {
   },
   barca: {
     bg: "#0a1630", surface: "#13255a", fg: "#ffffff", muted: "#cdd7ee", accent: "#ffd23f", accent2: "#a50044", line: "#2a3f78",
-    texture: "stripes", ease: "cubic-bezier(0.34, 1.56, 0.64, 1)", face: "display", caps: true,
+    texture: "dots", ease: "cubic-bezier(0.34, 1.56, 0.64, 1)", face: "display", caps: true,
   },
 };
 
