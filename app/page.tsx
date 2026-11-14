@@ -9,11 +9,13 @@ import Skills from "@/components/Skills";
 import Beyond from "@/components/Beyond";
 import Footer from "@/components/Footer";
 import { DEVICE_LAB_IDS } from "@/data/projects";
-import { getMediaManifest } from "@/lib/media";
+import { TESTIMONIALS } from "@/data/testimonials";
+import { getMediaManifest, getTestimonialAvatars } from "@/lib/media";
 
 export default function Home() {
   // Resolved at build time: only media files that exist are ever referenced.
   const media = getMediaManifest(DEVICE_LAB_IDS);
+  const avatars = getTestimonialAvatars(TESTIMONIALS.map((t) => t.id));
 
   return (
     <>
@@ -22,7 +24,7 @@ export default function Home() {
         <Hero/>
         <About/>
         <Projects media={media}/>
-        <Testimonials/>
+        <Testimonials avatars={avatars}/>
         <Experience/>
         <Contact/>
         <Skills/>
