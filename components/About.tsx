@@ -1,7 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { projects } from "@/data/projects";
+import { useReducedMotion } from "@/lib/capabilities";
+import CountUp from "./CountUp";
 import { Disc3, Gamepad2, Ticket } from "lucide-react";
 import { useT } from "@/messages";
 import Rich from "./Rich";
@@ -32,9 +36,29 @@ const INTERESTS = [
   { key: "club", hash: "#beyond-club", icon: Ticket },
 ] as const;
 
+// Quick facts derived from data (no self-reported numbers).
+const STATS = [
+  { key: "projects", value: projects.length },
+  {
+    key: "live",
+    value: projects.filter((p) => p.category === "commercial" && p.platform === "web").length,
+  },
+  { key: "semester", value: 5 },
+] as const;
+
 export default function About() {
   const t = useT();
   const [imageError, setImageError] = useState(false);
+  const reduced = useReducedMotion();
+  const portraitRef = useRef<HTMLDivElement>(null);
+  // Portrait: mask opens as it enters, then the photo drifts (parallax) inside its frame.
+  const { scrollYProgress } = useScroll({
+    target: portraitRef,
+    offset: ["start end", "end start"],
+  });
+  const photoY = useTransform(scrollYProgress, [0, 1], ["-7%", "7%"]);
+  const reveal = useTransform(scrollYProgress, [0.05, 0.38], [18, 0]);
+  const clip = useTransform(reveal, (v) => `inset(${v}% ${v}% ${v}% ${v}% round 14px)`);
 
   const facts = [
     { id: "location", label: t.about.facts.location, value: t.about.facts.locationValue },
@@ -57,22 +81,35 @@ export default function About() {
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5" data-reveal>
             <div className={`overflow-hidden p-4 ${CARD}`}>
-              <div className="relative aspect-4/3 w-full overflow-hidden rounded-[calc(var(--radius-card)-0.5rem)] bg-surface-2">
+              <motion.div
+                ref={portraitRef}
+                style={reduced ? undefined : { clipPath: clip }}
+                className="relative aspect-4/3 w-full overflow-hidden rounded-[calc(var(--radius-card)-0.5rem)] bg-surface-2"
+              >
                 {!imageError ? (
-                  <Image
-                    src="/images/avatar.jpeg"
-                    alt={t.about.portraitAlt}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 480px"
-                    onError={() => setImageError(true)}
-                    className="object-cover object-center transition-transform duration-700 ease-out-expo hover:scale-[1.03]"
-                  />
+                  <motion.div
+                    className="absolute -inset-y-[8%] inset-x-0"
+                    style={reduced ? undefined : { y: photoY }}
+                  >
+                    <Image
+                      src="/images/avatar.jpeg"
+                      alt={t.about.portraitAlt}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 480px"
+                      onError={() => setImageError(true)}
+                      className="object-cover object-center transition-transform duration-700 ease-out-expo hover:scale-[1.03]"
+                    />
+                  </motion.div>
                 ) : (
                   <div className="flex h-full w-full items-center justify-center font-display text-4xl font-bold text-ink-subtle">
                     Gabriel Paz
                   </div>
                 )}
-              </div>
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary-950/45 via-transparent to-transparent"
+                />
+              </motion.div>
               <div className="mt-4 flex items-center justify-between px-1 text-xs text-ink-muted">
                 <span className="font-medium text-ink">Gabriel Esteban Paz Guerrero</span>
                 <span className="font-mono">@itsGabo22</span>
@@ -81,6 +118,20 @@ export default function About() {
           </div>
 
           <div className="space-y-8 lg:col-span-7" data-reveal style={{ "--reveal-i": 1 } as React.CSSProperties}>
+            <dl className="grid grid-cols-3 gap-3">
+              {STATS.map((stat) => (
+                <div
+                  key={stat.key}
+                  className={`flex flex-col-reverse justify-end gap-1 p-4 sm:p-5 ${CARD}`}
+                >
+                  <dt className="text-xs leading-snug text-ink-muted">{t.about.stats[stat.key]}</dt>
+                  <dd className="font-display text-4xl font-extrabold leading-none tracking-tighter text-primary-ink sm:text-5xl">
+                    <CountUp value={stat.value} />
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
             <div className={`p-6 sm:p-8 ${CARD}`}>
               <p className="text-base leading-relaxed text-ink-muted sm:text-lg">
                 <Rich text={t.about.bio} />

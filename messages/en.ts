@@ -75,6 +75,11 @@ export const en: Messages = {
       goTo: "See in Beyond code:",
     },
     coreStack: "Core stack",
+    stats: {
+      projects: "Projects in the portfolio",
+      live: "Commercial platforms in production",
+      semester: "Software Engineering semester",
+    },
   },
   projects: {
     title: "Projects",

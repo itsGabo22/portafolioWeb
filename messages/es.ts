@@ -77,6 +77,11 @@ export const es = {
       goTo: "Ver en Fuera del código:",
     },
     coreStack: "Stack principal",
+    stats: {
+      projects: "Proyectos en el portafolio",
+      live: "Plataformas comerciales en producción",
+      semester: "Semestre de Ingeniería de Software",
+    },
   },
   projects: {
     title: "Proyectos",
