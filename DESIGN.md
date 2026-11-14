@@ -5,7 +5,7 @@ Fuente de verdad de los tokens: `app/globals.css` (variables CSS en `:root` / `.
 ## 1. Identidad
 
 - **Concepto:** "taller de un ingeniero que diseña". Superficies neutras de zinc, un único acento esmeralda que marca lo accionable y lo vivo, índigo como acento secundario escaso.
-- **Modo:** claro por defecto, oscuro conmutable (regla A de `AGENTS.md`). Cada token tiene pareja clara/oscura.
+- **Modo:** claro por defecto, oscuro conmutable (regla A de `AGENTS.md`). Cada token tiene pareja clara/oscura: los componentes usan tokens semánticos (`text-ink`, `bg-surface-1`, `border-line`…) definidos en `:root` y redefinidos en `.dark`, equivalentes al patrón `bg-white dark:bg-zinc-950` de la regla. **Excepciones documentadas:** las tres bandas del color primario (Experiencia, Contacto, Footer, §2.1) son verde profundo en ambos temas por diseño, y los moods de *Fuera del código* (§8) tienen paleta propia; la página sigue cargando en claro y el conmutador global no cambia.
 - **Dónde se gasta la audacia:** en tres momentos — el teclado 3D (Hero y Skills), el **Device Lab** (Projects) y el panel de moods de **Fuera del código**. Todo lo demás es sobrio.
 
 ## 2. Color
@@ -114,7 +114,7 @@ Reglas: un único sistema de revelado (`[data-reveal]`, se activa con `.reveal-a
 1. **Teclado:** vívido **solo** en `#hero` y `#skills`. En cualquier otra sección se *aparca*: opacidad 0 + `visibility:hidden` (transición 480 ms) y el render loop se pausa (`api.setPaused`). Nunca queda detrás de texto ni de tarjetas en 375/768/1280/1920. Los eventos de puntero/teclado no se reenvían al canvas aparcado.
 2. **Device Lab:** canvas propio (`@react-three/fiber`), importado dinámicamente (`ssr:false`) solo cuando la sección se acerca al viewport; `dpr` limitado a [1, 1.75]; `frameloop` pasa a `"never"` fuera de pantalla; canvas `aria-hidden`, nunca captura el scroll.
 3. **Fallbacks:** sin WebGL o equipo modesto (viewport < 768 px, `deviceMemory ≤ 4`, `hardwareConcurrency ≤ 4`) → maquetas 2D en CSS; `prefers-reduced-motion` → composición estática sin pinning.
-4. **Geometría procedural** preferida; GLB ≤ 300 KB, CC0/propios y acreditados en `public/CREDITS.md`.
+4. **Geometría procedural** preferida; GLB ≤ 300 KB, CC0, MIT o propios, acreditados en `public/CREDITS.md` (el Bongo Cat es un personaje de terceros incluido por decisión del autor).
 5. Como mucho dos contextos WebGL vivos a la vez, y nunca ambos renderizando: el teclado está aparcado mientras el Device Lab está en pantalla.
 
 ## 8. Moods de *Fuera del código*

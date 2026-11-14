@@ -70,6 +70,7 @@ function ProjectCard({
     >
       <span aria-hidden="true" className="project-card-glare" />
       <div>
+        {/* media frame stays dark in both themes: screenshots/placeholder sit on it edge to edge */}
         <div className={`relative w-full overflow-hidden bg-zinc-950 ${featured ? "aspect-[3/2] lg:aspect-[2/1]" : "aspect-[3/2]"}`}>
           {project.image && !imgError ? (
             <Image
