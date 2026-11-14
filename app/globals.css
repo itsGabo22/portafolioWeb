@@ -439,3 +439,14 @@ html {
   .project-card { transform: none; }
   .project-card-glare { display: none; }
 }
+
+/* Testimonials auto-advance progress (paused/hidden when not running) */
+@keyframes testimonial-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.testimonial-progress {
+  animation-name: testimonial-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
