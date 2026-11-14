@@ -1,0 +1,7 @@
+# Netlify builds Next.js through its OpenNext adapter (auto-installed when the
+# framework is detected). The site's UI settings have no build command, so it
+# must be declared here or Netlify publishes the raw repository unbuilt.
+# No `output: "export"` and no pinned @netlify/plugin-nextjs on purpose.
+[build]
+  command = "npm run build"
+  publish = ".next"
