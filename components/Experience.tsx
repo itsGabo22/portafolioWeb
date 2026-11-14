@@ -463,9 +463,9 @@ function TimelineTrack({
                 </span>
               </div>
 
-              <h4 className="font-display text-xl font-bold tracking-tight text-zinc-50">
+              <h3 className="font-display text-xl font-bold tracking-tight text-zinc-50">
                 {item.title[lang]}
-              </h4>
+              </h3>
               <div className="mt-1 flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-300">
                 <span>{item.organization[lang]}</span>
                 {item.url && (
