@@ -29,7 +29,7 @@ import { createKeyInput, isTypingTarget } from "./keyboard/input";
 import {
   createKeyboardMotion,
   detectKeyboardSection,
-  isVividSection,
+  isKeyboardVivid,
   type KeyboardSection,
 } from "./keyboard/motion";
 import { useKeyboardSounds } from "./keyboard/use-keyboard-sounds";
@@ -96,28 +96,46 @@ export default function InteractiveKeyboard3D() {
   const [loadVersion, setLoadVersion] = useState(0);
   const ready = loadVersion > 0;
   const [section, setSection] = useState<KeyboardSection>("hero");
-  const vivid = isVividSection(section);
-  const vividRef = useRef(true);
+  const [vivid, setVivid] = useState(false);
+  const vividRef = useRef(false);
 
-  // Park/unpark from the scroll position even before the 3D scene has loaded.
+  // Park/unpark from the live layout, independent of the 3D scene loading.
+  // Re-checked on scroll, scroll end, resize, hash jumps and whenever the page
+  // height changes (lazily mounted sections move everything below them).
   useEffect(() => {
     let raf = 0;
+    let settle = 0;
     const sync = () => {
       raf = 0;
       const next = detectKeyboardSection();
-      vividRef.current = isVividSection(next);
+      const nextVivid = isKeyboardVivid(next);
+      if (vividRef.current !== nextVivid) {
+        vividRef.current = nextVivid;
+        motion.current?.setParked(!nextVivid);
+      }
+      setVivid(nextVivid);
       setSection((prev) => (prev === next ? prev : next));
     };
-    const onScroll = () => {
+    const schedule = () => {
       if (!raf) raf = window.requestAnimationFrame(sync);
+      window.clearTimeout(settle);
+      settle = window.setTimeout(sync, 160);
     };
-    raf = window.requestAnimationFrame(sync);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("scrollend", schedule);
+    window.addEventListener("resize", schedule);
+    window.addEventListener("hashchange", schedule);
+    const resizeObserver = new ResizeObserver(schedule);
+    resizeObserver.observe(document.body);
     return () => {
       window.cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.clearTimeout(settle);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("scrollend", schedule);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("hashchange", schedule);
+      resizeObserver.disconnect();
     };
   }, []);
   const [selected, setSelected] = useState<KeyboardSkill | null>(null);
@@ -416,14 +434,14 @@ export default function InteractiveKeyboard3D() {
   useEffect(() => {
     if (!ready || !api.current) return;
     const controller = createKeyboardMotion(api.current, scene, (next) => {
-      vividRef.current = isVividSection(next);
-      if (!vividRef.current) {
+      if (!isKeyboardVivid(next)) {
         input.releaseAll();
         setSelected(null);
       }
       setSection(next);
     });
     motion.current = controller;
+    controller.setParked(!vividRef.current);
     controller.setCounterEnabled(true);
     controller.reveal();
     return () => {

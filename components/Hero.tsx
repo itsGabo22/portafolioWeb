@@ -198,7 +198,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Right Column: Open Spatial Stage for Interactive 3D Mechanical Keyboard */}
-          <div className="pointer-events-none relative min-h-[340px] lg:col-span-5 lg:min-h-[540px]" />
+          <div className="pointer-events-none relative hidden lg:col-span-5 lg:block lg:min-h-[540px]" />
         </div>
 
         {/* Minimalist Scroll Down Indicator */}

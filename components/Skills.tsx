@@ -151,8 +151,9 @@ export default function Skills() {
 
         {/* Open Stage for the Center-Stage 3D Mechanical Keyboard */}
         <div
+          id="skills-stage"
           aria-hidden="true"
-          className="pointer-events-none h-[400px] sm:h-[480px] lg:h-[540px] w-full"
+          className="pointer-events-none h-[85vh] min-h-[420px] w-full"
         />
 
         {/* Editorial Header & Clean Filter Pill Bar */}

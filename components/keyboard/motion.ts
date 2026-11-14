@@ -18,6 +18,25 @@ export type KeyboardSection =
 export const VIVID_SECTIONS: readonly KeyboardSection[] = ["hero", "skills"];
 export const isVividSection = (s: KeyboardSection) => VIVID_SECTIONS.includes(s);
 
+/**
+ * Whether the keyboard may be drawn right now without sitting behind text:
+ * - #hero only on wide layouts (>=1024px), where the copy and the keyboard
+ *   occupy separate columns; on single-column layouts it would cover the bio.
+ * - #skills only while its empty stage (#skills-stage) is centred in the
+ *   viewport, so the heading above and the cards below stay clear.
+ */
+export function isKeyboardVivid(section: KeyboardSection): boolean {
+  if (typeof window === "undefined") return false;
+  if (section === "hero") return window.innerWidth >= 1024;
+  if (section !== "skills") return false;
+  const stage = document.getElementById("skills-stage");
+  if (!stage) return false;
+  const rect = stage.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const offset = rect.top + rect.height / 2 - vh / 2;
+  return Math.abs(offset) < vh * 0.12 && rect.height >= vh * 0.7;
+}
+
 const SECTION_ORDER: readonly KeyboardSection[] = [
   "hero",
   "about",
@@ -300,7 +319,7 @@ export function createKeyboardMotion(
 
     updateVisibilityForSection(next);
     syncKeyAnimations(immediate);
-    setParked(!isVividSection(next));
+
   };
 
   // Continuous, gentle breathing float that composes additively
@@ -386,6 +405,8 @@ export function createKeyboardMotion(
   document.addEventListener("visibilitychange", onVisibility);
 
   return {
+    /** Parking is decided by the component from the live layout (see isKeyboardVivid). */
+    setParked,
     setCounterEnabled(enabled: boolean) {
       if (disposed || enabled === counterEnabled) return;
       counterEnabled = enabled;
