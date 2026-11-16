@@ -5,11 +5,11 @@ export interface BilingualText {
 
 /**
  * UI groups:
- * - "interface-design": the Diseño de Interfaces class apps (featured, Device Lab)
- * - "academic": other UCC coursework
+ * - "multiplatform": the four apps shown in the Device Lab (featured)
+ * - "academic": other academic projects
  * - "commercial": client / VICARDEV production work
  */
-export type ProjectCategory = "interface-design" | "academic" | "commercial";
+export type ProjectCategory = "multiplatform" | "academic" | "commercial";
 /** Decides the demo button label: live site, recorded video, downloadable build, or README. */
 export type DemoType = "live" | "video" | "release" | "readme";
 export type ProjectStatus = "completed" | "in-progress";
@@ -58,7 +58,7 @@ export const projects: Project[] = [
       es: "Proyecto Académico UCC · App Móvil & IA",
       en: "UCC Academic Project · Mobile App & AI",
     },
-    category: "interface-design",
+    category: "multiplatform",
     demoType: "readme",
     status: "completed",
     platform: "mobile",
@@ -83,7 +83,7 @@ export const projects: Project[] = [
       es: "Proyecto Académico UCC · App Desktop & IA",
       en: "UCC Academic Project · Desktop App & AI",
     },
-    category: "interface-design",
+    category: "multiplatform",
     demoType: "readme",
     status: "completed",
     platform: "desktop",
@@ -105,10 +105,10 @@ export const projects: Project[] = [
       en: "WGO (Where We Go?) — Voice Navigator for Wear OS",
     },
     tagline: {
-      es: "Proyecto Diseño de Interfaces · Smartwatch",
-      en: "Interface Design Project · Smartwatch",
+      es: "Proyecto Académico UCC · Smartwatch",
+      en: "UCC Academic Project · Smartwatch",
     },
-    category: "interface-design",
+    category: "multiplatform",
     demoType: "video",
     status: "completed",
     platform: "smartwatch",
@@ -131,10 +131,10 @@ export const projects: Project[] = [
       en: "Nexo: Protocolo Sombra — 3D Video Game",
     },
     tagline: {
-      es: "Proyecto Diseño de Interfaces · Videojuego en equipo",
-      en: "Interface Design Project · Team Video Game",
+      es: "Proyecto Académico UCC · Videojuego en equipo",
+      en: "UCC Academic Project · Team Video Game",
     },
-    category: "interface-design",
+    category: "multiplatform",
     demoType: "readme",
     status: "completed",
     platform: "game",

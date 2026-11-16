@@ -189,7 +189,7 @@ function ProjectGroup({
 export default function Projects({ media = {} }: { media?: MediaManifest }) {
   const t = useT();
 
-  const designProjects = projects.filter((p) => p.category === "interface-design");
+  const designProjects = projects.filter((p) => p.category === "multiplatform");
   const academicProjects = projects.filter((p) => p.category === "academic");
   const commercialProjects = projects.filter((p) => p.category === "commercial");
 

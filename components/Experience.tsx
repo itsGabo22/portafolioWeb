@@ -222,8 +222,8 @@ const ACADEMIC_EXPERIENCE: TimelineItem[] = [
       en: "Universidad Cooperativa de Colombia (UCC), Campus Pasto",
     },
     description: {
-      es: "Formación universitaria enfocada en arquitectura de software, estructuras de datos, ingeniería de requisitos, bases de datos espaciales/relacionales, diseño de interfaces y sistemas distribuidos.",
-      en: "University degree focused on software architecture, data structures, requirements engineering, relational/spatial databases, interface design, and distributed systems.",
+      es: "Formación universitaria enfocada en arquitectura de software, estructuras de datos, ingeniería de requisitos, bases de datos espaciales/relacionales, UX/UI y sistemas distribuidos.",
+      en: "University degree focused on software architecture, data structures, requirements engineering, relational/spatial databases, UX/UI, and distributed systems.",
     },
     highlights: ["Java 17", "Spring Boot", "PostgreSQL", "TypeScript", "Git"],
   },
