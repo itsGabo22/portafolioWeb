@@ -1,8 +1,10 @@
 "use client";
 
-import { ArrowUpRight, CircleCheck, CircleDashed, Clock, Lock } from "lucide-react";
+import { ArrowUpRight, CircleCheck, CircleDashed, Clock, Download, Lock } from "lucide-react";
 import type { Project } from "@/data/projects";
 import { isTodo } from "@/data/projects";
+import { RELEASE_LINKS } from "@/data/release-links";
+import { useApp } from "@/context/AppContext";
 import { useT } from "@/messages";
 import { GitHubIcon } from "../icons";
 
@@ -45,6 +47,8 @@ const primaryButton =
 /** GitHub + demo actions shared by the project cards and the Device Lab panel. */
 export function ProjectActions({ project }: { project: Project }) {
   const t = useT();
+  const { lang } = useApp();
+  const release = RELEASE_LINKS[project.id];
   const privateCode = project.nda || project.privateRepo || !project.github;
 
   return (
@@ -82,6 +86,12 @@ export function ProjectActions({ project }: { project: Project }) {
           <span className="sr-only"> {t.common.newTab}</span>
         </a>
       )}
+      {release?.url ? (
+        <a href={release.url} rel="noopener noreferrer" className={`${secondaryButton} col-span-2`}>
+          <Download className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span className="truncate">{release.label[lang]}</span>
+        </a>
+      ) : null}
     </div>
   );
 }
