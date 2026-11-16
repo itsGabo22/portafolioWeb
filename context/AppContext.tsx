@@ -8,6 +8,8 @@ import React, {
   useState,
   useSyncExternalStore,
 } from "react";
+import { es } from "@/messages/es";
+import { en } from "@/messages/en";
 
 export type Theme = "light" | "dark";
 export type Language = "es" | "en";
@@ -25,6 +27,9 @@ interface AppContextValue {
   sceneReady: boolean;
   setSceneReady: (ready: boolean) => void;
 }
+
+const ES_TITLE = es.meta.title;
+const EN_TITLE = en.meta.title;
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
@@ -115,9 +120,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [theme]);
 
-  // Sincronizar el atributo lang del DOM externo (<html>) con el idioma activo
+  // Sincronizar <html lang> y el título del documento con el idioma activo
   useEffect(() => {
     document.documentElement.lang = lang;
+    const wanted = lang === "en" ? EN_TITLE : ES_TITLE;
+    const apply = () => {
+      if (document.title !== wanted) document.title = wanted;
+    };
+    apply();
+    // Next.js applies the (Spanish) metadata title after hydration; keep ours.
+    const observer = new MutationObserver(apply);
+    observer.observe(document.head, { subtree: true, childList: true, characterData: true });
+    return () => observer.disconnect();
   }, [lang]);
 
   const setTheme = useCallback((newTheme: Theme) => {

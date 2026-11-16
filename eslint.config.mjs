@@ -13,6 +13,9 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     "naresh_ref/**",
+    // Local agent tooling (design skills installed per developer, not part of the app):
+    ".claude/**",
+    ".agents/**",
   ]),
 ]);
 

@@ -106,6 +106,8 @@ type TargetMagnetState = {
 export default function CustomCursor() {
   const isClient = useIsClient();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const finePointer = useMediaQuery("(pointer: fine)");
+  const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 
   const jellyRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
@@ -131,7 +133,8 @@ export default function CustomCursor() {
   const cursorMovedRef = useRef(false);
   const setRef = useRef<Setters>({});
 
-  const isDesktop = isClient && !isMobile;
+  // Custom cursor + magnetic pull only for precise pointers and when motion is welcome.
+  const isDesktop = isClient && !isMobile && finePointer && !reducedMotion;
 
   useLayoutEffect(() => {
     if (!isDesktop) return;

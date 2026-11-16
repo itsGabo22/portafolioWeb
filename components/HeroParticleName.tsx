@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { useApp } from "@/context/AppContext";
+import { useT } from "@/messages";
 
 interface DustParticle {
   ox: number;
@@ -19,7 +20,8 @@ interface DustParticle {
 }
 
 export default function HeroParticleName() {
-  const { theme, lang } = useApp();
+  const { theme } = useApp();
+  const t = useT();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fontProbeRef = useRef<HTMLSpanElement>(null);
@@ -59,7 +61,7 @@ export default function HeroParticleName() {
           return computed;
         }
       }
-      return '"Space Grotesk", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      return '"Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
     };
 
     const buildScene = () => {
@@ -399,11 +401,7 @@ export default function HeroParticleName() {
     <div
       ref={containerRef}
       className="relative w-full max-w-[650px] select-none"
-      title={
-        lang === "es"
-          ? "Pasa el cursor sobre las letras para desintegrarlas en partículas"
-          : "Move cursor across the letters to disintegrate into quantum dust"
-      }
+      title={t.hero.particleHint}
     >
       {/* Hidden probe to resolve --font-space-grotesk actual font-family name for HTML5 Canvas */}
       <span

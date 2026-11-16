@@ -1,11 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { useApp } from "@/context/AppContext";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { projects } from "@/data/projects";
+import { useReducedMotion } from "@/lib/capabilities";
+import CountUp from "./CountUp";
+import { Disc3, Gamepad2, Ticket } from "lucide-react";
+import { useT } from "@/messages";
+import Rich from "./Rich";
 import TechBadge from "./TechBadge";
-import TiltSurface from "./TiltSurface";
+import SectionEyebrow from "./SectionEyebrow";
 
 const TECH_STACK_PILLS = [
   "JavaScript",
@@ -22,217 +27,159 @@ const TECH_STACK_PILLS = [
   "AWS",
 ];
 
-const GLASS_CARD_CLASS =
-  "rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 ring-1 ring-zinc-900/[0.06] shadow-[0_12px_40px_-12px_rgba(15,23,42,0.08),inset_0_1px_0_0_rgba(255,255,255,0.9)] dark:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl backdrop-saturate-150";
+const CARD =
+  "rounded-card border border-line bg-surface-1/80 shadow-elev-1 backdrop-blur-xl";
+
+const INTERESTS = [
+  { key: "music", hash: "#beyond-music", icon: Disc3 },
+  { key: "games", hash: "#beyond-games", icon: Gamepad2 },
+  { key: "club", hash: "#beyond-club", icon: Ticket },
+] as const;
+
+// Quick facts derived from data (no self-reported numbers).
+const STATS = [
+  { key: "projects", value: projects.length },
+  {
+    key: "live",
+    value: projects.filter((p) => p.category === "commercial" && p.platform === "web").length,
+  },
+  { key: "semester", value: 5 },
+] as const;
 
 export default function About() {
-  const { lang } = useApp();
+  const t = useT();
   const [imageError, setImageError] = useState(false);
+  const reduced = useReducedMotion();
+  const portraitRef = useRef<HTMLDivElement>(null);
+  // Portrait: mask opens as it enters, then the photo drifts (parallax) inside its frame.
+  const { scrollYProgress } = useScroll({
+    target: portraitRef,
+    offset: ["start end", "end start"],
+  });
+  const photoY = useTransform(scrollYProgress, [0, 1], ["-7%", "7%"]);
+  const reveal = useTransform(scrollYProgress, [0.05, 0.38], [18, 0]);
+  const clip = useTransform(reveal, (v) => `inset(${v}% ${v}% ${v}% ${v}% round 14px)`);
 
-  const quickFacts = [
-    {
-      id: "location",
-      label: { es: "Ubicación", en: "Location" },
-      value: {
-        es: "Pasto, Nariño, Colombia",
-        en: "Pasto, Nariño, Colombia",
-      },
-    },
-    {
-      id: "semester",
-      label: { es: "Educación", en: "Education" },
-      value: {
-        es: "5.º Semestre — Ingeniería de Software (UCC)",
-        en: "5th Semester — Software Engineering (UCC)",
-      },
-    },
-    {
-      id: "agency",
-      label: { es: "Marca Fundada", en: "Founded Brand" },
-      value: {
-        es: "VICARDEV (vicardev.digital)",
-        en: "VICARDEV (vicardev.digital)",
-      },
-    },
-    {
-      id: "interests",
-      label: { es: "Enfoque Técnico", en: "Technical Focus" },
-      value: {
-        es: "Arquitectura Cloud, E-Commerce, IA & Automatización",
-        en: "Cloud Architecture, E-Commerce, AI & Automation",
-      },
-    },
+  const facts = [
+    { id: "location", label: t.about.facts.location, value: t.about.facts.locationValue },
+    { id: "education", label: t.about.facts.education, value: t.about.facts.educationValue },
+    { id: "brand", label: t.about.facts.brand, value: t.about.facts.brandValue },
+    { id: "focus", label: t.about.facts.focus, value: t.about.facts.focusValue },
   ];
 
   return (
-    <section
-      id="about"
-      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
-    >
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Clean Monumental Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.45 }}
-          className="mb-16 text-center"
-        >
-          <h2 className="font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-6xl">
-            {lang === "es" ? "Sobre mí" : "About Me"}
+    <section id="about" className="relative overflow-hidden border-t border-line py-24 sm:py-32">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-16 text-center" data-reveal>
+            <SectionEyebrow id="about" />
+          <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
+            {t.about.title}
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
-            {lang === "es"
-              ? "Ingeniería de software, arquitectura escalable y productos digitales en producción."
-              : "Software engineering, scalable architecture, and digital products in live production."}
-          </p>
-        </motion.div>
+          <p className="mx-auto mt-4 max-w-2xl text-base text-ink-muted">{t.about.subtitle}</p>
+        </div>
 
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
-          {/* Left Column: 3D-Tilted Portrait Frame with Frosted Glass */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-5"
-          >
-            <TiltSurface maxTilt={7}>
-              <div className={`overflow-hidden p-4 ${GLASS_CARD_CLASS}`}>
-                <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-950">
-                  {!imageError ? (
+          <div className="lg:col-span-5" data-reveal>
+            <div className={`overflow-hidden p-4 ${CARD}`}>
+              <motion.div
+                ref={portraitRef}
+                style={reduced ? undefined : { clipPath: clip }}
+                className="relative aspect-4/3 w-full overflow-hidden rounded-[calc(var(--radius-card)-0.5rem)] bg-surface-2"
+              >
+                {!imageError ? (
+                  <motion.div
+                    className="absolute -inset-y-[8%] inset-x-0"
+                    style={reduced ? undefined : { y: photoY }}
+                  >
                     <Image
                       src="/images/avatar.jpeg"
-                      alt={
-                        lang === "es"
-                          ? "Gabriel Esteban Paz Guerrero — Ingeniería de Software"
-                          : "Gabriel Esteban Paz Guerrero — Software Engineering"
-                      }
+                      alt={t.about.portraitAlt}
                       fill
                       sizes="(max-width: 1024px) 100vw, 480px"
                       onError={() => setImageError(true)}
-                      className="object-cover object-center transition-transform duration-700 hover:scale-105"
+                      className="object-cover object-center transition-transform duration-700 ease-out-expo hover:scale-[1.03]"
                     />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center font-display text-4xl font-bold text-zinc-400">
-                      Gabriel Paz
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-4 flex items-center justify-between px-1 text-xs text-zinc-500 dark:text-zinc-400">
-                  <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                    Gabriel Esteban Paz Guerrero
-                  </span>
-                  <span className="font-mono">@itsGabo22</span>
-                </div>
-              </div>
-            </TiltSurface>
-          </motion.div>
-
-          {/* Right Column: Editorial Bio + Minimalist Facts + Real SVG Tech Stack */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="lg:col-span-7 space-y-8"
-          >
-            <TiltSurface maxTilt={4}>
-              <div className={`p-6 sm:p-8 ${GLASS_CARD_CLASS}`}>
-                <p className="text-base sm:text-lg leading-relaxed text-zinc-700 dark:text-zinc-300">
-                  {lang === "es" ? (
-                    <>
-                      Soy estudiante de 5.º semestre de Ingeniería de Software
-                      en la Universidad Cooperativa de Colombia (UCC),
-                      desarrollador Full-Stack y fundador de{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        VICARDEV
-                      </strong>
-                      . Diseño arquitecturas web de alto rendimiento, tiendas de
-                      comercio electrónico en producción para clientes como{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        Brisal
-                      </strong>
-                      ,{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        Blue Velvet
-                      </strong>
-                      ,{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        Carlin Cosméticos
-                      </strong>{" "}
-                      y{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        ElectroTech Pasto
-                      </strong>
-                      , además de integraciones de inteligencia artificial que
-                      convierten problemas reales en productos escalables.
-                    </>
-                  ) : (
-                    <>
-                      I am a 5th-semester Software Engineering student at
-                      Universidad Cooperativa de Colombia (UCC), a Full-Stack
-                      Developer, and the founder of{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        VICARDEV
-                      </strong>
-                      . I architect high-performance web systems and live
-                      production e-commerce platforms for clients including{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        Brisal
-                      </strong>
-                      ,{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        Blue Velvet
-                      </strong>
-                      ,{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        Carlin Cosmetics
-                      </strong>
-                      , and{" "}
-                      <strong className="font-semibold text-zinc-950 dark:text-white">
-                        ElectroTech Pasto
-                      </strong>
-                      , alongside artificial intelligence integrations that turn
-                      real-world challenges into scalable products.
-                    </>
-                  )}
-                </p>
-
-                {/* Clean Typographic Facts Grid */}
-                <div className="mt-8 grid grid-cols-1 gap-6 border-t border-zinc-300/60 dark:border-zinc-800/80 pt-6 sm:grid-cols-2">
-                  {quickFacts.map((fact) => (
-                    <div key={fact.id} className="space-y-1">
-                      <div className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                        {fact.label[lang]}
-                      </div>
-                      <div className="font-display text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                        {fact.value[lang]}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </TiltSurface>
-
-            {/* Real Vector SVG Tech Stack Badges */}
-            <div className="space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
-                {lang === "es" ? "Stack Principal" : "Core Stack"}
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {TECH_STACK_PILLS.map((tech) => (
-                  <TechBadge
-                    key={tech}
-                    name={tech}
-                    size="sm"
-                    interactive
-                  />
-                ))}
+                  </motion.div>
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center font-display text-4xl font-bold text-ink-subtle">
+                    Gabriel Paz
+                  </div>
+                )}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary-950/45 via-transparent to-transparent"
+                />
+              </motion.div>
+              <div className="mt-4 flex items-center justify-between px-1 text-xs text-ink-muted">
+                <span className="font-medium text-ink">Gabriel Esteban Paz Guerrero</span>
+                <span className="font-mono">@itsGabo22</span>
               </div>
             </div>
-          </motion.div>
+          </div>
+
+          <div className="space-y-8 lg:col-span-7" data-reveal style={{ "--reveal-i": 1 } as React.CSSProperties}>
+            <dl className="grid grid-cols-3 gap-3">
+              {STATS.map((stat) => (
+                <div
+                  key={stat.key}
+                  className={`flex flex-col-reverse justify-end gap-1 p-4 sm:p-5 ${CARD}`}
+                >
+                  <dt className="text-xs leading-snug text-ink-muted">{t.about.stats[stat.key]}</dt>
+                  <dd className="font-display text-4xl font-extrabold leading-none tracking-tighter text-primary-ink sm:text-5xl">
+                    <CountUp value={stat.value} />
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <div className={`p-6 sm:p-8 ${CARD}`}>
+              <p className="text-base leading-relaxed text-ink-muted sm:text-lg">
+                <Rich text={t.about.bio} />
+              </p>
+
+              <dl className="mt-8 grid grid-cols-1 gap-6 border-t border-line pt-6 sm:grid-cols-2">
+                {facts.map((fact) => (
+                  <div key={fact.id} className="space-y-1">
+                    <dt className="text-xs font-medium text-ink-subtle">{fact.label}</dt>
+                    <dd className="font-display text-sm font-semibold text-ink">{fact.value}</dd>
+                  </div>
+                ))}
+                <div className="space-y-2 sm:col-span-2">
+                  <dt className="text-xs font-medium text-ink-subtle">{t.about.facts.interests}</dt>
+                  <dd>
+                    <ul className="flex flex-wrap gap-2">
+                      {INTERESTS.map(({ key, hash, icon: Icon }) => (
+                        <li key={key}>
+                          <a
+                            href={hash}
+                            aria-label={`${t.about.interests.goTo} ${t.about.interests[key]}`}
+                            className="cursor-can-hover group inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface-2 px-4 py-2 text-sm font-semibold text-ink transition-[border-color,background-color,transform] duration-200 ease-out-expo hover:-translate-y-0.5 hover:border-primary-line hover:bg-primary-soft"
+                          >
+                            <Icon
+                              className="h-4 w-4 text-primary-ink transition-transform duration-300 group-hover:rotate-12"
+                              aria-hidden="true"
+                            />
+                            <span>{t.about.interests[key]}</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-ink-muted">{t.about.coreStack}</h3>
+              <ul className="flex flex-wrap gap-2">
+                {TECH_STACK_PILLS.map((tech) => (
+                  <li key={tech}>
+                    <TechBadge name={tech} size="sm" interactive />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </section>

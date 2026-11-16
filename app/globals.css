@@ -2,24 +2,197 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ─────────────────────────────────────────────────────────────
+   Design tokens — see DESIGN.md. Components consume these through
+   the Tailwind theme (bg-surface, text-ink, rounded-card, ease-out-expo…)
+   or directly as var(--token). No raw hex values in components.
+   ───────────────────────────────────────────────────────────── */
+
+/* Mood variables are registered so the Beyond panel can morph them smoothly */
+@property --mood-bg { syntax: "<color>"; inherits: true; initial-value: #0b1210; }
+@property --mood-surface { syntax: "<color>"; inherits: true; initial-value: #121c19; }
+@property --mood-fg { syntax: "<color>"; inherits: true; initial-value: #ecfdf5; }
+@property --mood-muted { syntax: "<color>"; inherits: true; initial-value: #a7c4b8; }
+@property --mood-accent { syntax: "<color>"; inherits: true; initial-value: #34d399; }
+@property --mood-accent-2 { syntax: "<color>"; inherits: true; initial-value: #6366f1; }
+@property --mood-line { syntax: "<color>"; inherits: true; initial-value: #24443a; }
+
 :root {
-  --background: #f8fafc;
-  --foreground: #09090b;
-  --accent-emerald: #10b981;
-  --accent-indigo: #6366f1;
+  /* PRIMARY — deep forest green (DESIGN.md §2.1). One perceptual scale in
+     OKLCH driven by a single hue: change --primary-hue (158 = forest green,
+     ~255 = deep blue) and every primary token follows, keeping WCAG AA. */
+  --primary-hue: 158;
+  --primary-50: oklch(0.975 0.015 var(--primary-hue));
+  --primary-100: oklch(0.937 0.036 var(--primary-hue));
+  --primary-200: oklch(0.875 0.067 var(--primary-hue));
+  --primary-300: oklch(0.787 0.101 var(--primary-hue));
+  --primary-400: oklch(0.692 0.124 var(--primary-hue));
+  --primary-500: oklch(0.603 0.125 var(--primary-hue));
+  --primary-600: oklch(0.516 0.108 var(--primary-hue));
+  --primary-700: oklch(0.449 0.092 var(--primary-hue));
+  --primary-800: oklch(0.383 0.075 var(--primary-hue));
+  --primary-900: oklch(0.330 0.061 var(--primary-hue));
+  --primary-950: oklch(0.231 0.039 var(--primary-hue));
+  /* semantic aliases — light theme */
+  --primary: var(--primary-700);          /* CTA fill: white text 7.1:1 */
+  --primary-strong: var(--primary-800);   /* CTA hover/pressed */
+  --on-primary: #ffffff;
+  --primary-ink: var(--primary-700);      /* primary-coloured text/links: 6.8:1 on #fafafa */
+  --primary-soft: color-mix(in oklch, var(--primary-600) 11%, transparent); /* chip/tag wash */
+  --primary-line: color-mix(in oklch, var(--primary-600) 35%, transparent);
+
+  /* colour — light (default) */
+  --surface-0: #fafafa;          /* page */
+  --surface-1: #ffffff;          /* cards */
+  --surface-2: #f4f4f5;          /* insets, chips */
+  --ink: #18181b;                /* primary text  17.7:1 on surface-1 */
+  --ink-muted: #52525b;          /* secondary     7.7:1 */
+  --ink-subtle: #71717a;         /* tertiary      4.8:1 (≥14px only) */
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --accent: #047857;             /* emerald-700 text/links 5.5:1 */
+  --accent-strong: #065f46;
+  --accent-fill: #10b981;        /* emerald-500 fills, rings, glows */
+  --accent-soft: rgb(16 185 129 / 0.1);
+  --accent-2: #4f46e5;           /* indigo-600 secondary accent 6.3:1 */
+  --focus-ring: var(--primary-700); /* 7.1:1 vs white (WCAG 1.4.11) */
+  --warn: #b45309;               /* amber-700, "in progress" 5.0:1 */
+  --warn-soft: rgb(245 158 11 / 0.12);
+  --danger: #b91c1c;
+  --scrim: rgb(250 250 250 / 0.72);
+
+  /* type — two families: display + text (mono falls back to the system stack) */
+  --text-display: clamp(2.6rem, 1.4rem + 5.2vw, 5.25rem);
+  --text-h2: clamp(2.25rem, 1.2rem + 4.4vw, 4.5rem);
+  --text-h3: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --text-lead: clamp(1.05rem, 0.98rem + 0.35vw, 1.25rem);
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-micro: 0.75rem;
+  --leading-tight: 1.05;
+  --leading-body: 1.6;
+
+  /* spacing rhythm (4px base) */
+  --space-section: clamp(5rem, 3.5rem + 6vw, 9rem);
+  --space-gutter: clamp(1rem, 0.6rem + 1.6vw, 2rem);
+
+  /* radii — hierarchy, not one radius everywhere */
+  --radius-chip: 0.5rem;
+  --radius-control: 0.75rem;
+  --radius-card: 1.25rem;
+  --radius-stage: 2rem;
+
+  /* elevation */
+  --shadow-1: 0 1px 2px rgb(24 24 27 / 0.06), 0 1px 1px rgb(24 24 27 / 0.04);
+  --shadow-2: 0 8px 24px -8px rgb(24 24 27 / 0.14), 0 2px 6px rgb(24 24 27 / 0.06);
+  --shadow-3: 0 24px 60px -20px rgb(24 24 27 / 0.28), 0 6px 16px rgb(24 24 27 / 0.08);
+  --glow-accent: 0 0 0 1px rgb(16 185 129 / 0.35), 0 10px 40px -12px rgb(16 185 129 / 0.45);
+
+  /* motion */
+  --dur-instant: 90ms;
+  --dur-fast: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 520ms;
+  --dur-mood: 700ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* layers */
+  --z-scene: 1;
+  --z-content: 10;
+  --z-nav: 50;
+  --z-overlay: 80;
 }
 
 .dark {
-  --background: #09090b;
-  --foreground: #fafafa;
+  --surface-0: #09090b;
+  --surface-1: #18181b;
+  --surface-2: #27272a;
+  --ink: #fafafa;                /* 19.1:1 on surface-0 */
+  --ink-muted: #d4d4d8;          /* 13.5:1 */
+  --ink-subtle: #a1a1aa;         /* 7.8:1 */
+  --line: #27272a;
+  --line-strong: #3f3f46;
+  --accent: #34d399;             /* emerald-400 10.4:1 */
+  --accent-strong: #6ee7b7;
+  --accent-fill: #10b981;
+  --accent-soft: rgb(16 185 129 / 0.14);
+  --accent-2: #818cf8;           /* indigo-400 6.7:1 */
+  --focus-ring: var(--primary-300);
+  --primary: var(--primary-600);          /* CTA fill: white text 5.3:1 */
+  --primary-strong: var(--primary-700);
+  --primary-ink: var(--primary-300);      /* 10.6:1 on zinc-950, 9.4:1 on zinc-900 */
+  --primary-soft: color-mix(in oklch, var(--primary-400) 15%, transparent);
+  --primary-line: color-mix(in oklch, var(--primary-400) 35%, transparent);
+  --warn: #fbbf24;
+  --warn-soft: rgb(251 191 36 / 0.12);
+  --danger: #f87171;
+  --scrim: rgb(9 9 11 / 0.72);
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 10px 30px -10px rgb(0 0 0 / 0.6);
+  --shadow-3: 0 30px 70px -24px rgb(0 0 0 / 0.75);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  --color-background: var(--surface-0);
+  --color-foreground: var(--ink);
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-2: var(--accent-2);
+  --color-primary-50: var(--primary-50);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-400: var(--primary-400);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-800: var(--primary-800);
+  --color-primary-900: var(--primary-900);
+  --color-primary-950: var(--primary-950);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-on-primary: var(--on-primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-line: var(--primary-line);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-mood-bg: var(--mood-bg);
+  --color-mood-surface: var(--mood-surface);
+  --color-mood-fg: var(--mood-fg);
+  --color-mood-muted: var(--mood-muted);
+  --color-mood-accent: var(--mood-accent);
+  --color-mood-line: var(--mood-line);
+
+  --font-sans: var(--font-text), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), var(--font-text), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Code", Consolas, monospace;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+
+  --radius-chip: var(--radius-chip);
+  --radius-control: var(--radius-control);
+  --radius-card: var(--radius-card);
+  --radius-stage: var(--radius-stage);
+
+  --shadow-elev-1: var(--shadow-1);
+  --shadow-elev-2: var(--shadow-2);
+  --shadow-elev-3: var(--shadow-3);
+  --shadow-glow: var(--glow-accent);
+
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-spring: var(--ease-spring);
 }
 
 html {
@@ -31,31 +204,35 @@ html.dark {
   color-scheme: dark;
 }
 
+/* Sticky navbar offset so anchored sections are not hidden under it */
+section[id],
+footer[id] {
+  scroll-margin-top: 4.5rem;
+}
+
 body {
-  background-color: var(--background);
+  background-color: var(--surface-0);
   background-image:
-    radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.08), transparent 44%),
-    radial-gradient(circle at 16% 78%, rgba(99, 102, 241, 0.07), transparent 46%),
-    linear-gradient(180deg, #ffffff 0%, #f4f4f5 52%, #fafafa 100%);
+    radial-gradient(circle at 82% 18%, rgb(16 185 129 / 0.08), transparent 44%),
+    radial-gradient(circle at 16% 78%, rgb(99 102 241 / 0.07), transparent 46%);
   background-attachment: fixed;
-  color: var(--foreground);
-  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink);
+  font-family: var(--font-text), ui-sans-serif, system-ui, sans-serif;
   overflow-x: hidden;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color var(--dur-base) ease, color var(--dur-base) ease;
 }
 
 html.dark body {
   background-image:
-    radial-gradient(circle at 82% 18%, rgba(16, 185, 129, 0.09), transparent 44%),
-    radial-gradient(circle at 16% 78%, rgba(99, 102, 241, 0.08), transparent 46%),
-    linear-gradient(180deg, #09090b 0%, #09090b 100%);
+    radial-gradient(circle at 82% 18%, rgb(16 185 129 / 0.09), transparent 44%),
+    radial-gradient(circle at 16% 78%, rgb(99 102 241 / 0.08), transparent 46%);
 }
 
-/* Canvas Overlay Mode: Permite interactuar con el teclado 3D en los espacios abiertos
-   mientras conserva todos los enlaces, botones, formularios y tarjetas 100% interactivos */
+/* Canvas overlay: the hero/skills keyboard stays clickable in open space while
+   every link, button, form control and card keeps receiving pointer input. */
 main {
   position: relative;
-  z-index: 10;
+  z-index: var(--z-content);
   pointer-events: none;
 }
 
@@ -66,46 +243,237 @@ main label,
 main select,
 main textarea,
 main form,
+main iframe,
+main video,
 main [role="button"],
 main [role="tab"],
-main [role="tablist"] {
+main [role="tablist"],
+main [data-interactive] {
   pointer-events: auto;
 }
 
-/* Utilidades de matriz técnica y cuadrícula (adaptadas a Light y Dark mode) */
+/* One focus ring for the whole site */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-chip);
+}
+
+/* Scroll reveal: elements start visible (no-JS safe); JS adds .reveal-armed then .is-in */
+.reveal-armed [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--dur-slow) var(--ease-out-expo),
+    transform var(--dur-slow) var(--ease-out-expo);
+  transition-delay: calc(var(--reveal-i, 0) * 70ms);
+}
+.reveal-armed [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Technical grid utilities (light + dark) */
 .bg-tech-grid {
   background-size: 40px 40px;
   background-image:
-    linear-gradient(to right, rgba(228, 228, 231, 0.55) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(228, 228, 231, 0.55) 1px, transparent 1px);
+    linear-gradient(to right, rgb(228 228 231 / 0.55) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(228 228 231 / 0.55) 1px, transparent 1px);
 }
 
 .dark .bg-tech-grid {
   background-image:
-    linear-gradient(to right, rgba(39, 39, 42, 0.3) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(39, 39, 42, 0.3) 1px, transparent 1px);
+    linear-gradient(to right, rgb(39 39 42 / 0.3) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(39 39 42 / 0.3) 1px, transparent 1px);
 }
 
 .bg-dot-matrix {
-  background-image: radial-gradient(rgba(16, 185, 129, 0.2) 1px, transparent 1px);
+  background-image: radial-gradient(rgb(16 185 129 / 0.2) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .dark .bg-dot-matrix {
-  background-image: radial-gradient(rgba(16, 185, 129, 0.16) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(rgb(16 185 129 / 0.16) 1px, transparent 1px);
 }
 
-/* Zoom sutil para capturas panorámicas de proyectos */
+/* Subtle zoom for project screenshots */
 .sp-shot {
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform var(--dur-slow) var(--ease-out-expo);
 }
 .group:hover .sp-shot {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
-/* Selección de texto personalizada */
 ::selection {
-  background-color: rgba(16, 185, 129, 0.22);
+  background-color: color-mix(in oklch, var(--primary-500) 28%, transparent);
   color: inherit;
+}
+
+html {
+  scrollbar-color: color-mix(in oklch, var(--primary-600) 70%, transparent) transparent;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PRIMARY BANDS — exactly three full-bleed places: Experience,
+   Contact and Footer (DESIGN.md §2.1). A band is always deep green in
+   both themes, so it opts its subtree into the dark token set (.dark on
+   the element) and re-tints the dark neutral ramp toward the primary hue
+   so cards read as green glass instead of grey. Text stays AA:
+   zinc-50 11.4:1, zinc-300 8.0:1, zinc-400 6.4:1, zinc-500 4.9:1 on primary-900.
+   ───────────────────────────────────────────────────────────── */
+.band-primary {
+  --surface-0: var(--primary-950);
+  --surface-1: oklch(0.285 0.05 var(--primary-hue));
+  --surface-2: oklch(0.33 0.055 var(--primary-hue));
+  --line: oklch(0.4 0.05 var(--primary-hue) / 0.55);
+  --line-strong: oklch(0.48 0.06 var(--primary-hue) / 0.6);
+  --ink-subtle: oklch(0.8 0.03 var(--primary-hue));
+  --accent: var(--primary-300);
+  --accent-strong: var(--primary-200);
+  --accent-fill: var(--primary-400);
+  --accent-soft: color-mix(in oklch, var(--primary-400) 16%, transparent);
+  --primary-ink: var(--primary-300);
+  --focus-ring: var(--primary-200);
+  --color-zinc-950: var(--primary-950);
+  --color-zinc-900: oklch(0.285 0.05 var(--primary-hue));
+  --color-zinc-800: oklch(0.36 0.05 var(--primary-hue));
+  --color-zinc-700: oklch(0.44 0.045 var(--primary-hue));
+  --color-zinc-600: oklch(0.56 0.035 var(--primary-hue));
+  --color-zinc-500: oklch(0.72 0.03 var(--primary-hue));
+  --color-zinc-400: oklch(0.8 0.03 var(--primary-hue));
+  position: relative;
+  isolation: isolate;
+  color: var(--ink);
+  color-scheme: dark;
+  background-color: var(--primary-950);
+}
+.band-primary::before {
+  /* subtle texture: hairline grid fading out toward the edges */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, oklch(1 0 0 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(1 0 0 / 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 100%);
+}
+.band-gradient {
+  background-image:
+    radial-gradient(ellipse 70% 50% at 85% 0%, color-mix(in oklch, var(--primary-600) 35%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--primary-900) 0%, var(--primary-950) 100%);
+}
+.band-gradient-rev {
+  background-image:
+    radial-gradient(ellipse 60% 55% at 15% 100%, color-mix(in oklch, var(--primary-600) 30%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--primary-950) 0%, var(--primary-900) 100%);
+}
+
+/* Indeterminate progress bar (Device Lab loader never shows a fake percentage) */
+@keyframes indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+.progress-indeterminate {
+  animation: indeterminate 1.3s var(--ease-in-out) infinite;
+}
+
+/* Device Lab 2D fallback: gentle float (frozen under reduced motion) */
+@keyframes device-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.device-float > * {
+  animation: device-float 5.5s var(--ease-in-out) infinite;
+  animation-delay: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-armed [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Project cards: cursor tilt + spotlight glare (vars set from JS on fine pointers) */
+.project-card {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 0%;
+  --glare: 0;
+  transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition:
+    transform var(--dur-slow) var(--ease-out-expo),
+    box-shadow var(--dur-base) ease,
+    border-color var(--dur-base) ease;
+  will-change: transform;
+}
+.project-card:hover {
+  transition-duration: 120ms, var(--dur-base), var(--dur-base);
+}
+.project-card-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  opacity: var(--glare);
+  transition: opacity var(--dur-base) ease;
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgb(255 255 255 / 0.16), transparent 60%);
+  mix-blend-mode: soft-light;
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-card { transform: none; }
+  .project-card-glare { display: none; }
+}
+
+/* Testimonials auto-advance progress (paused/hidden when not running) */
+@keyframes testimonial-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.testimonial-progress {
+  animation-name: testimonial-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* Section transitions: a primary light seam on top of every band */
+.band-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--primary-300) 30%, var(--primary-200) 50%, var(--primary-300) 70%, transparent);
+  opacity: 0.55;
+}
+
+/* Project card without a screenshot yet (no request, no 404) */
+.project-placeholder {
+  background:
+    radial-gradient(circle at 30% 20%, color-mix(in oklch, var(--primary-600) 45%, transparent), transparent 55%),
+    radial-gradient(circle at 80% 90%, color-mix(in oklch, var(--primary-800) 70%, transparent), transparent 60%),
+    var(--primary-950);
+}
+.project-placeholder::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(oklch(1 0 0 / 0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(circle at 50% 45%, #000 20%, transparent 75%);
 }

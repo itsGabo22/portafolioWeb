@@ -20,7 +20,7 @@ Portafolio web profesional y académico de **Gabriel Esteban Paz Guerrero** (`@i
 - **Iconografía**: `lucide-react` (CERO emojis en la interfaz de usuario)
 - **Animaciones**: `framer-motion`
 - **Estado Global**: Contexto React (`context/AppContext.tsx`) para Tema (`light` / `dark`) e Idioma (`es` / `en`)
-- **Despliegue**: Vercel
+- **Despliegue**: Netlify (Next.js mediante el adaptador OpenNext de Netlify)
 
 ## 3. Reglas Globales Innegociables (Tema, Idioma y Estructura)
 

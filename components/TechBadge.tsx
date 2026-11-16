@@ -1,7 +1,10 @@
 "use client";
 
 import React from "react";
+import { Code2 } from "lucide-react";
 
+// Only techs with a logo that actually represents them. Anything else renders a
+// neutral icon instead of a misleading logo.
 const TECH_LOGO_MAP: Record<string, string> = {
   "javascript": "/assets/keyboard/logos/js.svg",
   "js": "/assets/keyboard/logos/js.svg",
@@ -23,32 +26,17 @@ const TECH_LOGO_MAP: Record<string, string> = {
   "git": "/assets/keyboard/logos/git.svg",
   "linux": "/assets/keyboard/logos/linux.svg",
   "cloudflare": "/assets/keyboard/logos/cloudflare.svg",
-  "hostinger dns": "/assets/keyboard/logos/cloudflare.svg",
   "steam api": "/assets/keyboard/logos/steam.svg",
-  "gemini ai": "/assets/keyboard/logos/claude.svg",
-  "conversational ai": "/assets/keyboard/logos/claude.svg",
-  "ai analytics": "/assets/keyboard/logos/claude.svg",
-  "ai integration": "/assets/keyboard/logos/claude.svg",
-  "capacitor mobile": "/assets/keyboard/logos/expo.svg",
-  "webapk / pwa": "/assets/keyboard/logos/expo.svg",
-  "kotlin / wear os": "/assets/keyboard/logos/gcp.svg",
-  "java": "/assets/keyboard/logos/proxmox.svg",
-  "java 17": "/assets/keyboard/logos/proxmox.svg",
-  "spring boot": "/assets/keyboard/logos/nodejs.svg",
   "python": "/assets/logos/python-mono.svg",
   "fastapi": "/assets/logos/python-mono.svg",
   "astro": "/assets/logos/astro-mono.svg",
   "supabase": "/assets/logos/supabase-mono.svg",
   "vercel": "/assets/logos/vercel-mono.svg",
-  "tauri v2": "/assets/keyboard/logos/bun.svg",
-  "tauri v2 / rust": "/assets/keyboard/logos/bun.svg",
-  "resend api": "/assets/keyboard/logos/nginx.svg",
-  "web audio api": "/assets/keyboard/logos/js.svg",
 };
 
-export function getTechLogo(techName: string): string {
-  const key = techName.trim().toLowerCase();
-  return TECH_LOGO_MAP[key] ?? "/assets/keyboard/logos/ts.svg";
+/** Returns the logo path, or null when no accurate logo exists. */
+export function getTechLogo(techName: string): string | null {
+  return TECH_LOGO_MAP[techName.trim().toLowerCase()] ?? null;
 }
 
 export default function TechBadge({
@@ -82,13 +70,17 @@ export default function TechBadge({
       <span
         className={`inline-flex ${pedestalSize} shrink-0 items-center justify-center rounded-md bg-zinc-900 dark:bg-zinc-800/95 p-1 shadow-inner ring-1 ring-zinc-950/15 dark:ring-white/10 transition-transform duration-200 group-hover/badge:scale-105`}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={logo}
-          alt=""
-          aria-hidden="true"
-          className={`${imgSize} shrink-0 object-contain [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.45))]`}
-        />
+        {logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={logo}
+            alt=""
+            aria-hidden="true"
+            className={`${imgSize} shrink-0 object-contain [filter:drop-shadow(0_1px_1px_rgba(0,0,0,0.45))]`}
+          />
+        ) : (
+          <Code2 aria-hidden="true" className={`${imgSize} shrink-0 text-zinc-100`} />
+        )}
       </span>
       <span>{name}</span>
     </span>

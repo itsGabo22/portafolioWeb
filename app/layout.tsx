@@ -1,30 +1,31 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, IBM_Plex_Sans } from "next/font/google";
 import { AppProvider } from "@/context/AppContext";
 import InteractiveStage from "@/components/InteractiveStage";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+// Two families only (see DESIGN.md): a characterful display grotesque + a precise text face.
+const display = Bricolage_Grotesque({
+  variable: "--font-display-face",
   subsets: ["latin"],
   display: "swap",
+  weight: ["500", "600", "700", "800"],
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const text = IBM_Plex_Sans({
+  variable: "--font-text",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
+const SITE_URL = "https://gabodevportafolio.netlify.app";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/" },
   title:
-    "Gabriel Esteban Paz Guerrero | Full-Stack Software Developer & Founder of VICARDEV",
+    "Gabriel Esteban Paz Guerrero | Desarrollador Full-Stack y fundador de VICARDEV",
   description:
     "Portafolio profesional de Gabriel Esteban Paz Guerrero (@itsGabo22). Desarrollador Full-Stack, estudiante de 5.º semestre de Ingeniería de Software en la UCC (Pasto, Colombia) y fundador de VICARDEV.",
   keywords: [
@@ -42,12 +43,22 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title:
-      "Gabriel Esteban Paz Guerrero | Full-Stack Developer & Fundador de VICARDEV",
+      "Gabriel Esteban Paz Guerrero | Desarrollador Full-Stack y fundador de VICARDEV",
     description:
       "Arquitectando plataformas web escalables, comercio electrónico en producción e integraciones de inteligencia artificial desde Pasto, Colombia.",
     type: "website",
+    url: SITE_URL,
     locale: "es_CO",
+    siteName: "Portafolio de Gabriel Esteban Paz Guerrero",
   },
+  twitter: {
+    card: "summary_large_image",
+    title:
+      "Gabriel Esteban Paz Guerrero | Desarrollador Full-Stack y fundador de VICARDEV",
+    description:
+      "Portafolio profesional: plataformas web, e-commerce y apps con IA desde Pasto, Colombia.",
+  },
+  // favicon: app/favicon.ico and the Open Graph image (app/opengraph-image.tsx) are picked up automatically.
 };
 
 export default function RootLayout({
@@ -58,7 +69,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 antialiased selection:bg-emerald-500/25 selection:text-emerald-900 dark:selection:text-emerald-200 flex flex-col transition-colors duration-200`}
+        className={`${display.variable} ${text.variable} min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 antialiased selection:bg-emerald-500/25 selection:text-emerald-900 dark:selection:text-emerald-200 flex flex-col transition-colors duration-200`}
       >
         <AppProvider>
           <InteractiveStage />

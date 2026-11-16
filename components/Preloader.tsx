@@ -3,48 +3,28 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApp } from "@/context/AppContext";
+import { useT } from "@/messages";
 
 export default function Preloader() {
-  const { sceneReady, lang } = useApp();
-  const [progress, setProgress] = useState(0);
+  const { sceneReady } = useApp();
+  const t = useT();
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const preloadAssets = [
-      "/assets/keyboard/keycaps.glb",
-      "/assets/keyboard/bongo-frames.glb",
-    ];
+    // The keyboard only mounts up front on wide layouts; skip the GLB prefetch elsewhere.
+    const preloadAssets = window.innerWidth >= 1024 ? ["/assets/keyboard/keycaps.glb"] : [];
     preloadAssets.forEach((url) => {
       fetch(url, { cache: "force-cache" }).catch(() => {});
     });
 
-    let current = 0;
-    const interval = window.setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) return 100;
-        const step = sceneReady ? 18 : prev < 75 ? 9 : 2;
-        current = Math.min(sceneReady ? 100 : 92, prev + step);
-        return current;
-      });
-    }, 45);
-
-    const fallbackTimer = window.setTimeout(() => {
-      setProgress(100);
-      window.setTimeout(() => setVisible(false), 260);
-    }, 1350);
-
-    return () => {
-      window.clearInterval(interval);
-      window.clearTimeout(fallbackTimer);
-    };
-  }, [sceneReady]);
+    // Never block the page for long: hide after the scene is ready or 900 ms at most.
+    const fallbackTimer = window.setTimeout(() => setVisible(false), 900);
+    return () => window.clearTimeout(fallbackTimer);
+  }, []);
 
   useEffect(() => {
     if (sceneReady) {
-      const doneTimer = window.setTimeout(() => {
-        setProgress(100);
-        window.setTimeout(() => setVisible(false), 240);
-      }, 60);
+      const doneTimer = window.setTimeout(() => setVisible(false), 120);
       return () => window.clearTimeout(doneTimer);
     }
   }, [sceneReady]);
@@ -68,7 +48,7 @@ export default function Preloader() {
             <div className="flex items-center gap-2.5">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="font-semibold text-zinc-900 dark:text-zinc-100">
-                Gabriel Paz · Portafolio
+                {t.preloader.brand}
               </span>
             </div>
             <span>Pasto, CO · UTC-5</span>
@@ -77,29 +57,22 @@ export default function Preloader() {
           {/* Center Brand & Status */}
           <div className="my-auto flex flex-col items-start gap-4 max-w-xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-zinc-300/80 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/70 px-3 py-1 text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
-              {lang === "es"
-                ? "Preparando experiencia interactiva 3D"
-                : "Preparing interactive 3D experience"}
+              {t.preloader.status}
             </span>
             <p className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
               Gabriel Esteban Paz Guerrero
             </p>
             <div className="h-1 w-full max-w-xs overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-              <div
-                className="h-full bg-emerald-600 dark:bg-emerald-400 transition-all duration-100 ease-out"
-                style={{ width: `${progress}%` }}
-              />
+              <div className="progress-indeterminate h-full w-1/3 rounded-full bg-emerald-600 dark:bg-emerald-400" />
             </div>
           </div>
 
           {/* Bottom Counter */}
           <div className="flex items-end justify-between">
             <span className="text-xs font-medium tracking-wider text-zinc-500 dark:text-zinc-400">
-              VICARDEV · Full-Stack & AI Architecture
+              {t.preloader.tagline}
             </span>
-            <span className="font-display text-6xl sm:text-8xl font-black tracking-tighter tabular-nums leading-none text-zinc-900 dark:text-zinc-50">
-              {String(progress).padStart(2, "0")}%
-            </span>
+
           </div>
         </motion.div>
       )}

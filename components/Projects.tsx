@@ -1,252 +1,235 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { useReducedMotion } from "@/lib/capabilities";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { ArrowUpRight, Lock } from "lucide-react";
-import { projects, Project, ProjectKind } from "@/data/projects";
+import { Gamepad2, Lock } from "lucide-react";
+import { projects, type Project, type MediaManifest } from "@/data/projects";
 import { useApp } from "@/context/AppContext";
+import { fmt, useT } from "@/messages";
 import TechBadge from "./TechBadge";
-import TiltSurface from "./TiltSurface";
+import { ProjectActions, StatusBadge } from "./projects/ProjectBits";
+import DeviceLab from "./devicelab/DeviceLab";
+import SectionEyebrow from "./SectionEyebrow";
 
-function GitHubSvg({ className = "h-3.5 w-3.5" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
-      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z" />
-    </svg>
-  );
-}
-
-function ProjectCard({ project, index }: { project: Project; index: number }) {
+function ProjectCard({
+  project,
+  index,
+  featured = false,
+}: {
+  project: Project;
+  index: number;
+  featured?: boolean;
+}) {
   const { lang } = useApp();
+  const t = useT();
   const [imgError, setImgError] = useState(false);
-  const isAcademic = project.projectType === "academic";
+  const isCommercial = project.category === "commercial";
+  const reduced = useReducedMotion();
+  const cardRef = useRef<HTMLElement>(null);
+  const raf = useRef(0);
+
+  // Cursor-tracking tilt + spotlight glare (fine pointers only, off under reduced motion).
+  const onPointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (reduced || e.pointerType !== "mouse") return;
+    const el = cardRef.current;
+    if (!el) return;
+    const { clientX, clientY } = e;
+    cancelAnimationFrame(raf.current);
+    raf.current = requestAnimationFrame(() => {
+      const r = el.getBoundingClientRect();
+      const x = (clientX - r.left) / r.width;
+      const y = (clientY - r.top) / r.height;
+      el.style.setProperty("--rx", `${((0.5 - y) * 6).toFixed(2)}deg`);
+      el.style.setProperty("--ry", `${((x - 0.5) * 8).toFixed(2)}deg`);
+      el.style.setProperty("--mx", `${(x * 100).toFixed(1)}%`);
+      el.style.setProperty("--my", `${(y * 100).toFixed(1)}%`);
+      el.style.setProperty("--glare", "1");
+    });
+  };
+  const onPointerLeave = () => {
+    cancelAnimationFrame(raf.current);
+    const el = cardRef.current;
+    if (!el) return;
+    el.style.setProperty("--rx", "0deg");
+    el.style.setProperty("--ry", "0deg");
+    el.style.setProperty("--glare", "0");
+  };
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.45, delay: index * 0.05 }}
-      className="flex w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333333%-1rem)]"
+    <article
+      ref={cardRef}
+      id={`project-${project.id}`}
+      data-reveal
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+      style={{ "--reveal-i": index % 3 } as React.CSSProperties}
+      className={`project-card group relative flex scroll-mt-24 flex-col justify-between overflow-hidden rounded-card border border-line bg-surface-1/85 shadow-elev-1 backdrop-blur-xl hover:border-primary-line hover:shadow-elev-2 ${
+        featured ? "lg:col-span-2" : ""
+      }`}
     >
-      <TiltSurface maxTilt={6} className="w-full h-full">
-        <div className="group flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-white/80 dark:border-white/10 bg-white/52 dark:bg-zinc-900/60 ring-1 ring-zinc-900/[0.06] shadow-[0_12px_40px_-12px_rgba(15,23,42,0.08),inset_0_1px_0_0_rgba(255,255,255,0.9)] dark:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.45),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 hover:bg-white/65 dark:hover:bg-zinc-900/75 hover:shadow-xl">
-          <div>
-            {/* Panoramic Showcase Window */}
-            <div className="relative aspect-[3/2] w-full overflow-hidden bg-zinc-950">
-              {!imgError ? (
-                <Image
-                  src={project.image}
-                  alt={project.title[lang]}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
-                  onError={() => setImgError(true)}
-                  className="sp-shot object-cover object-top"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-zinc-900 text-sm font-medium text-zinc-400">
-                  {project.title[lang]}
-                </div>
+      <span aria-hidden="true" className="project-card-glare" />
+      <div>
+        {/* media frame stays dark in both themes: screenshots/placeholder sit on it edge to edge */}
+        <div className={`relative w-full overflow-hidden bg-zinc-950 ${featured ? "aspect-[3/2] lg:aspect-[2/1]" : "aspect-[3/2]"}`}>
+          {project.image && !imgError ? (
+            <Image
+              src={project.image}
+              alt={fmt(t.projects.imageAlt, { title: project.title[lang] })}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 420px"
+              onError={() => setImgError(true)}
+              className="sp-shot object-cover object-top"
+            />
+          ) : (
+            // No screenshot yet (e.g. Nexo): a designed placeholder, never a broken <img>.
+            <div
+              aria-hidden="true"
+              className="project-placeholder relative flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden px-6 text-center"
+            >
+              <Gamepad2 className="h-9 w-9 text-primary-300" strokeWidth={1.5} />
+              <span className="font-display text-xl font-bold tracking-tight text-zinc-100 sm:text-2xl">
+                {project.title[lang].split(" — ")[0]}
+              </span>
+            </div>
+          )}
+
+          <div className="pointer-events-none absolute inset-x-3 top-3 z-10 flex flex-wrap items-center justify-between gap-2">
+            <span className="rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-zinc-100 backdrop-blur-md">
+              {isCommercial ? t.projects.pill.commercial : t.projects.pill.academic}
+            </span>
+            <span className="flex flex-wrap items-center gap-1.5">
+              {project.status && <StatusBadge status={project.status} tone="overlay" />}
+              {project.nda && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-medium text-amber-300 backdrop-blur-md">
+                  <Lock className="h-3 w-3" aria-hidden="true" />
+                  <span>NDA</span>
+                </span>
               )}
-
-              {/* Subtle Top Pill for Commercial vs Academic */}
-              <div className="pointer-events-none absolute top-3 left-3 right-3 z-10 flex items-center justify-between gap-2">
-                <span className="rounded-full bg-black/70 px-3 py-1 text-[11px] font-medium text-zinc-100 backdrop-blur-md">
-                  {isAcademic
-                    ? lang === "es"
-                      ? "Académico UCC · IA"
-                      : "UCC Academic · AI"
-                    : lang === "es"
-                      ? "Producción Comercial"
-                      : "Live Commercial"}
-                </span>
-
-                {project.isPrivateRepo && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-medium text-amber-300 backdrop-blur-md">
-                    <Lock className="h-3 w-3" />
-                    <span>NDA</span>
-                  </span>
-                )}
-              </div>
-
-              {/* Bottom Gradient Overlay with Title & Category Pill */}
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-28 flex-col justify-end bg-gradient-to-t from-zinc-950 via-zinc-950/75 to-transparent p-4">
-                <h3 className="font-display text-lg font-bold leading-snug text-white drop-shadow-sm">
-                  {project.title[lang]}
-                </h3>
-                <span className="mt-1 w-fit rounded-md bg-white/15 px-2.5 py-0.5 text-[11px] font-medium text-zinc-100 backdrop-blur-sm">
-                  {project.category[lang]}
-                </span>
-              </div>
-            </div>
-
-            {/* Editorial Description */}
-            <div className="p-5">
-              <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-                {project.description[lang]}
-              </p>
-            </div>
+            </span>
           </div>
 
-          {/* Card Footer: Real SVG Tech Badges + Action Links */}
-          <div className="px-5 pb-5 pt-1">
-            <div className="mb-4 flex flex-wrap gap-1.5">
-              {project.technologies.map((tech) => (
-                <TechBadge key={tech} name={tech} size="xs" />
-              ))}
-            </div>
-
-            <div className="grid grid-cols-2 gap-2.5 border-t border-zinc-300/60 dark:border-zinc-800/80 pt-4">
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={
-                  project.isPrivateRepo
-                    ? lang === "es"
-                      ? "Repositorio privado de cliente comercial — Ver perfil de GitHub"
-                      : "Private commercial client repo — View GitHub profile"
-                    : undefined
-                }
-                className="cursor-can-hover inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/80 dark:border-zinc-800 bg-white/60 dark:bg-zinc-950/80 px-3 py-2.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 backdrop-blur-md transition-colors hover:bg-white/90 dark:hover:bg-zinc-800"
-              >
-                {project.isPrivateRepo ? (
-                  <Lock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                ) : (
-                  <GitHubSvg className="h-3.5 w-3.5 shrink-0" />
-                )}
-                <span className="truncate">
-                  {project.isPrivateRepo
-                    ? lang === "es"
-                      ? "Código (NDA / GitHub)"
-                      : "Code (Client NDA)"
-                    : lang === "es"
-                      ? "Código"
-                      : "Source"}
-                </span>
-              </a>
-
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cursor-can-hover group/btn inline-flex items-center justify-center gap-1.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-3.5 py-2.5 text-xs font-semibold text-white dark:text-zinc-950 transition-colors hover:bg-zinc-800 dark:hover:bg-white"
-              >
-                <span>{lang === "es" ? "Demo en vivo" : "Live Demo"}</span>
-                <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-              </a>
-            </div>
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-28 flex-col justify-end bg-gradient-to-t from-zinc-950 via-zinc-950/75 to-transparent p-4">
+            <h4 className="font-display text-lg font-bold leading-snug text-white">
+              {project.title[lang]}
+            </h4>
+            <span className="mt-1 w-fit rounded-md bg-white/15 px-2.5 py-0.5 text-[11px] font-medium text-zinc-100 backdrop-blur-sm">
+              {project.tagline[lang]}
+            </span>
           </div>
         </div>
-      </TiltSurface>
-    </motion.article>
+
+        <p className="p-5 text-sm leading-relaxed text-ink-muted">{project.description[lang]}</p>
+      </div>
+
+      <div className="px-5 pb-5 pt-1">
+        <ul className="mb-4 flex flex-wrap gap-1.5" aria-label={project.title[lang]}>
+          {project.tags.map((tech) => (
+            <li key={tech}>
+              <TechBadge name={tech} size="xs" />
+            </li>
+          ))}
+        </ul>
+        <div className="border-t border-line pt-4">
+          <ProjectActions project={project} />
+        </div>
+      </div>
+    </article>
   );
 }
 
-export default function Projects() {
-  const { lang } = useApp();
-  const [filter, setFilter] = useState<"all" | ProjectKind>("all");
+function ProjectGroup({
+  id,
+  title,
+  subtitle,
+  items,
+  columnsClass,
+  featuredFirst = false,
+  children,
+}: {
+  id: string;
+  title: string;
+  subtitle: string;
+  items: Project[];
+  columnsClass: string;
+  featuredFirst?: boolean;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="mt-20 first:mt-0" aria-labelledby={id} role="group">
+      <div className="mb-8 flex items-end justify-between gap-6 border-b border-line pb-4" data-reveal>
+        <div>
+          <h3 id={id} className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+            {title}
+          </h3>
+          <p className="mt-1 text-sm text-ink-muted">{subtitle}</p>
+        </div>
+        <span
+          aria-hidden="true"
+          className="font-display text-5xl font-extrabold leading-none tracking-tighter text-primary-ink/25 tabular-nums sm:text-7xl"
+        >
+          {String(items.length).padStart(2, "0")}
+        </span>
+      </div>
+      {children}
+      <div className={`grid grid-cols-1 gap-6 ${columnsClass}`}>
+        {items.map((project, index) => (
+          <ProjectCard
+            key={project.id}
+            project={project}
+            index={index}
+            featured={featuredFirst && index === 0}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
-  const filteredProjects =
-    filter === "all"
-      ? projects
-      : projects.filter((p) => p.projectType === filter);
+export default function Projects({ media = {} }: { media?: MediaManifest }) {
+  const t = useT();
 
-  const commercialCount = projects.filter(
-    (p) => p.projectType === "commercial"
-  ).length;
-  const academicCount = projects.filter(
-    (p) => p.projectType === "academic"
-  ).length;
+  const designProjects = projects.filter((p) => p.category === "interface-design");
+  const academicProjects = projects.filter((p) => p.category === "academic");
+  const commercialProjects = projects.filter((p) => p.category === "commercial");
 
   return (
-    <section
-      id="projects"
-      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200"
-    >
+    <section id="projects" className="relative border-t border-line py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Centered Monumental Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.45 }}
-          className="mb-12 text-center"
-        >
-          <h2 className="font-display text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-7xl">
-            {lang === "es" ? "Proyectos" : "Projects"}
+        <div className="mb-14 text-center" data-reveal>
+            <SectionEyebrow id="projects" />
+          <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
+            {t.projects.title}
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
-            {lang === "es"
-              ? "Plataformas comerciales en producción y proyectos universitarios de Ingeniería de Software con IA."
-              : "Live commercial production platforms and university Software Engineering + AI projects."}
-          </p>
-
-          {/* Frosted Glass Filter Tabs */}
-          <div
-            role="tablist"
-            aria-label={
-              lang === "es" ? "Filtrar proyectos" : "Filter projects"
-            }
-            className="mt-8 inline-flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/80 dark:border-white/10 bg-white/50 dark:bg-zinc-900/60 p-1.5 ring-1 ring-zinc-900/[0.06] shadow-[0_8px_30px_rgba(15,23,42,0.06),inset_0_1px_0_0_rgba(255,255,255,0.9)] backdrop-blur-2xl backdrop-saturate-150"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={filter === "all"}
-              onClick={() => setFilter("all")}
-              className={`cursor-can-hover rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
-                filter === "all"
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-              }`}
-            >
-              {lang === "es"
-                ? `Todos (${projects.length})`
-                : `All (${projects.length})`}
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={filter === "commercial"}
-              onClick={() => setFilter("commercial")}
-              className={`cursor-can-hover rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
-                filter === "commercial"
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-              }`}
-            >
-              {lang === "es"
-                ? `Comerciales & E-Commerce (${commercialCount})`
-                : `Commercial & E-Commerce (${commercialCount})`}
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={filter === "academic"}
-              onClick={() => setFilter("academic")}
-              className={`cursor-can-hover rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
-                filter === "academic"
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xs"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
-              }`}
-            >
-              {lang === "es"
-                ? `Académicos UCC & IA (${academicCount})`
-                : `UCC Academic & AI (${academicCount})`}
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Centered Responsive Flex-Grid Architecture */}
-        <div className="flex flex-wrap justify-center gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProjects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} />
-          ))}
+          <p className="mx-auto mt-4 max-w-2xl text-base text-ink-muted">{t.projects.subtitle}</p>
         </div>
+
+        <ProjectGroup
+          id="projects-design"
+          title={t.projects.groups.design.title}
+          subtitle={t.projects.groups.design.subtitle}
+          items={designProjects}
+          columnsClass="md:grid-cols-2"
+        >
+          <DeviceLab projects={designProjects} media={media} />
+        </ProjectGroup>
+
+        <ProjectGroup
+          id="projects-academic"
+          title={t.projects.groups.academic.title}
+          subtitle={t.projects.groups.academic.subtitle}
+          items={academicProjects}
+          columnsClass="md:grid-cols-2"
+        />
+
+        <ProjectGroup
+          id="projects-commercial"
+          title={t.projects.groups.commercial.title}
+          subtitle={t.projects.groups.commercial.subtitle}
+          items={commercialProjects}
+          columnsClass="md:grid-cols-2 lg:grid-cols-3"
+          featuredFirst
+        />
       </div>
     </section>
   );
