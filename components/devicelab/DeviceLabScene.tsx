@@ -235,6 +235,10 @@ function Rig({
     camera.position.x += (targetX - camera.position.x) * ease;
     camera.position.y += (0.35 - camera.position.y) * ease;
     camera.lookAt(camera.position.x, 0, 0);
+    // Which device is centered (QA hook; only written when it changes).
+    const centered = String(Math.round(camera.position.x / SPACING));
+    const canvas = state.gl.domElement;
+    if (canvas.dataset.centered !== centered) canvas.dataset.centered = centered;
 
     const t = state.clock.elapsedTime;
     groups.current.forEach((group, index) => {
