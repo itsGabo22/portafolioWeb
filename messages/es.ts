@@ -19,6 +19,14 @@ export const es = {
     brand: "Gabriel Paz · Portafolio",
     status: "Preparando la experiencia 3D",
     tagline: "VICARDEV · Arquitectura Full-Stack e IA",
+    steps: {
+      fonts: "Cargando tipografías",
+      hero: "Armando la portada",
+      keyboard: "Descargando el teclado 3D",
+      scene: "Montando la escena",
+      ready: "Todo listo",
+    },
+    hint: "Pasa el cursor o toca las teclas",
   },
   nav: {
     aria: "Navegación principal",

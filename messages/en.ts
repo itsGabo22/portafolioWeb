@@ -17,6 +17,14 @@ export const en: Messages = {
     brand: "Gabriel Paz · Portfolio",
     status: "Preparing the 3D experience",
     tagline: "VICARDEV · Full-Stack & AI Architecture",
+    steps: {
+      fonts: "Loading typefaces",
+      hero: "Setting up the cover",
+      keyboard: "Downloading the 3D keyboard",
+      scene: "Mounting the scene",
+      ready: "All set",
+    },
+    hint: "Move the cursor or touch the keys",
   },
   nav: {
     aria: "Main navigation",

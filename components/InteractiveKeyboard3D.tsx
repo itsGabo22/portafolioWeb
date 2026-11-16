@@ -18,6 +18,7 @@ import {
   type RuntimeEvent,
 } from "@chibi3d/runtime";
 import { useApp } from "@/context/AppContext";
+import { markReady, skipKeyboardSteps } from "@/lib/readiness";
 import { KEYBOARD_SKILLS } from "./keyboard/keyboard-skills";
 import {
   createKeyboardScene,
@@ -417,6 +418,7 @@ export default function InteractiveKeyboard3D() {
     (error: Error) => {
       failed.current = true;
       setSceneReady(true);
+      skipKeyboardSteps(); // never hold the loader for a scene that failed
       console.warn("3D Keyboard scene fallback active:", error);
     },
     [setSceneReady]
@@ -445,7 +447,12 @@ export default function InteractiveKeyboard3D() {
     controller.setParked(!vividRef.current);
     controller.setCounterEnabled(true);
     controller.reveal();
+    // Loader signal: scene loaded AND the choreography is running; wait two frames so the first one is drawn.
+    const frame = window.requestAnimationFrame(() =>
+      window.requestAnimationFrame(() => markReady("kb-scene"))
+    );
     return () => {
+      window.cancelAnimationFrame(frame);
       controller.dispose();
       motion.current = null;
     };
@@ -491,6 +498,10 @@ export default function InteractiveKeyboard3D() {
       release();
     };
   }, [input]);
+
+  useEffect(() => {
+    if (!hasWebGL) skipKeyboardSteps();
+  }, [hasWebGL]);
 
   if (!hasWebGL) return null;
 
