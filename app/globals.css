@@ -555,3 +555,25 @@ html.is-loading { overflow: hidden; }
   .pl-board { animation: none; transition: none; }
   .pl-sweep, .pl-shimmer { display: none; }
 }
+
+/* Device Lab 2D gaming desk: slow RGB drift in the indigo family (static under reduced motion) */
+@keyframes rgb-flow { to { background-position: 300% 0; } }
+@keyframes rgb-hue { 0%, 100% { filter: hue-rotate(-40deg); } 50% { filter: hue-rotate(60deg); } }
+@keyframes rgb-spin { to { transform: rotate(360deg); } }
+.rgb-glow {
+  background: linear-gradient(90deg, #22d3ee, #6366f1, #d946ef, #22d3ee);
+  background-size: 300% 100%;
+  animation: rgb-flow 7s linear infinite;
+  box-shadow: 0 0 10px 1px rgb(99 102 241 / 0.6);
+}
+.rgb-halo { filter: drop-shadow(0 0 14px rgb(99 102 241 / 0.35)); animation: rgb-hue 8s ease-in-out infinite; }
+.rgb-keys { animation: rgb-hue 8s ease-in-out infinite; }
+.rgb-fan {
+  background: radial-gradient(circle, #09090b 0 22%, transparent 24%), conic-gradient(from 0deg, #22d3ee, #6366f1, #d946ef, #22d3ee);
+  -webkit-mask: radial-gradient(circle, transparent 0 40%, #000 42%);
+  mask: radial-gradient(circle, transparent 0 40%, #000 42%);
+  animation: rgb-spin 5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rgb-glow, .rgb-halo, .rgb-keys, .rgb-fan { animation: none; }
+}
