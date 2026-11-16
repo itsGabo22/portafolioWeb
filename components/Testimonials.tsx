@@ -17,7 +17,7 @@ const METRICS = [
     key: "live",
     value: projects.filter((p) => p.category === "commercial" && p.platform === "web").length,
   },
-  { key: "design", value: projects.filter((p) => p.category === "interface-design").length },
+  { key: "design", value: projects.filter((p) => p.category === "multiplatform").length },
   { key: "total", value: projects.length },
 ] as const;
 

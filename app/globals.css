@@ -477,3 +477,108 @@ html {
   background-size: 18px 18px;
   mask-image: radial-gradient(circle at 50% 45%, #000 20%, transparent 75%);
 }
+
+/* ---------------------------------------------------------------------------
+   Page loader (components/Preloader.tsx): CSS-first, no images, no libraries.
+   A 6x4 keycap grid that lights up with the REAL load steps and answers the pointer.
+   --------------------------------------------------------------------------- */
+html.is-loading { overflow: hidden; }
+.pl-spot {
+  background: radial-gradient(520px circle at var(--px, 50%) var(--py, 38%), color-mix(in oklch, var(--primary-500) 16%, transparent), transparent 62%);
+}
+.pl-stage { perspective: 1100px; perspective-origin: 50% 40%; }
+@keyframes pl-board-in {
+  from { opacity: 0; transform: rotateX(86deg) rotateZ(-52deg) translateZ(-160px) scale(0.7); }
+  to   { opacity: 1; transform: rotateX(var(--rx, 52deg)) rotateZ(var(--rz, -20deg)) translateZ(0) scale(1); }
+}
+.pl-board {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 52deg)) rotateZ(var(--rz, -20deg));
+  transition: transform 450ms var(--ease-out-expo);
+  animation: pl-board-in 1.3s var(--ease-out-expo) both;
+  padding: 0.9rem;
+  border-radius: 1.1rem;
+  background: linear-gradient(145deg, #e4e4e7, #d4d4d8);
+  box-shadow: 0 2px 0 #a1a1aa, 0 10px 0 #a1a1aa, 0 40px 60px -20px rgb(0 0 0 / 0.35);
+}
+.dark .pl-board { background: linear-gradient(145deg, #27272a, #18181b); box-shadow: 0 2px 0 #09090b, 0 10px 0 #09090b, 0 40px 70px -20px rgb(16 185 129 / 0.25); }
+.pl-keys {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.5rem;
+  transform-style: preserve-3d;
+  touch-action: none;
+  user-select: none;
+}
+.pl-key {
+  display: grid;
+  aspect-ratio: 1 / 0.92;
+  place-items: center;
+  border-radius: 0.5rem;
+  border: 1px solid #d4d4d8;
+  border-bottom-width: 4px;
+  background: #fff;
+  color: #71717a;
+  font: 600 0.62rem/1 var(--font-mono, ui-monospace, monospace);
+  letter-spacing: 0.04em;
+  transform: translateZ(0);
+  transition: transform 420ms var(--ease-spring), background-color 220ms ease, border-color 220ms ease, color 220ms ease, box-shadow 220ms ease;
+}
+.pl-key[data-on="1"] {
+  transform: translateZ(16px);
+  border-color: var(--primary-600);
+  background: var(--primary-600);
+  color: #fff;
+  box-shadow: 0 0 18px -2px color-mix(in oklch, var(--primary-500) 70%, transparent);
+}
+.dark .pl-key { border-color: #3f3f46; background: #18181b; color: #a1a1aa; }
+.dark .pl-key[data-on="1"] { border-color: var(--primary-400); background: var(--primary-500); color: #052e1c; }
+.pl-bar { transform-origin: 0 50%; will-change: transform; }
+@keyframes pl-sweep { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+.pl-sweep::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 38%;
+  background: linear-gradient(100deg, transparent, color-mix(in oklch, var(--primary-400) 34%, transparent), transparent);
+  animation: pl-sweep 1.9s linear infinite;
+  will-change: transform;
+}
+.pl-shimmer {
+  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--primary-400) 55%, transparent), transparent);
+  animation: pl-sweep 1.4s linear infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pl-key { transition: none; }
+  .pl-board { animation: none; transition: none; }
+  .pl-sweep, .pl-shimmer { display: none; }
+}
+
+/* Device Lab 2D gaming desk: slow RGB drift in the indigo family (static under reduced motion) */
+@keyframes rgb-flow { to { background-position: 300% 0; } }
+@keyframes rgb-hue { 0%, 100% { filter: hue-rotate(-40deg); } 50% { filter: hue-rotate(60deg); } }
+@keyframes rgb-spin { to { transform: rotate(360deg); } }
+.rgb-glow {
+  background: linear-gradient(90deg, #22d3ee, #6366f1, #d946ef, #22d3ee);
+  background-size: 300% 100%;
+  animation: rgb-flow 7s linear infinite;
+  box-shadow: 0 0 10px 1px rgb(99 102 241 / 0.6);
+}
+.rgb-halo { filter: drop-shadow(0 0 14px rgb(99 102 241 / 0.35)); animation: rgb-hue 8s ease-in-out infinite; }
+.rgb-keys { animation: rgb-hue 8s ease-in-out infinite; }
+.rgb-fan {
+  background: radial-gradient(circle, #09090b 0 22%, transparent 24%), conic-gradient(from 0deg, #22d3ee, #6366f1, #d946ef, #22d3ee);
+  -webkit-mask: radial-gradient(circle, transparent 0 40%, #000 42%);
+  mask: radial-gradient(circle, transparent 0 40%, #000 42%);
+  animation: rgb-spin 5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rgb-glow, .rgb-halo, .rgb-keys, .rgb-fan { animation: none; }
+}
+
+/* Pinned skills track: no pin under reduced motion (beats the responsive height utilities) */
+@media (prefers-reduced-motion: reduce) {
+  #skills-track { height: auto !important; }
+}

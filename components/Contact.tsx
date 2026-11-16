@@ -165,7 +165,8 @@ export default function Contact() {
 
               <h2 className="font-display text-[clamp(2.5rem,0.6rem+8.2vw,7rem)] font-black uppercase leading-[0.86] tracking-tighter text-zinc-50">
                 {[t.contact.titleA, t.contact.titleB].map((line, i) => (
-                  <span key={i} className="block overflow-hidden pb-[0.06em]">
+                  <span key={i} /* mask for the reveal; padding + negative margin give the italic j (descender + left overhang) room without changing the layout */
+                  className="-mx-[0.14em] -mb-[0.2em] block overflow-hidden px-[0.14em] pb-[0.26em] pt-[0.04em]">
                     <motion.span
                       className={`block ${i === 1 ? "font-serif font-normal italic normal-case tracking-tight text-primary-300" : ""}`}
                       initial={reduced ? false : { y: "105%" }}

@@ -17,6 +17,14 @@ export const en: Messages = {
     brand: "Gabriel Paz · Portfolio",
     status: "Preparing the 3D experience",
     tagline: "VICARDEV · Full-Stack & AI Architecture",
+    steps: {
+      fonts: "Loading typefaces",
+      hero: "Setting up the cover",
+      keyboard: "Downloading the 3D keyboard",
+      scene: "Mounting the scene",
+      ready: "All set",
+    },
+    hint: "Move the cursor or touch the keys",
   },
   nav: {
     aria: "Main navigation",
@@ -83,10 +91,10 @@ export const en: Messages = {
   },
   projects: {
     title: "Projects",
-    subtitle: "The Interface Design class apps, UCC academic projects and the live production platforms from VICARDEV.",
+    subtitle: "4 apps on 4 different platforms, plus academic projects and the live production platforms from VICARDEV.",
     groups: {
       design: {
-        title: "Interface Design Projects",
+        title: "Cross-platform apps",
         subtitle: "Smartwatch, mobile, desktop and video game.",
       },
       academic: {
@@ -102,6 +110,7 @@ export const en: Messages = {
       academic: "Academic · UCC",
       commercial: "Live commercial",
     },
+    count: "{n} projects",
     privateNda: "Private code (NDA)",
     privateNdaTitle: "Private repository: commercial client under a non-disclosure agreement",
     privateRepo: "Private code",
@@ -122,7 +131,7 @@ export const en: Messages = {
   },
   deviceLab: {
     title: "Device Lab",
-    subtitle: "The four Interface Design apps, each on its own device. Scroll to tour them or pick one to see its details.",
+    subtitle: "The four apps, each on its own device. Scroll to tour them or pick one to see its details.",
     loading: "Loading the 3D lab",
     devicesAria: "Device Lab devices",
     openDetails: "See details for {title}",
@@ -154,7 +163,7 @@ export const en: Messages = {
     title: "Testimonials",
     metrics: {
       live: "Live commercial platforms",
-      design: "Interface Design apps",
+      design: "Cross-platform apps",
       total: "Projects in the portfolio",
     },
     listAria: "Choose a testimonial",
@@ -229,8 +238,8 @@ export const en: Messages = {
     subtitle: "My playlist, my favorite artists and games, and my club.",
     tabsAria: "Personal interests",
     menuAria: "Personal interests home menu",
-    moodNote: "Interface inspired by the PlayStation 5 home screen (marks of Sony Interactive Entertainment, no affiliation), for a single non-commercial course presentation. Original palettes and textures.",
-    photoNote: "Interface inspired by the PlayStation 5 home screen (marks of Sony Interactive Entertainment, no affiliation), for a single non-commercial course presentation. Game box art and album covers © their owners (the author's decision); concert, stadium and Pedri photos under free licenses; trophies: the author's own console data.",
+    moodNote: "Interface inspired by the PlayStation 5 home screen (marks of Sony Interactive Entertainment, no affiliation), for a single non-commercial presentation. Original palettes and textures.",
+    photoNote: "Interface inspired by the PlayStation 5 home screen (marks of Sony Interactive Entertainment, no affiliation), for a single non-commercial presentation. Game box art and album covers © their owners (the author's decision); concert, stadium and Pedri photos under free licenses; trophies: the author's own console data.",
     credits: "Credits and licenses",
     tabs: {
       games: "Games",

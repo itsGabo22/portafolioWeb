@@ -70,6 +70,7 @@ export default function DeviceLab({
   const [near, setNear] = useState(false);
   const [inView, setInView] = useState(false);
   const [active, setActive] = useState(0);
+  // Hover-only camera preview (null = the camera follows scroll progress).
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -117,6 +118,8 @@ export default function DeviceLab({
           progressRef.current = self.progress;
           const index = Math.round(self.progress * last);
           setActive((prev) => (prev === index ? prev : index));
+          // Scrolling always wins over a hover preview, so the camera can never stay pinned.
+          setFocusIndex((prev) => (prev === null ? prev : null));
         },
       });
     });
@@ -143,13 +146,16 @@ export default function DeviceLab({
 
   const open = useCallback((index: number, trigger: HTMLElement | null) => {
     triggerRef.current = trigger;
+    // The hover preview must never outlive the click that opened the panel.
+    setFocusIndex(null);
     setOpenIndex(index);
   }, []);
 
   const close = useCallback(() => {
     setOpenIndex(null);
+    setFocusIndex(null);
     const trigger = triggerRef.current;
-    window.requestAnimationFrame(() => trigger?.focus());
+    window.requestAnimationFrame(() => trigger?.focus({ preventScroll: true }));
   }, []);
 
   const chipRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -264,8 +270,9 @@ export default function DeviceLab({
                       type="button"
                       aria-current={selected ? "true" : undefined}
                       aria-label={fmt(t.deviceLab.openDetails, { title: item.project.title[lang] })}
-                      onFocus={() => setFocusIndex(index)}
-                      onBlur={() => setFocusIndex(null)}
+                      /* Hover previews a device; keyboard focus must NOT pin the camera
+                         (focus is restored to this chip when the panel closes, which used
+                         to freeze the 3D camera and ignore scroll). */
                       onMouseEnter={() => setFocusIndex(index)}
                       onMouseLeave={() => setFocusIndex(null)}
                       onClick={(event) => {

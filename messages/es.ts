@@ -19,6 +19,14 @@ export const es = {
     brand: "Gabriel Paz · Portafolio",
     status: "Preparando la experiencia 3D",
     tagline: "VICARDEV · Arquitectura Full-Stack e IA",
+    steps: {
+      fonts: "Cargando tipografías",
+      hero: "Armando la portada",
+      keyboard: "Descargando el teclado 3D",
+      scene: "Montando la escena",
+      ready: "Todo listo",
+    },
+    hint: "Pasa el cursor o toca las teclas",
   },
   nav: {
     aria: "Navegación principal",
@@ -85,10 +93,10 @@ export const es = {
   },
   projects: {
     title: "Proyectos",
-    subtitle: "Las aplicaciones de la clase de Diseño de Interfaces, los proyectos académicos de la UCC y las plataformas en producción de VICARDEV.",
+    subtitle: "4 apps en 4 plataformas distintas, más proyectos académicos y las plataformas en producción de VICARDEV.",
     groups: {
       design: {
-        title: "Proyectos de Diseño de Interfaces",
+        title: "Apps multiplataforma",
         subtitle: "Smartwatch, móvil, escritorio y videojuego.",
       },
       academic: {
@@ -104,6 +112,7 @@ export const es = {
       academic: "Académico · UCC",
       commercial: "Producción comercial",
     },
+    count: "{n} proyectos",
     privateNda: "Código privado (NDA)",
     privateNdaTitle: "Repositorio privado: cliente comercial con acuerdo de confidencialidad",
     privateRepo: "Código privado",
@@ -124,7 +133,7 @@ export const es = {
   },
   deviceLab: {
     title: "Device Lab",
-    subtitle: "Las cuatro apps de Diseño de Interfaces, cada una en su dispositivo. Desplázate para recorrerlas o elige una para ver sus detalles.",
+    subtitle: "Las cuatro apps, cada una en su dispositivo. Desplázate para recorrerlas o elige una para ver sus detalles.",
     loading: "Cargando el laboratorio 3D",
     devicesAria: "Dispositivos del Device Lab",
     openDetails: "Ver detalles de {title}",
@@ -156,7 +165,7 @@ export const es = {
     title: "Testimonios",
     metrics: {
       live: "Plataformas comerciales activas",
-      design: "Apps de Diseño de Interfaces",
+      design: "Apps multiplataforma",
       total: "Proyectos en el portafolio",
     },
     listAria: "Elegir testimonio",
@@ -231,8 +240,8 @@ export const es = {
     subtitle: "Mi playlist, mis artistas y juegos favoritos, y mi club.",
     tabsAria: "Intereses personales",
     menuAria: "Menú de inicio de intereses personales",
-    moodNote: "Interfaz inspirada en la pantalla de inicio de PlayStation 5 (marcas de Sony Interactive Entertainment, sin afiliación), para una única presentación del curso, sin fines comerciales. Paletas y texturas propias.",
-    photoNote: "Interfaz inspirada en la pantalla de inicio de PlayStation 5 (marcas de Sony Interactive Entertainment, sin afiliación), para una única presentación del curso, sin fines comerciales. Carátulas de juegos y portadas de álbumes © de sus titulares (uso decidido por el autor); fotos de conciertos, estadios y de Pedri con licencia libre; trofeos: datos de la consola del autor.",
+    moodNote: "Interfaz inspirada en la pantalla de inicio de PlayStation 5 (marcas de Sony Interactive Entertainment, sin afiliación), para una única presentación, sin fines comerciales. Paletas y texturas propias.",
+    photoNote: "Interfaz inspirada en la pantalla de inicio de PlayStation 5 (marcas de Sony Interactive Entertainment, sin afiliación), para una única presentación, sin fines comerciales. Carátulas de juegos y portadas de álbumes © de sus titulares (uso decidido por el autor); fotos de conciertos, estadios y de Pedri con licencia libre; trofeos: datos de la consola del autor.",
     credits: "Créditos y licencias",
     tabs: {
       games: "Juegos",

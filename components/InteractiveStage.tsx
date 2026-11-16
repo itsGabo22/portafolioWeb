@@ -1,50 +1,42 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import AmbientParticles from "./AmbientParticles";
 import CustomCursor from "./CustomCursor";
 import Preloader from "./Preloader";
 import RevealController from "./RevealController";
 
-const InteractiveKeyboard3D = dynamic(
-  () => import("./InteractiveKeyboard3D"),
-  { ssr: false }
-);
+import { hasWebGL } from "@/lib/capabilities";
+import { markReady, skipKeyboardSteps } from "@/lib/readiness";
+
+const loadKeyboard = () => import("./InteractiveKeyboard3D");
+const InteractiveKeyboard3D = dynamic(loadKeyboard, { ssr: false });
 
 /**
- * The 3D keyboard is only shown in the hero on wide (>=1200px) layouts, so on
- * phones/tablets its ~450 KB of JS and the WebGL scene are not loaded until the
- * visitor approaches #skills. On desktop it mounts once the browser is idle.
+ * The keyboard mounts immediately on every viewport: the page loader waits for it, so when the
+ * loader leaves, the keyboard section is already loaded and working (parked + paused until the
+ * hero / skills stage shows it). Devices that cannot (or should not) run it skip the wait.
  */
+const subscribeNever = () => () => {};
+const canRunKeyboard = (): boolean => {
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  return !conn?.saveData && hasWebGL();
+};
+
 function useKeyboardMount(): boolean {
-  const [mount, setMount] = useState(false);
+  const mount = useSyncExternalStore(subscribeNever, canRunKeyboard, () => false);
   useEffect(() => {
-    let done = false;
-    const decide = () => {
-      if (done) return;
-      const skills = document.getElementById("skills");
-      const wide = window.innerWidth >= 1200;
-      const nearSkills = skills ? skills.getBoundingClientRect().top < window.innerHeight * 2 : false;
-      if (wide || nearSkills) {
-        done = true;
-        setMount(true);
-        window.removeEventListener("scroll", decide);
-        window.removeEventListener("resize", decide);
-      }
-    };
-    const hasIdle = typeof window.requestIdleCallback === "function";
-    const idle = hasIdle
-      ? window.requestIdleCallback(decide, { timeout: 1500 })
-      : globalThis.setTimeout(decide, 600);
-    window.addEventListener("scroll", decide, { passive: true });
-    window.addEventListener("resize", decide);
-    return () => {
-      if (hasIdle) window.cancelIdleCallback(idle as number);
-      else globalThis.clearTimeout(idle);
-      window.removeEventListener("scroll", decide);
-      window.removeEventListener("resize", decide);
-    };
+    // Not `mount`: during hydration that is still the server value (false).
+    if (!canRunKeyboard()) {
+      skipKeyboardSteps();
+      return;
+    }
+    // Same promise the dynamic() above resolves: this just reports it to the loader.
+    loadKeyboard().then(
+      () => markReady("kb-chunk"),
+      () => skipKeyboardSteps()
+    );
   }, []);
   return mount;
 }
