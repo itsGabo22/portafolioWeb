@@ -140,6 +140,7 @@ function ProjectCard({
 
 function ProjectGroup({
   id,
+  number,
   title,
   subtitle,
   items,
@@ -148,6 +149,8 @@ function ProjectGroup({
   children,
 }: {
   id: string;
+  /** 1-based position of the block; shown as the big 01 / 02 / 03 index. */
+  number: number;
   title: string;
   subtitle: string;
   items: Project[];
@@ -155,20 +158,26 @@ function ProjectGroup({
   featuredFirst?: boolean;
   children?: React.ReactNode;
 }) {
+  const t = useT();
   return (
     <div className="mt-20 first:mt-0" aria-labelledby={id} role="group">
       <div className="mb-8 flex items-end justify-between gap-6 border-b border-line pb-4" data-reveal>
-        <div>
-          <h3 id={id} className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-            {title}
-          </h3>
-          <p className="mt-1 text-sm text-ink-muted">{subtitle}</p>
+        <div className="flex min-w-0 items-end gap-4 sm:gap-6">
+          <span
+            aria-hidden="true"
+            className="w-[2ch] shrink-0 font-display text-5xl font-extrabold leading-none tracking-tighter text-primary-ink/25 tabular-nums sm:text-7xl"
+          >
+            {String(number).padStart(2, "0")}
+          </span>
+          <div className="min-w-0">
+            <h3 id={id} className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+              {title}
+            </h3>
+            <p className="mt-1 text-sm text-ink-muted">{subtitle}</p>
+          </div>
         </div>
-        <span
-          aria-hidden="true"
-          className="font-display text-5xl font-extrabold leading-none tracking-tighter text-primary-ink/25 tabular-nums sm:text-7xl"
-        >
-          {String(items.length).padStart(2, "0")}
+        <span className="mb-1 shrink-0 rounded-full border border-line bg-surface-1/70 px-3 py-1 text-xs font-semibold text-ink-muted tabular-nums">
+          {fmt(t.projects.count, { n: items.length })}
         </span>
       </div>
       {children}
@@ -206,6 +215,7 @@ export default function Projects({ media = {} }: { media?: MediaManifest }) {
 
         <ProjectGroup
           id="projects-design"
+          number={1}
           title={t.projects.groups.design.title}
           subtitle={t.projects.groups.design.subtitle}
           items={designProjects}
@@ -216,6 +226,7 @@ export default function Projects({ media = {} }: { media?: MediaManifest }) {
 
         <ProjectGroup
           id="projects-academic"
+          number={2}
           title={t.projects.groups.academic.title}
           subtitle={t.projects.groups.academic.subtitle}
           items={academicProjects}
@@ -224,6 +235,7 @@ export default function Projects({ media = {} }: { media?: MediaManifest }) {
 
         <ProjectGroup
           id="projects-commercial"
+          number={3}
           title={t.projects.groups.commercial.title}
           subtitle={t.projects.groups.commercial.subtitle}
           items={commercialProjects}

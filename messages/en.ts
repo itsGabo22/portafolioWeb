@@ -102,6 +102,7 @@ export const en: Messages = {
       academic: "Academic · UCC",
       commercial: "Live commercial",
     },
+    count: "{n} projects",
     privateNda: "Private code (NDA)",
     privateNdaTitle: "Private repository: commercial client under a non-disclosure agreement",
     privateRepo: "Private code",

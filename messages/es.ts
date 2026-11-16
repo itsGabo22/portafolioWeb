@@ -104,6 +104,7 @@ export const es = {
       academic: "Académico · UCC",
       commercial: "Producción comercial",
     },
+    count: "{n} proyectos",
     privateNda: "Código privado (NDA)",
     privateNdaTitle: "Repositorio privado: cliente comercial con acuerdo de confidencialidad",
     privateRepo: "Código privado",
