@@ -577,3 +577,8 @@ html.is-loading { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .rgb-glow, .rgb-halo, .rgb-keys, .rgb-fan { animation: none; }
 }
+
+/* Pinned skills track: no pin under reduced motion (beats the responsive height utilities) */
+@media (prefers-reduced-motion: reduce) {
+  #skills-track { height: auto !important; }
+}
