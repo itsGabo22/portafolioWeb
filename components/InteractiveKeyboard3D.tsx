@@ -19,6 +19,7 @@ import {
 } from "@chibi3d/runtime";
 import { useApp } from "@/context/AppContext";
 import { markReady, skipKeyboardSteps } from "@/lib/readiness";
+import { SKILLS_PIN_EVENT } from "@/lib/skillsPin";
 import { KEYBOARD_SKILLS } from "./keyboard/keyboard-skills";
 import {
   createKeyboardScene,
@@ -164,6 +165,8 @@ export default function InteractiveKeyboard3D() {
 
   const dpr = useMemo<[number, number]>(() => [0.75, 1.75], []);
   const heldKeys = useRef<KeyboardKey[]>([]);
+  // Scroll-driven presses are silent: no sound, no cat tap, no odometer ticks.
+  const silentPress = useRef(false);
   const activeKeyRef = useRef<KeyboardKey | null>(null);
   const input = useMemo(
     () => createKeyInput(scene.keys, scene.columns),
@@ -251,12 +254,13 @@ export default function InteractiveKeyboard3D() {
           emissiveIntensity: pressed ? 0.65 : 0,
         });
         heldKeys.current = heldKeys.current.filter((held) => held !== key);
+        const silent = silentPress.current;
         if (pressed) {
-          if (ready && !document.hidden) {
+          if (ready && !document.hidden && !silent) {
             setPressCount((prev) => prev + 1);
           }
           heldKeys.current.push(key);
-          motion.current?.tapCat();
+          if (!silent) motion.current?.tapCat();
         }
         const shown = heldKeys.current.at(-1) ?? null;
         activeKeyRef.current = shown;
@@ -280,10 +284,31 @@ export default function InteractiveKeyboard3D() {
           }, 350);
         }
 
-        playSound(pressed);
+        if (!silent) playSound(pressed);
       }),
     [input, scene, playSound, ready, lang, syncActive3DLabel]
   );
+
+  // Pinned skills section: scroll progress types through the keys one by one (silently).
+  useEffect(() => {
+    if (!ready) return;
+    const onPin = (event: Event) => {
+      const p = (event as CustomEvent<number>).detail;
+      if (!vividRef.current || p <= 0.03 || p >= 0.97) {
+        input.release("pin");
+        return;
+      }
+      const index = Math.min(scene.keys.length - 1, Math.floor(((p - 0.03) / 0.94) * scene.keys.length));
+      silentPress.current = true;
+      input.press("pin", scene.keys[index].nodeId);
+      silentPress.current = false;
+    };
+    window.addEventListener(SKILLS_PIN_EVENT, onPin);
+    return () => {
+      window.removeEventListener(SKILLS_PIN_EVENT, onPin);
+      input.release("pin");
+    };
+  }, [ready, input, scene]);
 
   // Monitor #contact and <footer> visibility so the HUD card NEVER covers Footer.tsx or Contact
   useEffect(() => {

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { useT } from "@/messages";
 import TechBadge from "./TechBadge";
 import SectionEyebrow from "./SectionEyebrow";
+import { SKILLS_PIN_EVENT } from "@/lib/skillsPin";
 
 interface SkillCategory {
   id: string;
@@ -125,6 +126,37 @@ export default function Skills() {
   const t = useT();
   const [activeTab, setActiveTab] = useState<string>("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  // Pinned scroll: progress (0..1) through the tall track drives the progress rail (CSS var)
+  // and is broadcast so the 3D keyboard can "type" through its keys. Native scroll is never touched.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    let last = -1;
+    const update = () => {
+      raf = 0;
+      const rect = track.getBoundingClientRect();
+      const span = rect.height - window.innerHeight;
+      const p = span > 0 ? Math.min(1, Math.max(0, -rect.top / span)) : 0;
+      if (Math.abs(p - last) < 0.003 && p !== 0 && p !== 1) return;
+      last = p;
+      track.style.setProperty("--pin", p.toFixed(4));
+      window.dispatchEvent(new CustomEvent(SKILLS_PIN_EVENT, { detail: p }));
+    };
+    const schedule = () => {
+      if (!raf) raf = window.requestAnimationFrame(update);
+    };
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      if (raf) window.cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, []);
 
   const filteredCategories =
     activeTab === "all"
@@ -134,29 +166,39 @@ export default function Skills() {
   return (
     <section
       id="skills"
-      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-hidden"
+      className="relative border-t border-zinc-200/70 dark:border-zinc-800/60 bg-transparent py-24 sm:py-32 transition-colors duration-200 overflow-x-clip"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Centered Monumental Section Header */}
-        <div data-reveal
-          className="text-center"
-        >
-          <SectionEyebrow id="skills" />
-          <h2 className="font-display text-[length:var(--text-h2)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
-            {t.skills.title}
-          </h2>
-
-          <p className="mx-auto mt-2 text-base text-zinc-600 dark:text-zinc-400">
-            {t.skills.hint}
-          </p>
-        </div>
-
-        {/* Open Stage for the Center-Stage 3D Mechanical Keyboard */}
+        {/* Pinned stage: a tall track with a sticky viewport-high panel (native position: sticky,
+            no scroll hijacking). The keyboard stays centred while the track scrolls by, then releases. */}
         <div
-          id="skills-stage"
-          aria-hidden="true"
-          className="pointer-events-none h-[85vh] min-h-[420px] w-full"
-        />
+          ref={trackRef}
+          id="skills-track"
+          className="relative h-[185dvh] md:h-[230dvh] lg:h-[270dvh] motion-reduce:h-auto"
+        >
+          <div className="sticky top-0 h-dvh motion-reduce:static">
+            <div data-reveal className="absolute inset-x-0 top-[4.5rem] z-10 text-center sm:top-24">
+              <SectionEyebrow id="skills" />
+              <h2 className="font-display text-[clamp(1.9rem,1rem+2.6vw,3.25rem)] font-bold leading-[var(--leading-tight)] tracking-tight text-ink">
+                {t.skills.title}
+              </h2>
+            </div>
+            <p className="absolute inset-x-4 bottom-12 z-10 text-center text-sm text-zinc-600 dark:text-zinc-400">{t.skills.hint}</p>
+
+            {/* Open stage for the center-stage 3D mechanical keyboard (exactly viewport-centred while pinned) */}
+            <div id="skills-stage" aria-hidden="true" className="pointer-events-none absolute inset-0" />
+
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-6 bottom-6 z-10 mx-auto h-1 max-w-xs overflow-hidden rounded-full bg-zinc-200/80 dark:bg-zinc-800 motion-reduce:hidden"
+            >
+              <div
+                className="h-full origin-left rounded-full bg-emerald-600 dark:bg-emerald-400"
+                style={{ transform: "scaleX(var(--pin, 0))" }}
+              />
+            </div>
+          </div>
+        </div>
 
         {/* Editorial Header & Clean Filter Pill Bar */}
         <div className="mb-8 flex flex-col items-center justify-between gap-4 border-t border-zinc-300/60 dark:border-zinc-800 pt-10 sm:flex-row">
