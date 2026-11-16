@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react";
 import type { MoodId } from "@/data/personal";
-import { MOODS } from "./moods";
-import { styles } from "./styles";
+import { MOODS, type Mood } from "./moods";
 
 /** Deterministic pseudo-random particle layout (no Math.random → no hydration drift). */
 const PARTICLES = Array.from({ length: 26 }, (_, i) => {
@@ -15,13 +14,13 @@ const PARTICLES = Array.from({ length: 26 }, (_, i) => {
 });
 
 /** Texture + ambient particles for the active mood. Purely decorative. */
-export default function MoodTexture({ mood }: { mood: MoodId }) {
+export default function MoodTexture({ mood, texture }: { mood: MoodId; texture?: Mood["texture"] }) {
   const m = MOODS[mood] ?? MOODS.base;
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-      <div className={styles.texture} data-texture={m.texture} />
+      <div className="bx-texture" data-texture={texture ?? m.texture} />
       {m.particles && (
-        <div className={styles.particles} data-kind={m.particles}>
+        <div className="bx-particles" data-kind={m.particles}>
           {PARTICLES.map((p, i) => (
             <span
               key={i}

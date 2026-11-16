@@ -2,25 +2,31 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { BEYOND_TAB_IDS, type BeyondTabId } from "@/data/beyondTabs";
 import { useT } from "@/messages";
-import { BEYOND_TABS, type BeyondTab } from "./beyond/tabs";
+import { BEYOND_PHOTOS } from "./beyond/photos";
+// only the loader shell ships with the page; beyond.css comes with the menu chunk
+import "./beyond/beyond-shell.css";
 
-function PanelLoader() {
+function MenuLoader() {
   const t = useT();
   return (
-    <div role="status" className="flex min-h-[520px] items-center justify-center rounded-stage border border-line bg-surface-1/60">
+    <div role="status" className="ps-loader">
       <span className="text-sm text-ink-muted">{t.beyond.loading}</span>
     </div>
   );
 }
 
-const BeyondPanel = dynamic(() => import("./beyond/BeyondPanel"), { ssr: false, loading: () => <PanelLoader /> });
+const PsMenu = dynamic(() => import("./beyond/PsMenu"), { ssr: false, loading: () => <MenuLoader /> });
 
-/* The active tab lives in the URL hash (#beyond-music | #beyond-games | #beyond-club). */
+/* Active tab lives in the URL hash (#beyond-games | #beyond-media | #beyond-likes). */
 const HASH_EVENT = "beyond-hash";
-const tabFromHash = (hash: string): BeyondTab | null => {
-  const id = hash.replace("#beyond-", "");
-  return hash.startsWith("#beyond-") && (BEYOND_TABS as readonly string[]).includes(id) ? (id as BeyondTab) : null;
+const LEGACY: Record<string, BeyondTabId> = { music: "media", club: "likes" };
+const tabFromHash = (hash: string): BeyondTabId | null => {
+  if (!hash.startsWith("#beyond-")) return null;
+  const id = hash.slice("#beyond-".length);
+  if ((BEYOND_TAB_IDS as readonly string[]).includes(id)) return id as BeyondTabId;
+  return LEGACY[id] ?? null;
 };
 function subscribeHash(onChange: () => void) {
   window.addEventListener("hashchange", onChange);
@@ -36,10 +42,16 @@ export default function Beyond() {
   const t = useT();
   const hash = useSyncExternalStore(subscribeHash, readHash, () => "");
   const hashTab = tabFromHash(hash);
-  const tab: BeyondTab = hashTab ?? "music";
+  // Other in-page links (#contact...) replace the hash: keep the last menu tab (and its player).
+  const [lastTab, setLastTab] = useState<BeyondTabId>("games");
+  if (hashTab && hashTab !== lastTab) setLastTab(hashTab);
+  const tab: BeyondTabId = hashTab ?? lastTab;
 
   const sectionRef = useRef<HTMLElement>(null);
   const [near, setNear] = useState(false);
+  // A #beyond-* deep link mounts the menu right away; once mounted it stays mounted
+  // (a later #contact link must not unmount it or stop its player).
+  if (hashTab && !near) setNear(true);
   const [paused, setPaused] = useState(true);
 
   // Deep links (#beyond-*) scroll the section into view, on load and on hashchange.
@@ -47,7 +59,10 @@ export default function Beyond() {
     const reveal = () => {
       if (!tabFromHash(window.location.hash)) return;
       window.requestAnimationFrame(() =>
-        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+        sectionRef.current?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+          block: "start",
+        })
       );
     };
     reveal();
@@ -55,7 +70,7 @@ export default function Beyond() {
     return () => window.removeEventListener("hashchange", reveal);
   }, []);
 
-  // Lazy-mount near the viewport; pause textures/particles while off-screen.
+  // Lazy-mount near the viewport; pause textures, particles and the gamepad while off-screen.
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -77,7 +92,7 @@ export default function Beyond() {
     };
   }, []);
 
-  const onTab = useCallback((next: BeyondTab) => {
+  const onTab = useCallback((next: BeyondTabId) => {
     window.history.replaceState(null, "", `#beyond-${next}`);
     window.dispatchEvent(new Event(HASH_EVENT));
   }, []);
@@ -92,7 +107,20 @@ export default function Beyond() {
           <p className="mt-4 text-base text-ink-muted">{t.beyond.subtitle}</p>
         </div>
 
-        {near || hashTab ? <BeyondPanel tab={tab} onTab={onTab} paused={paused} /> : <PanelLoader />}
+        {near ? <PsMenu tab={tab} onTab={onTab} paused={paused} /> : <MenuLoader />}
+
+        <p className="mt-3 max-w-3xl text-xs text-ink-muted">
+          {BEYOND_PHOTOS ? t.beyond.photoNote : t.beyond.moodNote}{" "}
+          <a
+            href="/CREDITS.md"
+            target="_blank"
+            rel="noopener"
+            className="cursor-can-hover inline-flex min-h-6 items-center font-semibold text-primary-ink underline underline-offset-4"
+          >
+            {t.beyond.credits}
+            <span className="sr-only"> {t.common.newTab}</span>
+          </a>
+        </p>
       </div>
     </section>
   );

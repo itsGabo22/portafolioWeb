@@ -24,6 +24,8 @@ export interface Mood {
   face: "display" | "serif" | "mono";
   /** Letter-case / tracking feel. */
   caps: boolean;
+  /** Light palette (dark text): photos are brightened instead of dimmed under the scrim. */
+  light?: boolean;
 }
 
 export const MOODS: Record<MoodId, Mood> = {
@@ -41,7 +43,7 @@ export const MOODS: Record<MoodId, Mood> = {
   },
   macdemarco: {
     bg: "#fff4d6", surface: "#ffeab3", fg: "#2b2111", muted: "#5c4a26", accent: "#9a4507", accent2: "#2f7d6d", line: "#e2c886",
-    texture: "sun", ease: "cubic-bezier(0.34, 1.56, 0.64, 1)", face: "display", caps: false,
+    texture: "sun", ease: "cubic-bezier(0.34, 1.56, 0.64, 1)", face: "display", caps: false, light: true,
   },
   rdr2: {
     bg: "#2a1d12", surface: "#3a2918", fg: "#f4e7d0", muted: "#d9c7a6", accent: "#e8ad62", accent2: "#a3442c", line: "#5d4429",
@@ -58,6 +60,22 @@ export const MOODS: Record<MoodId, Mood> = {
   bloodborne: {
     bg: "#1a0709", surface: "#2a0d11", fg: "#f1e6e6", muted: "#d2bcbc", accent: "#ea7880", accent2: "#8e8a8a", line: "#4d1d22",
     texture: "fog", ease: "cubic-bezier(0.45, 0, 0.2, 1)", face: "serif", caps: false,
+  },
+  residentevil: {
+    bg: "#0d1110", surface: "#17201d", fg: "#eef1ec", muted: "#b7c2bb", accent: "#e8776b", accent2: "#6f8a7b", line: "#2a3a34",
+    texture: "fog", ease: "cubic-bezier(0.45, 0, 0.2, 1)", face: "display", caps: true,
+  },
+  deathstranding: {
+    bg: "#0c1219", surface: "#152230", fg: "#edf2f7", muted: "#b6c4d3", accent: "#f0b14a", accent2: "#5f86a8", line: "#263a4f",
+    texture: "grain", ease: "cubic-bezier(0.65, 0, 0.35, 1)", face: "display", caps: true,
+  },
+  gtavi: {
+    bg: "#1a0f24", surface: "#2a1838", fg: "#fbeefe", muted: "#dcc6e8", accent: "#ff8ac2", accent2: "#ffb35c", line: "#3d2752",
+    texture: "sun", ease: "cubic-bezier(0.16, 1, 0.3, 1)", face: "display", caps: true,
+  },
+  nexo: {
+    bg: "#0b0b16", surface: "#15152a", fg: "#eeeefe", muted: "#bcbce0", accent: "#7cf0d0", accent2: "#8b5cf6", line: "#2a2a4a",
+    texture: "scanlines", ease: "cubic-bezier(0.16, 1, 0.3, 1)", face: "mono", caps: true,
   },
   barca: {
     bg: "#0a1630", surface: "#13255a", fg: "#ffffff", muted: "#cdd7ee", accent: "#ffd23f", accent2: "#a50044", line: "#2a3f78",
