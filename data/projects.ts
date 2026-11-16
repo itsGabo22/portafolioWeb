@@ -135,21 +135,19 @@ export const projects: Project[] = [
       en: "Interface Design Project · Team Video Game",
     },
     category: "interface-design",
-    demoType: "video",
+    demoType: "readme",
     status: "completed",
     platform: "game",
     featured: true,
     projectType: "academic",
-    // TODO_GABO: add a screenshot at /images/projects/nexo.png and set it here.
-    image: "",
+    image: "/images/projects/nexo.png",
     description: {
       es: "Videojuego 3D en primera persona desarrollado en equipo con Unity 6 (6000.6.7f1), C# y UI Toolkit, con una interfaz de HUD propia y un personaje con IA (Gemini).",
       en: "Team-built first-person 3D video game made with Unity 6 (6000.6.7f1), C# and UI Toolkit, featuring a custom HUD interface and an AI-driven character (Gemini).",
     },
     tags: ["Unity 6", "C#", "UI Toolkit", "Gemini AI"],
     github: "https://github.com/itsGabo22/NexoProtocoloSombra",
-    // TODO_GABO: add the gameplay video URL (or drop public/media/nexo-protocolo-sombra/demo.mp4).
-    demo: "TODO_GABO: gameplay video URL",
+    demo: "https://github.com/itsGabo22/NexoProtocoloSombra#readme",
   },
   {
     id: "vicardev-agency",
