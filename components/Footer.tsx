@@ -79,7 +79,7 @@ export default function Footer() {
             </a>
 
             <a
-              href="https://www.linkedin.com/in/itsgabo22"
+              href="https://www.linkedin.com/in/gabriel-paz-8ab49733a/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${t.common.linkedinAria} ${t.common.newTab}`}

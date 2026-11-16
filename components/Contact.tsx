@@ -25,7 +25,7 @@ const CONTACT_EMAIL = "vicardev2026@gmail.com";
 const DIRECT_CHANNELS = [
   { key: "agency", href: "https://vicardev.digital" },
   { key: "github", href: "https://github.com/itsGabo22" },
-  { key: "linkedin", href: "https://www.linkedin.com/in/itsgabo22" },
+  { key: "linkedin", href: "https://www.linkedin.com/in/gabriel-paz-8ab49733a/" },
 ] as const;
 
 /** Pulls its child a few pixels toward the cursor (mouse only, off under reduced motion). */
